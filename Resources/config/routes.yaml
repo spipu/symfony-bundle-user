@@ -1,0 +1,5 @@
+controllers:
+    resource: '../../Controller/'
+    type:     annotation
+    prefix:   /
+    trailing_slash_on_root: false

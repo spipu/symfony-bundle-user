@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% import '@SpipuUi/macro/buttons.html.twig' as buttons %}
+
+{% set menuCurrentItem="spipu-user-profile" %}
+
+{% block header_title %}{{ parent() }} - {{ block('main_title') }}{% endblock %}
+
+{% block main_title %}{{ 'spipu.user.page.profile.show'|trans() }}{% endblock %}
+
+{% block main_actions %}
+    {{ buttons.defaultLink(path('spipu_user_profile_edit'), 'spipu.user.page.profile.edit', 'primary', 'edit') }}
+    {{ buttons.defaultLink(path('spipu_user_profile_password'), 'spipu.user.page.profile.password', 'success', 'key') }}
+    {{ buttons.defaultLink(path('spipu_user_security_logout'), 'spipu.user.page.security.log_out', 'danger', 'sign-out-alt') }}
+{% endblock %}
+
+{% block body %}{{ renderManager(manager) }}{% endblock %}

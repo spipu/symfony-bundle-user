@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+{% import '@SpipuUi/macro/buttons.html.twig' as buttons %}
+
+{% set menuCurrentItem="spipu-user-profile" %}
+
+{% block header_title %}{{ parent() }} - {{ block('main_title') }}{% endblock %}
+
+{% block main_title %}{{ 'spipu.user.page.profile.edit'|trans() }}{% endblock %}
+
+{% block main_actions %}
+    {{ buttons.back(path('spipu_user_profile_show')) }}
+    {{ buttons.submitManagerForm(manager) }}
+{% endblock %}
+
+{% block body %}{{ renderManager(manager) }}{% endblock %}

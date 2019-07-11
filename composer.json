@@ -1,0 +1,21 @@
+{
+    "name": "spipu/user-bundle",
+    "type": "symfony-bundle",
+    "description": "Spipu User Security Bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "laurent Minguet",
+            "email": "contact@minguet.fr"
+        }
+    ],
+    "version": "1.0",
+    "require": {
+        "spipu/ui-bundle": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spipu\\UserBundle\\": "./"
+        }
+    }
+}

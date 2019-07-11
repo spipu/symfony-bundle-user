@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% import '@SpipuUi/macro/buttons.html.twig' as buttons %}
+
+{% set menuCurrentItem="spipu-user-login" %}
+
+{% block header_title %}{{ parent() }} - {{ block('main_title') }}{% endblock %}
+
+{% block main_title %}{{ 'spipu.user.page.account.recover'|trans() }}{% endblock %}
+
+{% block main_actions %}
+    {{ buttons.back(path('spipu_user_security_login')) }}
+{% endblock %}
+
+{% block body %}{{ renderManager(manager) }}{% endblock %}

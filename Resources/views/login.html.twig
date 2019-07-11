@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+{% import '@SpipuUi/macro/buttons.html.twig' as buttons %}
+
+{% set menuCurrentItem="spipu-user-login" %}
+
+{% block header_title %}{{ parent() }} - {{ 'spipu.user.login.title'|trans }}{% endblock %}
+
+{% block main_actions %}
+    {%  if can.accountCreation %}
+        {{ buttons.defaultLink(path('spipu_user_account_create'), 'spipu.user.page.account.create', 'success', 'edit') }}
+    {% endif %}
+    {%  if can.passwordRecovery %}
+        {{ buttons.defaultLink(path('spipu_user_account_recover'), 'spipu.user.page.account.recover', 'danger', 'key') }}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="row pt-5">
+        <div class="col-xs-12 col-sm-10 col-ld-8 col-lg-6 m-auto">
+            <form action="{{ path('spipu_user_security_login') }}" method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div class="card">
+                    <div class="card-header font-weight-bold">
+                        {{ 'spipu.user.login.title'|trans }}
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="username">{{ 'spipu.user.login.field.login'|trans }}</label>
+                            <input type="text" class="form-control form-control-lg rounded-0" id="username" name="_username" value="{{ lastUsername }}" required/>
+                            <div class="invalid-feedback">{{ 'spipu.user.login.field.required'|trans }}</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">{{ 'spipu.user.login.field.password'|trans }}</label>
+                            <input type="password" class="form-control form-control-lg rounded-0" id="password" name="_password" required />
+                            <div class="invalid-feedback">{{ 'spipu.user.login.field.required'|trans }}</div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group custom-control custom-checkbox">
+                                <input type="checkbox" id="remember_me" name="_remember_me" class="custom-control-input"  />
+                                <label class="checkbox-custom custom-control-label" for="remember_me">{{ 'spipu.user.login.field.remember_me'|trans }}</label>
+                            </div>
+                        </div>
+                        <div class="form-group text-center">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary btn col-12 mt-3 mb-3">
+                    <i class="mr-1 fas fa-sign-in-alt"></i> {{ 'spipu.user.login.field.submit'|trans }}
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

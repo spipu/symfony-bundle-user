@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% import '@SpipuUi/macro/buttons.html.twig' as buttons %}
+
+{% set menuCurrentItem="spipu-user-admin" %}
+
+{% block header_title %}{{ parent() }} - {{ block('main_title') }}{% endblock %}
+
+{% block main_title %}{{ 'spipu.user.page.admin.list'|trans() }}{% endblock %}
+
+{% block main_actions %}
+    {% if is_granted('ROLE_ADMIN_MANAGE_USER_EDIT') %}
+        {{ buttons.create(path('spipu_user_admin_create'), 'spipu.ui.action.create') }}
+    {% endif %}
+{% endblock %}
+
+{% block body %}{{ renderManager(manager) }}{% endblock %}

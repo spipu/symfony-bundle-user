@@ -1,0 +1,114 @@
+spipu:
+    user:
+        label:
+            single:  "User"
+            plurial: "Users"
+
+        page:
+            admin:
+                list:     "Users"
+                create:   "Create User"
+                edit:     "Edit User #%id"
+                show:     "Show User #%id"
+            profile:
+                show:     "My Profile"
+                edit:     "Edit My Profile"
+                password: "Change My Password"
+            account:
+                create:   "Create an account"
+                waiting:  "Account created"
+                recover:  "Account Recovery"
+            security:
+                log_in:   "Log In"
+                log_out:  "Log Out"
+
+        action:
+            enable:  "Enable"
+            disable: "Disable"
+            recover: "Recover"
+            reset:   "Password"
+
+        form:
+            profile:    "Edit My Profile"
+            password:   "Change My Password"
+            edit:       ""
+
+        fieldset:
+            information:  "Information"
+            log_in:       "Login Information"
+            acl:          "ACL"
+            others:       "Others"
+            password:     "Password"
+            new_password: "New Password"
+            old_password: "Old Password"
+
+        field:
+            id:           "Id"
+            username:     "Username"
+            email:        "E-mail"
+            first_name:   "FirstName"
+            last_name:    "LastName"
+            roles:        "Roles"
+            active:       "Active"
+            nb_login:     "Login"
+            nb_try_login: "Try Login"
+            token_date:   "Token Date"
+            password:     "Password"
+            confirm:      "Confirm Password"
+            created_at:   "Created"
+            updated_at:   "Updated"
+
+        login:
+            title: "Login"
+            field:
+                login:       "Login"
+                password:    "Password"
+                remember_me: "Remember me"
+                required:    "This field is required"
+                submit:      "Log In"
+
+        error:
+            token:            "Invalid Token!"
+            yourself_delete:  "You can not delete yourself!"
+            yourself_enable:  "You can not enable yourself!"
+            yourself_disable: "You can not disable yourself!"
+            bad_old_password: "Your old password is wrong!"
+            confirm:          "The email or the token is invalid!"
+
+        success:
+            enabled:       "The item has been enabled."
+            disabled:      "The item has been disabled."
+            reset:         "A password recovery email has been sent"
+            mass_enabled:  "%count items have been enabled."
+            mass_disabled: "%count items have been disabled."
+            confirm:       "Your account has been activated, you can now use it."
+            recover:       "Your password account has been changed, you can now use it."
+
+        role:
+            admin:          "Manage Users"
+            admin_show:     "Manage Users - Show"
+            admin_edit:     "Manage Users - Edit"
+            admin_delete:   "Manage Users - Delete"
+
+        content:
+            waiting:
+                confirm_1:  "You account has been created successfully!"
+                confirm_2:  "You will receive a confirmation email, in order to activate your account."
+            recover:
+                confirm_1:  "An email has been sent!"
+                confirm_2:  "If the email is corresponding to an existing account, you will receive a confirmation email with a recovery link."
+
+        email:
+            global:
+                from:       "no-reply@mysite.fr"
+                hello:      "Hello %name"
+                no-reply:   "This is an automatic email, please do not reply."
+
+            confirm:
+                title:      "Account Creation"
+                thanks:     "Thank's you for your subscription."
+                action:     "In order to activate your account, you must click on the following link, or copy it on your browser."
+
+            recover:
+                title:      "Account Recovery"
+                action:     "In order to set a new password, you must click on the following link, or copy it on your browser."

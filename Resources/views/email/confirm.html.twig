@@ -1,0 +1,16 @@
+{% extends 'base_email.html.twig' %}
+
+{% block title %}{{  parent() }} - {{ 'spipu.user.email.confirm.title'|trans() }}{% endblock %}
+
+{% block body %}
+    <p>{{ 'spipu.user.email.global.hello'|trans({'%name': user.firstName ~ ' ' ~ user.lastname}) }}</p>
+    <p>{{ 'spipu.user.email.confirm.thanks'|trans() }}</p>
+    <ul>
+        <li>{{ 'spipu.user.field.username'|trans() }}: {{ user.username }}</li>
+        <li>{{ 'spipu.user.field.email'|trans() }}:    {{ user.email }}</li>
+    </ul>
+    <p>{{ 'spipu.user.email.confirm.action'|trans() }}</p>
+    <a href="{{ confirmLink }}">{{ confirmLink }}</a>
+    <hr />
+    <i>{{ 'spipu.user.email.global.no-reply'|trans() }}</i>
+{% endblock %}

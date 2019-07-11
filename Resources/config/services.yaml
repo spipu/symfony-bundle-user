@@ -1,0 +1,73 @@
+services:
+    # Generic Declaration
+    Spipu\UserBundle\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Tests,SpipuUserBundle.php}'
+        autowire: true
+        autoconfigure: true
+
+    # API Services
+    Spipu\UserBundle\Service\ModuleConfiguration:
+        public: true
+        arguments:
+            - 'SpipuUserBundle:User'
+            - '\Spipu\UserBundle\Entity\User'
+            - '@Spipu\UserBundle\Repository\UserRepository'
+            - true
+            - true
+
+    Spipu\UserBundle\Repository\UserRepository:
+        tags: ['doctrine.repository_service']
+        arguments:
+            - '@doctrine'
+
+    # Role Definition
+    Spipu\UserBundle\Service\RoleDefinition:
+        public: true
+        tags: ['spipu.user.role']
+
+    # Fixture
+    Spipu\UserBundle\Fixture\FirstUserFixture:
+        tags: ['spipu.fixture']
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
+            - '@security.user_password_encoder.generic'
+            - '@Spipu\UserBundle\Service\ModuleConfiguration'
+
+    # Internal Services
+    Spipu\UserBundle\Form\Options\Role:
+        arguments:
+            - !tagged 'spipu.user.role'
+
+    Spipu\UserBundle\Service\UserTokenManager:
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
+            - '%kernel.secret%'
+
+    Spipu\UserBundle\Ui\CreationForm:
+        arguments:
+            - '@security.user_password_encoder.generic'
+
+    Spipu\UserBundle\Ui\NewPasswordForm:
+        arguments:
+            - '@security.user_password_encoder.generic'
+
+    Spipu\UserBundle\Ui\PasswordForm:
+        arguments:
+            - '@security.user_password_encoder.generic'
+
+    Spipu\UserBundle\Ui\UserGrid:
+        arguments:
+            - '@Spipu\UserBundle\Service\ModuleConfiguration'
+            - '@security.token_storage'
+            - '@Spipu\UiBundle\Form\Options\YesNo'
+
+    security.authentication.provider.dao:
+        class: Spipu\UserBundle\Security\UserAuthenticationProvider
+        arguments:
+            - ~
+            - ~
+            - ~
+            - '@security.encoder_factory'
+            - '%security.authentication.hide_user_not_found%'
+            - '@doctrine.orm.default_entity_manager'

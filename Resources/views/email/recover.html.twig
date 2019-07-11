@@ -1,0 +1,11 @@
+{% extends 'base_email.html.twig' %}
+
+{% block title %}{{  parent() }} - {{ 'spipu.user.email.recover.title'|trans() }}{% endblock %}
+
+{% block body %}
+    <p>{{ 'spipu.user.email.global.hello'|trans({'%name': user.firstName ~ ' ' ~ user.lastname}) }}</p>
+    <p>{{ 'spipu.user.email.recover.action'|trans() }}</p>
+    <a href="{{ confirmLink }}">{{ confirmLink }}</a>
+    <hr />
+    <i>{{ 'spipu.user.email.global.no-reply'|trans() }}</i>
+{% endblock %}
