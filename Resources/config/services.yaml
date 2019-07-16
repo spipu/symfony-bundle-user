@@ -13,7 +13,7 @@ services:
             - 'SpipuUserBundle:User'
             - '\Spipu\UserBundle\Entity\User'
             - '@Spipu\UserBundle\Repository\UserRepository'
-            - true
+            - false
             - true
 
     Spipu\UserBundle\Repository\UserRepository:
