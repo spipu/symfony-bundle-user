@@ -110,7 +110,7 @@ class UserForm extends AbstractForm
                                 'choices'  => $this->yesNoOptions,
                                 'required' => true,
                             ]
-                        ))->setTemplateView('@SpipuUi\entity\view\yes-no.html.twig')
+                        ))->setTemplateView('@SpipuUi/entity/view/yes-no.html.twig')
                     )
                     ->addField((new Field(
                         'roles',
