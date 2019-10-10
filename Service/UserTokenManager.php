@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Service;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Spipu\UserBundle\Entity\GenericUser;
 
@@ -37,7 +38,7 @@ class UserTokenManager
      */
     public function generate(GenericUser $user): string
     {
-        $currentTime = new \DateTime('NOW');
+        $currentTime = new DateTime('NOW');
         $user->setTokenDate($currentTime);
 
         $this->entityManager->persist($user);

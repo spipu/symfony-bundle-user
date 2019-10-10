@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Ui;
 
+use Exception;
 use Spipu\UserBundle\Entity\GenericUser;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
@@ -67,13 +68,13 @@ class CreationForm extends ProfileForm
      * @param EntityInterface|null $resource
      * @return void
      * @SuppressWarnings(PMD.UnusedFormalParameter)
-     * @throws \Exception
+     * @throws Exception
      */
     public function setSpecificFields(FormInterface $form, EntityInterface $resource = null): void
     {
         /** @var GenericUser $resource */
         if (empty($resource->getPlainPassword())) {
-            throw new \Exception('The password is required');
+            throw new Exception('The password is required');
         }
 
         $resource->setPassword($this->encoder->encodePassword($resource, $resource->getPlainPassword()));
