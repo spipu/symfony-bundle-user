@@ -84,6 +84,9 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("No item found")')->count());
         $this->assertGreaterThan(0, $crawler->filter('a:contains("Create")')->count());
 
+        // Reset filter
+        $client->submit($crawler->selectButton('Search')->form(), ['fl[username]' => '']);
+
         // Create
         $crawler = $client->clickLink('Create');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
@@ -238,12 +241,23 @@ class AdminUserTest extends WebTestCase
         $client->submit($crawler->filter('button:contains("Delete")')->form());
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        // Return to the list
+        // Return to the list (it must keep the filters)
         $crawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertGreaterThan(0, $crawler->filter('h1:contains("Users")')->count());
         $this->assertCrawlerHasAlert($crawler, 'The item has been deleted');
         $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("No item found")')->count());
+
+        // Reset the filter
+        $crawler = $client->submit($crawler->selectButton('Search')->form(), ['fl[username]' => '']);
+
+        // Filter on ids
+        $crawler = $client->submit($crawler->selectButton('Search')->form(), ['fl[id][from]' => '11', 'fl[id][to]' => '52', 'fl[is_active]' => '0']);
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("42 items found")')->count());
+
+        // Reset the filter
+        $crawler = $client->submit($crawler->selectButton('Search')->form(), ['fl[id][from]' => '', 'fl[id][to]' => '', 'fl[is_active]' => '']);
     }
 
     public function testBadAccess()
