@@ -3,7 +3,6 @@ namespace Spipu\UserBundle\Tests\Functional\Entity;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
 use Spipu\UserBundle\Controller\SecurityController;
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 class AccountTest extends WebTestCase
 {
@@ -92,22 +91,11 @@ class AccountTest extends WebTestCase
         );
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        /** @var MessageDataCollector $mailCollector */
         // Get the sent email
-        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
-        $this->assertGreaterThan(0, $mailCollector->getMessageCount());
-        $message = $mailCollector->getMessages()[0];
-        $mailCollector->reset();
-        $this->assertInstanceOf(\Swift_Message::class, $message);
-
-        // Analyze the email
-        $this->assertSame(['no-reply@mysite.fr'], array_keys($message->getFrom()));
-        $this->assertSame(['user@test.fr'], array_keys($message->getTo()));
-        $this->assertSame('Account Creation', $message->getSubject());
-        $this->assertStringContainsString('user@test.fr', $message->getBody());
+        $messageBody = $this->assertHasEmail($client, 'no-reply@mysite.fr', 'user@test.fr', 'Account Creation', 'user@test.fr');
 
         // Get the activation url
-        $this->assertGreaterThan(0, preg_match(self::REGEX_URL, $message->getBody(), $match));
+        $this->assertGreaterThan(0, preg_match(self::REGEX_URL, $messageBody, $match));
         $confirmUrlParts = explode('/', str_replace('http://localhost/', '', $match[1]));
 
         // Validate the url
@@ -258,9 +246,7 @@ class AccountTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect());
 
         // No email
-        /** @var MessageDataCollector $mailCollector */
-        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
-        $this->assertEquals(0, $mailCollector->getMessageCount());
+        $this->assertHasNoEmail($client);
 
         // Generic result
         $crawler = $client->followRedirect();
@@ -298,21 +284,10 @@ class AccountTest extends WebTestCase
         );
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        // One email
-        /** @var MessageDataCollector $mailCollector */
-        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
-        $this->assertGreaterThan(0, $mailCollector->getMessageCount());
-        $message = $mailCollector->getMessages()[0];
-        $mailCollector->reset();
-        $this->assertInstanceOf(\Swift_Message::class, $message);
-
-        // Analyze the email
-        $this->assertSame(['no-reply@mysite.fr'], array_keys($message->getFrom()));
-        $this->assertSame(['user@test.fr'], array_keys($message->getTo()));
-        $this->assertSame('Account Recovery', $message->getSubject());
+        $messageBody = $this->assertHasEmail($client, 'no-reply@mysite.fr', 'user@test.fr', 'Account Recovery');
 
         // Get the activation url
-        $this->assertGreaterThan(0, preg_match(self::REGEX_URL, $message->getBody(), $match));
+        $this->assertGreaterThan(0, preg_match(self::REGEX_URL, $messageBody, $match));
         $confirmUrlParts = explode('/', str_replace('http://localhost/', '', $match[1]));
 
         // Validate the url

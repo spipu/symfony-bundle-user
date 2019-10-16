@@ -2,7 +2,6 @@
 namespace Spipu\UserBundle\Tests\Functional\Entity;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 class AccountDisableTest extends WebTestCase
 {

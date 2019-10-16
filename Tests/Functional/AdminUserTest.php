@@ -2,7 +2,6 @@
 namespace Spipu\UserBundle\Tests\Functional\Entity;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 class AdminUserTest extends WebTestCase
 {
@@ -108,19 +107,8 @@ class AdminUserTest extends WebTestCase
         );
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        /** @var MessageDataCollector $mailCollector */
         // Get the sent email
-        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
-        $this->assertEquals(1, $mailCollector->getMessageCount());
-        $message = $mailCollector->getMessages()[0];
-        $mailCollector->reset();
-        $this->assertInstanceOf(\Swift_Message::class, $message);
-
-        // Analyze the email
-        $this->assertSame(['no-reply@mysite.fr'], array_keys($message->getFrom()));
-        $this->assertSame(['user2@test.fr'], array_keys($message->getTo()));
-        $this->assertSame('Account Recovery', $message->getSubject());
-        $this->assertStringContainsString('user2@test.fr', $message->getBody());
+        $this->assertHasEmail($client, 'no-reply@mysite.fr', 'user2@test.fr', 'Account Recovery', 'user2@test.fr');
 
         // Show user page - Enabled
         $crawler = $client->followRedirect();
@@ -171,19 +159,8 @@ class AdminUserTest extends WebTestCase
         $client->clickLink('Password');
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        /** @var MessageDataCollector $mailCollector */
         // Get the sent email
-        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
-        $this->assertEquals(1, $mailCollector->getMessageCount());
-        $message = $mailCollector->getMessages()[0];
-        $mailCollector->reset();
-        $this->assertInstanceOf(\Swift_Message::class, $message);
-
-        // Analyze the email
-        $this->assertSame(['no-reply@mysite.fr'], array_keys($message->getFrom()));
-        $this->assertSame(['user2@test.fr'], array_keys($message->getTo()));
-        $this->assertSame('Account Recovery', $message->getSubject());
-        $this->assertStringContainsString('user2@test.fr', $message->getBody());
+        $this->assertHasEmail($client, 'no-reply@mysite.fr', 'user2@test.fr', 'Account Recovery', 'user2@test.fr');
 
         // Show user page - Reset
         $crawler = $client->followRedirect();
