@@ -38,7 +38,7 @@ class MailManagerTest extends TestCase
             ->method('sendTwigMail')
             ->with(
                 'spipu.user.email.confirm.title',
-                'spipu.user.email.global.from',
+                'no-reply@mysite.fr',
                 $user->getEmail(),
                 '@SpipuUser/email/confirm.html.twig',
                 [
@@ -49,11 +49,14 @@ class MailManagerTest extends TestCase
 
         $userTokenManager = SpipuUserMock::getUserTokenManager($this);
 
+        $mailConfiguration = MailConfigurationTest::getService($this);
+
         $service = new MailManager(
             $mailManager,
             $router,
             SymfonyMock::getTranslator($this),
-            $userTokenManager
+            $userTokenManager,
+            $mailConfiguration
         );
 
         $this->assertSame(null, $user->getTokenDate());
@@ -93,7 +96,7 @@ class MailManagerTest extends TestCase
             ->method('sendTwigMail')
             ->with(
                 'spipu.user.email.recover.title',
-                'spipu.user.email.global.from',
+                'no-reply@mysite.fr',
                 $user->getEmail(),
                 '@SpipuUser/email/recover.html.twig',
                 [
@@ -104,11 +107,14 @@ class MailManagerTest extends TestCase
 
         $userTokenManager = SpipuUserMock::getUserTokenManager($this);
 
+        $mailConfiguration = MailConfigurationTest::getService($this);
+
         $service = new MailManager(
             $mailManager,
             $router,
             SymfonyMock::getTranslator($this),
-            $userTokenManager
+            $userTokenManager,
+            $mailConfiguration
         );
 
         $this->assertSame(null, $user->getTokenDate());

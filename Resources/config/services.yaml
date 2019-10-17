@@ -7,6 +7,10 @@ services:
         autoconfigure: true
 
     # API Services
+    Spipu\UserBundle\Service\MailConfigurationInterface:
+        class:  Spipu\UserBundle\Service\MailConfiguration
+        public: true
+
     Spipu\UserBundle\Service\ModuleConfiguration:
         public: true
         arguments:

@@ -31,22 +31,30 @@ class MailManager
     private $userTokenManager;
 
     /**
+     * @var MailConfigurationInterface
+     */
+    private $mailConfiguration;
+
+    /**
      * MailManager constructor.
      * @param BaseMailManager $mailManager
      * @param UrlGeneratorInterface $urlGenerator
      * @param TranslatorInterface $translator
      * @param UserTokenManager $userTokenManager
+     * @param MailConfigurationInterface $mailConfiguration
      */
     public function __construct(
         BaseMailManager $mailManager,
         UrlGeneratorInterface $urlGenerator,
         TranslatorInterface $translator,
-        UserTokenManager $userTokenManager
+        UserTokenManager $userTokenManager,
+        MailConfigurationInterface $mailConfiguration
     ) {
         $this->mailManager = $mailManager;
         $this->urlGenerator = $urlGenerator;
         $this->translator = $translator;
         $this->userTokenManager = $userTokenManager;
+        $this->mailConfiguration = $mailConfiguration;
     }
 
     /**
@@ -67,7 +75,7 @@ class MailManager
 
         $this->mailManager->sendTwigMail(
             $this->translator->trans('spipu.user.email.confirm.title'),
-            $this->translator->trans('spipu.user.email.global.from'),
+            $this->mailConfiguration->getEmailFrom(),
             $user->getEmail(),
             '@SpipuUser/email/confirm.html.twig',
             [
@@ -95,7 +103,7 @@ class MailManager
 
         $this->mailManager->sendTwigMail(
             $this->translator->trans('spipu.user.email.recover.title'),
-            $this->translator->trans('spipu.user.email.global.from'),
+            $this->mailConfiguration->getEmailFrom(),
             $user->getEmail(),
             '@SpipuUser/email/recover.html.twig',
             [

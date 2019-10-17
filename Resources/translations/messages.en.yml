@@ -100,7 +100,6 @@ spipu:
 
         email:
             global:
-                from:       "no-reply@mysite.fr"
                 hello:      "Hello %name"
                 no-reply:   "This is an automatic email, please do not reply."
 
