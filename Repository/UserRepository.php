@@ -5,7 +5,7 @@ namespace Spipu\UserBundle\Repository;
 
 use Spipu\UserBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -19,10 +19,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
 {
     /**
      * UserRepository constructor.
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param string $entityClass
      */
-    public function __construct(RegistryInterface $registry, string $entityClass = User::class)
+    public function __construct(ManagerRegistry $registry, string $entityClass = User::class)
     {
         parent::__construct($registry, $entityClass);
     }

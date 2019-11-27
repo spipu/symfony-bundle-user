@@ -6,7 +6,6 @@ namespace Spipu\UserBundle\Controller;
 use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UserBundle\Event\UserEvent;
 use Spipu\UserBundle\Service\MailManager;
-use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\ModuleConfiguration;
 use Spipu\UserBundle\Service\UserTokenManager;
 use Spipu\UserBundle\Ui\CreationForm;
@@ -107,7 +106,6 @@ class AccountController extends AbstractController
      *     methods="GET"
      * )
      * @param ModuleConfiguration $moduleConfiguration
-     * @param UserRepository $repository
      * @param UserTokenManager $userTokenManager
      * @param string $email
      * @param string $token
@@ -115,7 +113,6 @@ class AccountController extends AbstractController
      */
     public function createConfirm(
         ModuleConfiguration $moduleConfiguration,
-        UserRepository $repository,
         UserTokenManager $userTokenManager,
         string $email,
         string $token
@@ -124,7 +121,7 @@ class AccountController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $user = $repository->findOneBy(['email' => $email]);
+        $user = $moduleConfiguration->getRepository()->findOneBy(['email' => $email]);
         if (!$user) {
             $this->addFlash('danger', $this->trans('spipu.user.error.confirm'));
             return $this->redirectToRoute('spipu_user_security_login');
@@ -154,7 +151,6 @@ class AccountController extends AbstractController
      * @param FormFactory $formFactory
      * @param RecoveryForm $recoveryForm
      * @param ModuleConfiguration $moduleConfiguration
-     * @param UserRepository $repository
      * @param MailManager $mailManager
      * @return Response
      * @throws \Spipu\UiBundle\Exception\UiException
@@ -163,7 +159,6 @@ class AccountController extends AbstractController
         FormFactory $formFactory,
         RecoveryForm $recoveryForm,
         ModuleConfiguration $moduleConfiguration,
-        UserRepository $repository,
         MailManager $mailManager
     ): Response {
         if (!$moduleConfiguration->hasAllowPasswordRecovery()) {
@@ -177,7 +172,7 @@ class AccountController extends AbstractController
 
             try {
                 $email = $manager->getForm()['email']->getData();
-                $user = $repository->findOneBy(['email' => $email]);
+                $user = $moduleConfiguration->getRepository()->findOneBy(['email' => $email]);
                 if (!$user) {
                     return $redirect;
                 }
@@ -222,7 +217,6 @@ class AccountController extends AbstractController
      * @param FormFactory $formFactory
      * @param NewPasswordForm $newPasswordForm
      * @param ModuleConfiguration $moduleConfiguration
-     * @param UserRepository $repository
      * @param UserTokenManager $userTokenManager
      * @param string $email
      * @param string $token
@@ -233,7 +227,6 @@ class AccountController extends AbstractController
         FormFactory $formFactory,
         NewPasswordForm $newPasswordForm,
         ModuleConfiguration $moduleConfiguration,
-        UserRepository $repository,
         UserTokenManager $userTokenManager,
         string $email,
         string $token
@@ -242,7 +235,7 @@ class AccountController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $user = $repository->findOneBy(['email' => $email]);
+        $user = $moduleConfiguration->getRepository()->findOneBy(['email' => $email]);
         if (!$user) {
             $this->addFlash('danger', $this->trans('spipu.user.error.confirm'));
             return $this->redirectToRoute('spipu_user_security_login');

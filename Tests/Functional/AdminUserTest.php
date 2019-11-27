@@ -166,8 +166,8 @@ class AdminUserTest extends WebTestCase
         $crawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertGreaterThan(0, $crawler->filter('h1:contains("Show User")')->count());
-        $this->assertCrawlerHasAlert($crawler, 'A password recovery email has been sent');
         $this->assertCrawlerHasFieldValue($crawler, 'username', 'test2_user');
+        $this->assertCrawlerHasAlert($crawler, 'A password recovery email has been sent');
 
         // Users List page
         $crawler = $client->clickLink('Users');

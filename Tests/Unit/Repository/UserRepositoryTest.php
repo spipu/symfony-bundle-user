@@ -6,7 +6,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\Repository\UserRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class UserRepositoryTest extends TestCase
 {
