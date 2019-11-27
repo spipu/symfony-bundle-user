@@ -3,9 +3,10 @@ namespace Spipu\UserBundle\Tests\Unit\Fixture;
 
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Fixture\FixtureInterface;
+use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Tests\SpipuUserMock;
 use Spipu\CoreBundle\Tests\SymfonyMock;
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Fixture\FirstUserFixture;
 use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 
@@ -13,10 +14,13 @@ class FirstUserFixtureTest extends TestCase
 {
     public function testBasic()
     {
+        $repository = $this->createMock(UserRepository::class);
+
         $fixture = new FirstUserFixture(
             SymfonyMock::getEntityManager($this),
             SymfonyMock::getUserPasswordEncoder($this),
-            ModuleConfigurationTest::getService($this, true, true)
+            ModuleConfigurationTest::getService($this, true, true),
+            $repository
         );
 
         $this->assertInstanceOf(FixtureInterface::class, $fixture);
@@ -32,8 +36,8 @@ class FirstUserFixtureTest extends TestCase
         $entityManager->expects($this->once())->method('persist')
             ->willReturnCallback(
                 function ($object) {
-                    /** @var GenericUser $object */
-                    $this->assertInstanceOf(GenericUser::class, $object);
+                    /** @var UserInterface $object */
+                    $this->assertInstanceOf(UserInterface::class, $object);
                     $this->assertSame('admin', $object->getUsername());
                     $this->assertSame('admin@admin.fr', $object->getEmail());
                     $this->assertSame('encoded_password', $object->getPassword());
@@ -44,9 +48,11 @@ class FirstUserFixtureTest extends TestCase
         $encoder = SymfonyMock::getUserPasswordEncoder($this);
 
         $configuration = ModuleConfigurationTest::getService($this, true, true);
-        $configuration->getRepository()->expects($this->once())->method('findOneBy')->willReturn(null);
 
-        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration);
+        $repository = $this->createMock(UserRepository::class);
+        $repository->expects($this->once())->method('findOneBy')->willReturn(null);
+
+        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration, $repository);
 
         $fixture->load(SymfonyMock::getConsoleOutput($this));
 
@@ -67,9 +73,11 @@ class FirstUserFixtureTest extends TestCase
         $encoder = SymfonyMock::getUserPasswordEncoder($this);
 
         $configuration = ModuleConfigurationTest::getService($this, true, true);
-        $configuration->getRepository()->expects($this->once())->method('findOneBy')->willReturn($user);
 
-        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration);
+        $repository = $this->createMock(UserRepository::class);
+        $repository->expects($this->once())->method('findOneBy')->willReturn($user);
+
+        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration, $repository);
 
         $fixture->load(SymfonyMock::getConsoleOutput($this));
 
@@ -90,9 +98,11 @@ class FirstUserFixtureTest extends TestCase
         $encoder = SymfonyMock::getUserPasswordEncoder($this);
 
         $configuration = ModuleConfigurationTest::getService($this, true, true);
-        $configuration->getRepository()->expects($this->once())->method('findOneBy')->willReturn($user);
 
-        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration);
+        $repository = $this->createMock(UserRepository::class);
+        $repository->expects($this->once())->method('findOneBy')->willReturn($user);
+
+        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration, $repository);
 
         $fixture->remove(SymfonyMock::getConsoleOutput($this));
 
@@ -111,9 +121,11 @@ class FirstUserFixtureTest extends TestCase
         $encoder = SymfonyMock::getUserPasswordEncoder($this);
 
         $configuration = ModuleConfigurationTest::getService($this, true, true);
-        $configuration->getRepository()->expects($this->once())->method('findOneBy')->willReturn(null);
 
-        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration);
+        $repository = $this->createMock(UserRepository::class);
+        $repository->expects($this->once())->method('findOneBy')->willReturn(null);
+
+        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration, $repository);
 
         $fixture->remove(SymfonyMock::getConsoleOutput($this));
 

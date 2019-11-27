@@ -4,13 +4,13 @@ declare(strict_types = 1);
 namespace Spipu\UserBundle\Ui;
 
 use Spipu\UiBundle\Exception\FormException;
-use Spipu\UserBundle\Entity\User;
 use Spipu\UserBundle\Form\Options\Role;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
 use Spipu\UiBundle\Entity\Form\FieldSet;
 use Spipu\UiBundle\Entity\Form\Form;
 use Spipu\UiBundle\Form\Options\YesNo;
+use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormInterface;
 
@@ -31,13 +31,17 @@ class UserForm extends AbstractForm
 
     /**
      * UserForm constructor.
+     * @param ModuleConfigurationInterface $moduleConfiguration
      * @param YesNo $yesNoOptions
      * @param Role $roleOptions
      */
     public function __construct(
+        ModuleConfigurationInterface $moduleConfiguration,
         YesNo $yesNoOptions,
         Role $roleOptions
     ) {
+        parent::__construct($moduleConfiguration);
+
         $this->yesNoOptions = $yesNoOptions;
         $this->roleOptions = $roleOptions;
     }
@@ -49,7 +53,7 @@ class UserForm extends AbstractForm
      */
     protected function prepareForm(): void
     {
-        $this->definition = new Form('user_admin', User::class);
+        $this->definition = new Form('user_admin', $this->getEntityClassName());
 
         $this->definition
             ->addFieldSet(

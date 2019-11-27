@@ -3,28 +3,30 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Repository;
 
-use Spipu\UserBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @method User|null find($id, $lockMode = null, $lockVersion = null)
- * @method User|null findOneBy(array $criteria, array $orderBy = null)
- * @method User[]    findAll()
- * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method UserInterface|null find($id, $lockMode = null, $lockVersion = null)
+ * @method UserInterface|null findOneBy(array $criteria, array $orderBy = null)
+ * @method UserInterface[]    findAll()
+ * @method UserInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserRepository extends ServiceEntityRepository implements UserLoaderInterface
 {
     /**
      * UserRepository constructor.
      * @param ManagerRegistry $registry
-     * @param string $entityClass
+     * @param ModuleConfigurationInterface $moduleConfiguration
      */
-    public function __construct(ManagerRegistry $registry, string $entityClass = User::class)
-    {
-        parent::__construct($registry, $entityClass);
+    public function __construct(
+        ManagerRegistry $registry,
+        ModuleConfigurationInterface $moduleConfiguration
+    ) {
+        parent::__construct($registry, trim($moduleConfiguration->getEntityClassName(), '\\'));
     }
 
     /**

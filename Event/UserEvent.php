@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Event;
 
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -14,7 +14,7 @@ class UserEvent extends Event
     const PREFIX_NAME = 'spipu.user.action.';
 
     /**
-     * @var GenericUser
+     * @var UserInterface
      */
     private $user;
 
@@ -25,10 +25,10 @@ class UserEvent extends Event
 
     /**
      * GridEvent constructor.
-     * @param GenericUser $user
+     * @param UserInterface $user
      * @param string $action
      */
-    public function __construct(GenericUser $user, string $action)
+    public function __construct(UserInterface $user, string $action)
     {
         $this->user = $user;
         $this->action = $action;
@@ -43,9 +43,9 @@ class UserEvent extends Event
     }
 
     /**
-     * @return GenericUser
+     * @return UserInterface
      */
-    public function getUser(): GenericUser
+    public function getUser(): UserInterface
     {
         return $this->user;
     }

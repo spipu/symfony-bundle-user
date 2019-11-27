@@ -8,15 +8,17 @@ use Spipu\UiBundle\Exception\UiException;
 use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UiBundle\Service\Ui\GridFactory;
 use Spipu\UiBundle\Service\Ui\ShowFactory;
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface;
+use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\MailManager;
-use Spipu\UserBundle\Service\ModuleConfiguration;
+use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Spipu\UserBundle\Ui\UserForm;
 use Spipu\UserBundle\Ui\UserGrid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Throwable;
 
 /**
  * Class AdminUserController
@@ -56,7 +58,8 @@ class AdminUserController extends AbstractController
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_EDIT')")
      * @param FormFactory $formFactory
      * @param UserForm $userForm
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param ModuleConfigurationInterface $moduleConfiguration
+     * @param UserRepository $userRepository
      * @param int $id
      * @return Response
      * @throws UiException
@@ -64,13 +67,14 @@ class AdminUserController extends AbstractController
     public function edit(
         FormFactory $formFactory,
         UserForm $userForm,
-        ModuleConfiguration $moduleConfiguration,
+        ModuleConfigurationInterface $moduleConfiguration,
+        UserRepository $userRepository,
         int $id
     ): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        /** @var GenericUser $resource */
-        $resource = $moduleConfiguration->getRepository()->findOneBy(['id' => $id]);
+        /** @var UserInterface $resource */
+        $resource = $userRepository->findOneBy(['id' => $id]);
         if (!$resource) {
             throw $this->createNotFoundException();
         }
@@ -94,7 +98,7 @@ class AdminUserController extends AbstractController
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_EDIT')")
      * @param FormFactory $formFactory
      * @param UserForm $userForm
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param ModuleConfigurationInterface $moduleConfiguration
      * @param MailManager $mailManager
      * @return Response
      * @throws UiException
@@ -102,7 +106,7 @@ class AdminUserController extends AbstractController
     public function create(
         FormFactory $formFactory,
         UserForm $userForm,
-        ModuleConfiguration $moduleConfiguration,
+        ModuleConfigurationInterface $moduleConfiguration,
         MailManager $mailManager
     ): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -134,7 +138,7 @@ class AdminUserController extends AbstractController
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_SHOW')")
      * @param ShowFactory $showFactory
      * @param UserForm $userForm
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param UserRepository $userRepository
      * @param int $id
      * @return Response
      * @throws UiException
@@ -142,11 +146,11 @@ class AdminUserController extends AbstractController
     public function show(
         ShowFactory $showFactory,
         UserForm $userForm,
-        ModuleConfiguration $moduleConfiguration,
+        UserRepository $userRepository,
         int $id
     ): Response {
-        /** @var GenericUser $resource */
-        $resource = $moduleConfiguration->getRepository()->findOneBy(['id' => $id]);
+        /** @var UserInterface $resource */
+        $resource = $userRepository->findOneBy(['id' => $id]);
         if (!$resource) {
             throw $this->createNotFoundException();
         }
@@ -166,16 +170,19 @@ class AdminUserController extends AbstractController
      * )
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_DELETE')")
      * @param Request $request
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param UserRepository $userRepository
      * @param int $id
      * @return Response
      */
-    public function delete(Request $request, ModuleConfiguration $moduleConfiguration, int $id): Response
-    {
+    public function delete(
+        Request $request,
+        UserRepository $userRepository,
+        int $id
+    ): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        /** @var GenericUser $resource */
-        $resource = $moduleConfiguration->getRepository()->findOneBy(['id' => $id]);
+        /** @var UserInterface $resource */
+        $resource = $userRepository->findOneBy(['id' => $id]);
         if (!$resource) {
             throw $this->createNotFoundException();
         }
@@ -212,17 +219,20 @@ class AdminUserController extends AbstractController
      *     methods="GET"
      * )
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_EDIT')")
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param UserRepository $userRepository
      * @param int $id
      * @param string $backTo
      * @return Response
      */
-    public function enable(ModuleConfiguration $moduleConfiguration, int $id, string $backTo = 'list'): Response
-    {
+    public function enable(
+        UserRepository $userRepository,
+        int $id,
+        string $backTo = 'list'
+    ): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        /** @var GenericUser $resource */
-        $resource = $moduleConfiguration->getRepository()->findOneBy(['id' => $id]);
+        /** @var UserInterface $resource */
+        $resource = $userRepository->findOneBy(['id' => $id]);
         if (!$resource) {
             throw $this->createNotFoundException();
         }
@@ -254,17 +264,20 @@ class AdminUserController extends AbstractController
      *     methods="GET"
      * )
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_EDIT')")
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param UserRepository $userRepository
      * @param int $id
      * @param string $backTo
      * @return Response
      */
-    public function disable(ModuleConfiguration $moduleConfiguration, int $id, string $backTo = 'list'): Response
-    {
+    public function disable(
+        UserRepository $userRepository,
+        int $id,
+        string $backTo = 'list'
+    ): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        /** @var GenericUser $resource */
-        $resource = $moduleConfiguration->getRepository()->findOneBy(['id' => $id]);
+        /** @var UserInterface $resource */
+        $resource = $userRepository->findOneBy(['id' => $id]);
         if (!$resource) {
             throw $this->createNotFoundException();
         }
@@ -296,17 +309,21 @@ class AdminUserController extends AbstractController
      *     methods="GET"
      * )
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_EDIT')")
-     * @param ModuleConfiguration $moduleConfiguration
-     * @param int $id
+     * @param UserRepository $userRepository
      * @param MailManager $mailManager
+     * @param int $id
      * @return Response
+     * @throws Throwable
      */
-    public function reset(ModuleConfiguration $moduleConfiguration, int $id, MailManager $mailManager): Response
-    {
+    public function reset(
+        UserRepository $userRepository,
+        MailManager $mailManager,
+        int $id
+    ): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        /** @var GenericUser $resource */
-        $resource = $moduleConfiguration->getRepository()->findOneBy(['id' => $id]);
+        /** @var UserInterface $resource */
+        $resource = $userRepository->findOneBy(['id' => $id]);
         if (!$resource) {
             throw $this->createNotFoundException();
         }
@@ -327,13 +344,13 @@ class AdminUserController extends AbstractController
      *     methods="POST"
      * )
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_EDIT')")
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param UserRepository $userRepository
      * @param Request $request
      * @return Response
      */
-    public function massEnable(ModuleConfiguration $moduleConfiguration, Request $request): Response
+    public function massEnable(UserRepository $userRepository, Request $request): Response
     {
-        return $this->massAction($moduleConfiguration, $request, 'enable', 'spipu.user.success.mass_enabled');
+        return $this->massAction($userRepository, $request, 'enable', 'spipu.user.success.mass_enabled');
     }
 
     /**
@@ -343,17 +360,17 @@ class AdminUserController extends AbstractController
      *     methods="POST"
      * )
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_EDIT')")
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param UserRepository $userRepository
      * @param Request $request
      * @return Response
      */
-    public function massDisable(ModuleConfiguration $moduleConfiguration, Request $request): Response
+    public function massDisable(UserRepository $userRepository, Request $request): Response
     {
-        return $this->massAction($moduleConfiguration, $request, 'disable', 'spipu.user.success.mass_disabled');
+        return $this->massAction($userRepository, $request, 'disable', 'spipu.user.success.mass_disabled');
     }
 
     /**
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param UserRepository $userRepository
      * @param Request $request
      * @param string $action
      * @param string $transLabel
@@ -361,7 +378,7 @@ class AdminUserController extends AbstractController
      * @SuppressWarnings(PMD.CyclomaticComplexity)
      */
     private function massAction(
-        ModuleConfiguration $moduleConfiguration,
+        UserRepository $userRepository,
         Request $request,
         string $action,
         string $transLabel
@@ -378,8 +395,8 @@ class AdminUserController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
 
         $count = 0;
-        /** @var GenericUser[] $rows */
-        $rows = $moduleConfiguration->getRepository()->findBy(['id' => $selected]);
+        /** @var UserInterface[] $rows */
+        $rows = $userRepository->findBy(['id' => $selected]);
         foreach ($rows as $row) {
             try {
                 if ($this->massActionRow($row, $action)) {
@@ -398,11 +415,11 @@ class AdminUserController extends AbstractController
     }
 
     /**
-     * @param GenericUser $row
+     * @param UserInterface $row
      * @param string $action
      * @return bool
      */
-    private function massActionRow(GenericUser $row, string $action): bool
+    private function massActionRow(UserInterface $row, string $action): bool
     {
         if ($this->getUser()->getId() === $row->getId()) {
             $this->addFlashTrans('danger', 'spipu.user.error.yourself_'.$action);
@@ -424,10 +441,10 @@ class AdminUserController extends AbstractController
 
     /**
      * @param string $backTo
-     * @param GenericUser|null $resource
+     * @param UserInterface|null $resource
      * @return Response
      */
-    private function redirectTo(string $backTo, GenericUser $resource = null): Response
+    private function redirectTo(string $backTo, UserInterface $resource = null): Response
     {
         switch ($backTo) {
             case 'show':

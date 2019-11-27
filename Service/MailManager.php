@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Spipu\UserBundle\Service;
 
 use Spipu\CoreBundle\Service\MailManager as BaseMailManager;
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -58,11 +58,11 @@ class MailManager
     }
 
     /**
-     * @param GenericUser $user
+     * @param UserInterface $user
      * @return void
-     * @throws \Exception
+     * @throws \Throwable
      */
-    public function sendActivationEmail(GenericUser $user): void
+    public function sendActivationEmail(UserInterface $user): void
     {
         $confirmLink = $this->urlGenerator->generate(
             'spipu_user_account_create_confirm',
@@ -86,11 +86,11 @@ class MailManager
     }
 
     /**
-     * @param GenericUser $user
+     * @param UserInterface $user
      * @return void
-     * @throws \Exception
+     * @throws \Throwable
      */
-    public function sendRecoveryEmail(GenericUser $user): void
+    public function sendRecoveryEmail(UserInterface $user): void
     {
         $confirmLink = $this->urlGenerator->generate(
             'spipu_user_account_recovery_confirm',

@@ -3,11 +3,9 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Service;
 
-use Spipu\UserBundle\Entity\GenericUser;
-use Spipu\UserBundle\Repository\UserRepository;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Spipu\UserBundle\Entity\UserInterface;
 
-class ModuleConfiguration
+class ModuleConfiguration implements ModuleConfigurationInterface
 {
     /**
      * @var string
@@ -18,11 +16,6 @@ class ModuleConfiguration
      * @var string
      */
     private $entityClassName;
-
-    /**
-     * @var UserRepository
-     */
-    private $entityRepository;
 
     /**
      * @var bool
@@ -38,20 +31,17 @@ class ModuleConfiguration
      * UserTokenService constructor.
      * @param string $entityName
      * @param string $entityClassName
-     * @param UserRepository $entityRepository
      * @param bool $allowAccountCreation
      * @param bool $allowPasswordRecovery
      */
     public function __construct(
         string $entityName,
         string $entityClassName,
-        UserRepository $entityRepository,
         bool $allowAccountCreation,
         bool $allowPasswordRecovery
     ) {
         $this->entityName = $entityName;
         $this->entityClassName = $entityClassName;
-        $this->entityRepository = $entityRepository;
         $this->allowAccountCreation = $allowAccountCreation;
         $this->allowPasswordRecovery = $allowPasswordRecovery;
     }
@@ -81,20 +71,20 @@ class ModuleConfiguration
     }
 
     /**
-     * @return GenericUser
+     * @return string
      */
-    public function getNewEntity(): GenericUser
+    public function getEntityClassName(): string
     {
-        $className = $this->entityClassName;
-
-        return new $className();
+        return $this->entityClassName;
     }
 
     /**
-     * @return UserRepository
+     * @return UserInterface
      */
-    public function getRepository(): UserRepository
+    public function getNewEntity(): UserInterface
     {
-        return $this->entityRepository;
+        $className = $this->getEntityClassName();
+
+        return new $className();
     }
 }

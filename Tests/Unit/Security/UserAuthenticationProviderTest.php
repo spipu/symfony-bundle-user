@@ -4,13 +4,10 @@ namespace Spipu\UserBundle\Tests\Unit\Security;
 use PHPUnit\Framework\TestCase;
 use Spipu\UserBundle\Tests\SpipuUserMock;
 use Spipu\CoreBundle\Tests\SymfonyMock;
-use Spipu\UserBundle\Entity\GenericUser;
 use Spipu\UserBundle\Security\UserAuthenticationProvider;
 use Spipu\UserBundle\Security\UserChecker;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class UserAuthenticationProviderTest extends TestCase
 {

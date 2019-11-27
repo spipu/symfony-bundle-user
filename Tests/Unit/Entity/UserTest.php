@@ -2,8 +2,9 @@
 namespace Spipu\UserBundle\Tests\Unit\Entity;
 
 use PHPUnit\Framework\TestCase;
+use Spipu\UserBundle\Entity\UserInterface;
+use Spipu\UserBundle\Tests\GenericUser;
 use Spipu\UserBundle\Tests\SpipuUserMock;
-use Spipu\UserBundle\Entity\GenericUser;
 
 class GenericUserTest extends TestCase
 {
@@ -12,6 +13,7 @@ class GenericUserTest extends TestCase
         $date = new \DateTime();
 
         $entity = SpipuUserMock::getUserEntity(1);
+        $this->assertInstanceOf(UserInterface::class, $entity);
         $this->assertSame(1, $entity->getId());
 
         $entity->setRoles([]);
@@ -51,7 +53,7 @@ class GenericUserTest extends TestCase
 
         $serialized = $entity->serialize();
 
-        $new = new GenericUser();
+        $new = new GenericUser(null);
         $new->unserialize($serialized);
 
         $this->assertSame($serialized, $new->serialize());

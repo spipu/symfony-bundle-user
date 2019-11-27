@@ -6,7 +6,7 @@ use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UiBundle\Entity\Grid;
 use Spipu\UiBundle\Form\Options\YesNo;
 use Spipu\UiBundle\Service\Ui\Definition\GridDefinitionInterface;
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\UserGrid;
 
@@ -17,7 +17,7 @@ class UserGridTest extends TestCase
      */
     public function testGrid()
     {
-        $user = $this->createMock(GenericUser::class);
+        $user = $this->createMock(UserInterface::class);
         $user->method('getId')->willReturn(42);
 
         $tokenStorage = SymfonyMock::getTokenStorage($this);

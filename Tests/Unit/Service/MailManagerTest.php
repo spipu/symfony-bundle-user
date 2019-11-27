@@ -15,9 +15,10 @@ class MailManagerTest extends TestCase
         $user = SpipuUserMock::getUserEntity(42);
         $user
             ->setEmail('mock_email')
-            ->setUsername('mock_username')
-            ->setCreatedAtValue()
-            ->setUpdatedAtValue();
+            ->setUsername('mock_username');
+
+        $user->setCreatedAtValue();
+        $user->setUpdatedAtValue();
 
         $router = SymfonyMock::getRouter($this);
         $router
@@ -73,9 +74,10 @@ class MailManagerTest extends TestCase
         $user = SpipuUserMock::getUserEntity(42);
         $user
             ->setEmail('mock_email')
-            ->setUsername('mock_username')
-            ->setCreatedAtValue()
-            ->setUpdatedAtValue();
+            ->setUsername('mock_username');
+
+        $user->setCreatedAtValue();
+        $user->setUpdatedAtValue();
 
         $router = SymfonyMock::getRouter($this);
         $router

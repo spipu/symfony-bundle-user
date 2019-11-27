@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Controller;
 
-use Spipu\UserBundle\Service\ModuleConfiguration;
+use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,12 +20,12 @@ class SecurityController extends AbstractController
      *     name="spipu_user_security_login"
      * )
      * @param AuthenticationUtils $authenticationUtils
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param ModuleConfigurationInterface $moduleConfiguration
      * @return Response
      */
     public function login(
         AuthenticationUtils $authenticationUtils,
-        ModuleConfiguration $moduleConfiguration
+        ModuleConfigurationInterface $moduleConfiguration
     ): Response {
         $error = $authenticationUtils->getLastAuthenticationError();
         if ($error) {

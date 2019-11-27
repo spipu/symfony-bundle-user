@@ -3,6 +3,7 @@ namespace Spipu\UserBundle\Tests\Unit\Ui;
 
 use PHPUnit\Framework\TestCase;
 use Spipu\UiBundle\Entity\Form;
+use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\RecoveryForm;
 use Symfony\Component\Form\FormInterface;
 
@@ -10,7 +11,9 @@ class RecoveryFormTest extends TestCase
 {
     public function testForm()
     {
-        $form = new RecoveryForm();
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new RecoveryForm($moduleConfiguration);
 
         $definition = $form->getDefinition();
 

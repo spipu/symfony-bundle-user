@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Security;
 
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface as SpipuUserInterface;
 use Spipu\UserBundle\Exception\UnactivatedAccountException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -16,7 +16,7 @@ class UserChecker implements UserCheckerInterface
      */
     public function checkPreAuth(UserInterface $user): void
     {
-        if (!$user instanceof GenericUser) {
+        if (!$user instanceof SpipuUserInterface) {
             return;
         }
 
@@ -31,7 +31,7 @@ class UserChecker implements UserCheckerInterface
      */
     public function checkPostAuth(UserInterface $user): void
     {
-        if (!$user instanceof GenericUser) {
+        if (!$user instanceof SpipuUserInterface) {
             return;
         }
 

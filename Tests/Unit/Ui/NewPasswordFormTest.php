@@ -4,8 +4,8 @@ namespace Spipu\UserBundle\Tests\Unit\Ui;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UiBundle\Entity\Form;
-use Spipu\UserBundle\Entity\GenericUser;
-use Spipu\UserBundle\Entity\User;
+use Spipu\UserBundle\Tests\GenericUser;
+use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\NewPasswordForm;
 use Symfony\Component\Form\FormInterface;
 
@@ -13,14 +13,16 @@ class NewPasswordFormTest extends TestCase
 {
     public function testForm()
     {
-        $form = new NewPasswordForm(SymfonyMock::getUserPasswordEncoder($this));
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new NewPasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
 
         $definition = $form->getDefinition();
 
         $this->assertInstanceOf(Form\Form::class, $definition);
 
         $this->assertSame('user_new_password', $definition->getCode());
-        $this->assertSame(User::class, $definition->getEntityClassName());
+        $this->assertSame(GenericUser::class, $definition->getEntityClassName());
 
         $fieldSet = $definition->getFieldSet('new_password');
         $this->assertInstanceOf(Form\FieldSet::class, $fieldSet);
@@ -39,7 +41,9 @@ class NewPasswordFormTest extends TestCase
 
     public function testSubmitOk()
     {
-        $form = new NewPasswordForm(SymfonyMock::getUserPasswordEncoder($this));
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new NewPasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
 
@@ -53,7 +57,9 @@ class NewPasswordFormTest extends TestCase
 
     public function testSubmitKo()
     {
-        $form = new NewPasswordForm(SymfonyMock::getUserPasswordEncoder($this));
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new NewPasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
 

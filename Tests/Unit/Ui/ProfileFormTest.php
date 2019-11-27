@@ -3,7 +3,8 @@ namespace Spipu\UserBundle\Tests\Unit\Ui;
 
 use PHPUnit\Framework\TestCase;
 use Spipu\UiBundle\Entity\Form;
-use Spipu\UserBundle\Entity\User;
+use Spipu\UserBundle\Tests\GenericUser;
+use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\ProfileForm;
 use Symfony\Component\Form\FormInterface;
 
@@ -11,14 +12,16 @@ class ProfileFormTest extends TestCase
 {
     public function testForm()
     {
-        $form = new ProfileForm();
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new ProfileForm($moduleConfiguration);
 
         $definition = $form->getDefinition();
 
         $this->assertInstanceOf(Form\Form::class, $definition);
 
         $this->assertSame('user_profile', $definition->getCode());
-        $this->assertSame(User::class, $definition->getEntityClassName());
+        $this->assertSame(GenericUser::class, $definition->getEntityClassName());
 
         $fieldSet = $definition->getFieldSet('information');
         $this->assertInstanceOf(Form\FieldSet::class, $fieldSet);

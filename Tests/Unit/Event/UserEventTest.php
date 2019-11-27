@@ -2,8 +2,8 @@
 namespace Spipu\UserBundle\Tests\Unit\Event;
 
 use PHPUnit\Framework\TestCase;
-use Spipu\UserBundle\Entity\GenericUser;
 use Spipu\UserBundle\Event\UserEvent;
+use Spipu\UserBundle\Tests\GenericUser;
 
 class UserEventTest extends TestCase
 {

@@ -4,8 +4,8 @@ namespace Spipu\UserBundle\Tests\Unit\Ui;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UiBundle\Entity\Form;
-use Spipu\UserBundle\Entity\GenericUser;
-use Spipu\UserBundle\Entity\User;
+use Spipu\UserBundle\Tests\GenericUser;
+use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\PasswordForm;
 use Symfony\Component\Form\FormInterface;
 
@@ -13,14 +13,16 @@ class PasswordFormTest extends TestCase
 {
     public function testForm()
     {
-        $form = new PasswordForm(SymfonyMock::getUserPasswordEncoder($this));
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
 
         $definition = $form->getDefinition();
 
         $this->assertInstanceOf(Form\Form::class, $definition);
 
         $this->assertSame('user_password', $definition->getCode());
-        $this->assertSame(User::class, $definition->getEntityClassName());
+        $this->assertSame(GenericUser::class, $definition->getEntityClassName());
 
         $fieldSet = $definition->getFieldSet('old_password');
         $this->assertInstanceOf(Form\FieldSet::class, $fieldSet);
@@ -46,7 +48,9 @@ class PasswordFormTest extends TestCase
 
     public function testSubmitOk()
     {
-        $form = new PasswordForm(SymfonyMock::getUserPasswordEncoder($this));
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
         $symfonyForm->expects($this->once())->method('offsetGet')->with('oldPassword')->willReturn($symfonyForm);
@@ -63,7 +67,9 @@ class PasswordFormTest extends TestCase
 
     public function testSubmitKoBadOldPassword()
     {
-        $form = new PasswordForm(SymfonyMock::getUserPasswordEncoder($this));
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
         $symfonyForm->expects($this->once())->method('offsetGet')->with('oldPassword')->willReturn($symfonyForm);
@@ -80,7 +86,9 @@ class PasswordFormTest extends TestCase
 
     public function testSubmitKoMissingNewPassword()
     {
-        $form = new PasswordForm(SymfonyMock::getUserPasswordEncoder($this));
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
         $symfonyForm->expects($this->once())->method('offsetGet')->with('oldPassword')->willReturn($symfonyForm);

@@ -11,19 +11,11 @@ services:
         class:  Spipu\UserBundle\Service\MailConfiguration
         public: true
 
-    Spipu\UserBundle\Service\ModuleConfiguration:
-        public: true
-        arguments:
-            - 'SpipuUserBundle:User'
-            - '\Spipu\UserBundle\Entity\User'
-            - '@Spipu\UserBundle\Repository\UserRepository'
-            - false
-            - true
-
     Spipu\UserBundle\Repository\UserRepository:
         tags: ['doctrine.repository_service']
         arguments:
             - '@doctrine'
+            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
 
     # Role Definition
     Spipu\UserBundle\Service\RoleDefinition:
@@ -36,7 +28,8 @@ services:
         arguments:
             - '@doctrine.orm.default_entity_manager'
             - '@security.user_password_encoder.generic'
-            - '@Spipu\UserBundle\Service\ModuleConfiguration'
+            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
+            - '@Spipu\UserBundle\Repository\UserRepository'
 
     # Internal Services
     Spipu\UserBundle\Form\Options\Role:
@@ -50,19 +43,30 @@ services:
 
     Spipu\UserBundle\Ui\CreationForm:
         arguments:
+            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
             - '@security.user_password_encoder.generic'
 
     Spipu\UserBundle\Ui\NewPasswordForm:
         arguments:
+            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
             - '@security.user_password_encoder.generic'
 
     Spipu\UserBundle\Ui\PasswordForm:
         arguments:
+            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
             - '@security.user_password_encoder.generic'
+
+    Spipu\UserBundle\Ui\ProfileForm:
+        arguments:
+            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
+
+    Spipu\UserBundle\Ui\RecoveryForm:
+        arguments:
+            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
 
     Spipu\UserBundle\Ui\UserGrid:
         arguments:
-            - '@Spipu\UserBundle\Service\ModuleConfiguration'
+            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
             - '@security.token_storage'
             - '@Spipu\UiBundle\Form\Options\YesNo'
 

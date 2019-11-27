@@ -5,12 +5,12 @@ namespace Spipu\UserBundle\Ui;
 
 use Exception;
 use Spipu\UiBundle\Exception\FormException;
-use Spipu\UserBundle\Entity\GenericUser;
-use Spipu\UserBundle\Entity\User;
+use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
 use Spipu\UiBundle\Entity\Form\FieldSet;
 use Spipu\UiBundle\Entity\Form\Form;
+use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -24,11 +24,15 @@ class PasswordForm extends AbstractForm
 
     /**
      * UserForm constructor.
+     * @param ModuleConfigurationInterface $moduleConfiguration
      * @param UserPasswordEncoderInterface $encoder
      */
     public function __construct(
+        ModuleConfigurationInterface $moduleConfiguration,
         UserPasswordEncoderInterface $encoder
     ) {
+        parent::__construct($moduleConfiguration);
+
         $this->encoder = $encoder;
     }
 
@@ -38,7 +42,7 @@ class PasswordForm extends AbstractForm
      */
     protected function prepareForm(): void
     {
-        $this->definition = new Form('user_password', User::class);
+        $this->definition = new Form('user_password', $this->getEntityClassName());
 
         $this->definition
             ->addFieldSet(
@@ -84,7 +88,7 @@ class PasswordForm extends AbstractForm
      */
     public function setSpecificFields(FormInterface $form, EntityInterface $resource = null): void
     {
-        /** @var GenericUser $resource */
+        /** @var UserInterface $resource */
         $oldPassword = $form['oldPassword']->getData();
         if (!$this->encoder->isPasswordValid($resource, $oldPassword)) {
             throw new Exception('spipu.user.error.bad_old_password');

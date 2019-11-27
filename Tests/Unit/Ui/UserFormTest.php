@@ -4,8 +4,9 @@ namespace Spipu\UserBundle\Tests\Unit\Ui;
 use PHPUnit\Framework\TestCase;
 use Spipu\UiBundle\Entity\Form;
 use Spipu\UiBundle\Form\Options\YesNo;
-use Spipu\UserBundle\Entity\User;
+use Spipu\UserBundle\Tests\GenericUser;
 use Spipu\UserBundle\Form\Options\Role;
+use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\UserForm;
 use Symfony\Component\Form\FormInterface;
 
@@ -16,14 +17,16 @@ class UserFormTest extends TestCase
         $yesNo = new YesNo();
         $roles = new Role([]);
 
-        $form = new UserForm($yesNo, $roles);
+        $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
+
+        $form = new UserForm($moduleConfiguration, $yesNo, $roles);
 
         $definition = $form->getDefinition();
 
         $this->assertInstanceOf(Form\Form::class, $definition);
 
         $this->assertSame('user_admin', $definition->getCode());
-        $this->assertSame(User::class, $definition->getEntityClassName());
+        $this->assertSame(GenericUser::class, $definition->getEntityClassName());
 
         $fieldSet = $definition->getFieldSet('information');
         $this->assertInstanceOf(Form\FieldSet::class, $fieldSet);

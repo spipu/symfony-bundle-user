@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Ui;
 
-use Spipu\UserBundle\Entity\User;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
 use Spipu\UiBundle\Entity\Form\FieldSet;
@@ -23,7 +22,7 @@ class ProfileForm extends AbstractForm
      */
     protected function prepareForm(): void
     {
-        $this->definition = new Form('user_profile', User::class);
+        $this->definition = new Form('user_profile', $this->getEntityClassName());
 
         $this->definition
             ->addFieldSet(

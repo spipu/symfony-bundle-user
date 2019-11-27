@@ -3,10 +3,9 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\TimestampableTrait;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -16,7 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity(fields="username", message="Username already taken")
  * @UniqueEntity(fields="email", message="Email already taken")
  */
-class GenericUser implements EntityInterface, UserInterface, \Serializable
+abstract class AbstractUser implements UserInterface
 {
     use TimestampableTrait;
 
@@ -95,10 +94,10 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     private $active = false;
 
     /**
-     * @var \DateTime|null
+     * @var DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected $tokenDate = null;
+    private $tokenDate = null;
 
     /**
      * Get the PK id
@@ -121,9 +120,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Set the email
      * @param string $email
-     * @return User
+     * @return UserInterface
      */
-    public function setEmail(string $email): self
+    public function setEmail(string $email): UserInterface
     {
         $this->email = $email;
 
@@ -142,9 +141,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Set the username
      * @param string $username
-     * @return User
+     * @return UserInterface
      */
-    public function setUsername(string $username): self
+    public function setUsername(string $username): UserInterface
     {
         $this->username = $username;
 
@@ -163,9 +162,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Set the password
      * @param string $password
-     * @return User
+     * @return UserInterface
      */
-    public function setPassword(string $password): self
+    public function setPassword(string $password): UserInterface
     {
         $this->password = $password;
 
@@ -184,9 +183,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Set the PlainPassword
      * @param string $password
-     * @return self
+     * @return UserInterface
      */
-    public function setPlainPassword(string $password): self
+    public function setPlainPassword(string $password): UserInterface
     {
         $this->plainPassword = $password;
 
@@ -205,9 +204,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Set the FirstName
      * @param string $firstName
-     * @return User
+     * @return UserInterface
      */
-    public function setFirstName(string $firstName): self
+    public function setFirstName(string $firstName): UserInterface
     {
         $this->firstName = $firstName;
 
@@ -226,9 +225,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Set the LastName
      * @param string $lastName
-     * @return User
+     * @return UserInterface
      */
-    public function setLastName(string $lastName): self
+    public function setLastName(string $lastName): UserInterface
     {
         $this->lastName = $lastName;
 
@@ -251,9 +250,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Set the roles
      * @param string[] $roles
-     * @return User
+     * @return UserInterface
      */
-    public function setRoles(array $roles): self
+    public function setRoles(array $roles): UserInterface
     {
         $this->roles = $roles;
 
@@ -272,9 +271,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Set the Nb of Login
      * @param int $nbLogin
-     * @return User
+     * @return UserInterface
      */
-    public function setNbLogin(int $nbLogin): self
+    public function setNbLogin(int $nbLogin): UserInterface
     {
         $this->nbLogin = $nbLogin;
 
@@ -293,9 +292,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Get the nb of try login with a wrong password
      * @param int $nbTryLogin
-     * @return User
+     * @return UserInterface
      */
-    public function setNbTryLogin(int $nbTryLogin): self
+    public function setNbTryLogin(int $nbTryLogin): UserInterface
     {
         $this->nbTryLogin = $nbTryLogin;
 
@@ -310,18 +309,18 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     {
         return serialize(
             [
-                $this->id,
-                $this->email,
-                $this->username,
-                $this->password,
-                $this->firstName,
-                $this->lastName,
-                $this->roles,
-                $this->nbLogin,
-                $this->nbTryLogin,
-                $this->active,
-                $this->createdAt,
-                $this->updatedAt
+                $this->getId(),
+                $this->getEmail(),
+                $this->getUsername(),
+                $this->getPassword(),
+                $this->getFirstName(),
+                $this->getLastName(),
+                $this->getRoles(),
+                $this->getNbLogin(),
+                $this->getNbTryLogin(),
+                $this->getActive(),
+                $this->getCreatedAt(),
+                $this->getUpdatedAt()
             ]
         );
     }
@@ -362,9 +361,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     /**
      * Removes sensitive data from the user.
      *
-     * @return self
+     * @return UserInterface
      */
-    public function eraseCredentials(): self
+    public function eraseCredentials(): UserInterface
     {
         $this->plainPassword = null;
 
@@ -381,9 +380,9 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
 
     /**
      * @param bool $active
-     * @return User
+     * @return UserInterface
      */
-    public function setActive(bool $active): self
+    public function setActive(bool $active): UserInterface
     {
         $this->active = $active;
 
@@ -391,18 +390,18 @@ class GenericUser implements EntityInterface, UserInterface, \Serializable
     }
 
     /**
-     * @return ?\DateTime
+     * @return DateTime|null ?\DateTime
      */
-    public function getTokenDate(): ?\DateTime
+    public function getTokenDate(): ?DateTime
     {
         return $this->tokenDate;
     }
 
     /**
-     * @param ?\DateTime $tokenDate
-     * @return User
+     * @param DateTime|null $tokenDate
+     * @return UserInterface
      */
-    public function setTokenDate(?\DateTime $tokenDate): self
+    public function setTokenDate(?DateTime $tokenDate): UserInterface
     {
         $this->tokenDate = $tokenDate;
 

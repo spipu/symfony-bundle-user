@@ -5,8 +5,9 @@ namespace Spipu\UserBundle\Fixture;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Spipu\CoreBundle\Fixture\FixtureInterface;
-use Spipu\UserBundle\Entity\GenericUser;
-use Spipu\UserBundle\Service\ModuleConfiguration;
+use Spipu\UserBundle\Entity\UserInterface;
+use Spipu\UserBundle\Repository\UserRepository;
+use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -26,25 +27,33 @@ class FirstUserFixture implements FixtureInterface
     private $encoder;
 
     /**
-     * @var ModuleConfiguration
+     * @var ModuleConfigurationInterface
      */
     private $moduleConfiguration;
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
 
     /**
      * PHP constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param UserPasswordEncoderInterface $encoder
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param ModuleConfigurationInterface $moduleConfiguration
+     * @param UserRepository $userRepository
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         UserPasswordEncoderInterface $encoder,
-        ModuleConfiguration $moduleConfiguration
+        ModuleConfigurationInterface $moduleConfiguration,
+        UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->moduleConfiguration = $moduleConfiguration;
         $this->encoder = $encoder;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -103,12 +112,12 @@ class FirstUserFixture implements FixtureInterface
 
     /**
      * @param string $identifier
-     * @return GenericUser|null
+     * @return UserInterface|null
      */
-    private function findObject(string $identifier): ?GenericUser
+    private function findObject(string $identifier): ?UserInterface
     {
-        /** @var GenericUser $object */
-        $object = $this->moduleConfiguration->getRepository()->findOneBy(['username' => $identifier]);
+        /** @var UserInterface $object */
+        $object = $this->userRepository->findOneBy(['username' => $identifier]);
 
         return $object;
     }

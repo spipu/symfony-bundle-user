@@ -5,7 +5,7 @@ namespace Spipu\UserBundle\Service;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface;
 
 class UserTokenManager
 {
@@ -33,10 +33,10 @@ class UserTokenManager
     }
 
     /**
-     * @param GenericUser $user
+     * @param UserInterface $user
      * @return string
      */
-    public function generate(GenericUser $user): string
+    public function generate(UserInterface $user): string
     {
         $currentTime = new DateTime('NOW');
         $user->setTokenDate($currentTime);
@@ -48,11 +48,11 @@ class UserTokenManager
     }
 
     /**
-     * @param GenericUser $user
+     * @param UserInterface $user
      * @param string $token
      * @return bool
      */
-    public function isValid(GenericUser $user, string $token): bool
+    public function isValid(UserInterface $user, string $token): bool
     {
         if (!$user->getTokenDate()) {
             return false;
@@ -62,10 +62,10 @@ class UserTokenManager
     }
 
     /**
-     * @param GenericUser $user
+     * @param UserInterface $user
      * @return void
      */
-    public function reset(GenericUser $user): void
+    public function reset(UserInterface $user): void
     {
         $user->setTokenDate(null);
 
@@ -74,10 +74,10 @@ class UserTokenManager
     }
 
     /**
-     * @param GenericUser $user
+     * @param UserInterface $user
      * @return string
      */
-    private function getCurrentToken(GenericUser $user): string
+    private function getCurrentToken(UserInterface $user): string
     {
         $data = [
             $user->getId(),

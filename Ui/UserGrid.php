@@ -4,10 +4,10 @@ declare(strict_types = 1);
 namespace Spipu\UserBundle\Ui;
 
 use Spipu\UiBundle\Service\Ui\Definition\GridDefinitionInterface;
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UiBundle\Entity\Grid;
 use Spipu\UiBundle\Form\Options\YesNo as OptionsYesNo;
-use Spipu\UserBundle\Service\ModuleConfiguration;
+use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class UserGrid implements GridDefinitionInterface
 {
     /**
-     * @var ModuleConfiguration
+     * @var ModuleConfigurationInterface
      */
     private $moduleConfiguration;
 
@@ -33,12 +33,12 @@ class UserGrid implements GridDefinitionInterface
 
     /**
      * UserGrid constructor.
-     * @param ModuleConfiguration $moduleConfiguration
+     * @param ModuleConfigurationInterface $moduleConfiguration
      * @param TokenStorageInterface $tokenStorage
      * @param OptionsYesNo $optionsYesNo
      */
     public function __construct(
-        ModuleConfiguration $moduleConfiguration,
+        ModuleConfigurationInterface $moduleConfiguration,
         TokenStorageInterface $tokenStorage,
         OptionsYesNo $optionsYesNo
     ) {
@@ -160,11 +160,11 @@ class UserGrid implements GridDefinitionInterface
     }
 
     /**
-     * @return GenericUser
+     * @return UserInterface
      */
-    private function getCurrentUser(): GenericUser
+    private function getCurrentUser(): UserInterface
     {
-        /** @var GenericUser $user */
+        /** @var UserInterface $user */
         $user = $this->tokenStorage->getToken()->getUser();
 
         return $user;

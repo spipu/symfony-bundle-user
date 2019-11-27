@@ -3,31 +3,15 @@ namespace Spipu\UserBundle\Tests;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Spipu\CoreBundle\Service\Filesystem;
-use Spipu\CoreBundle\Service\FinderFactory;
-use Spipu\CoreBundle\Service\MailManager;
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\AbstractUser;
+use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Service\UserTokenManager;
-use Symfony\Component\Finder\Finder;
 
 class SpipuUserMock extends TestCase
 {
     public static function getUserEntity(int $id = null)
     {
-        $entity = new GenericUser();
-
-        if ($id !== null) {
-            $setId = \Closure::bind(
-                function ($value) {
-                    $this->id = $value;
-                },
-                $entity,
-                $entity
-            );
-            $setId($id);
-        }
-
-        return $entity;
+        return new GenericUser($id);
     }
 
     /**
@@ -41,7 +25,7 @@ class SpipuUserMock extends TestCase
         $userTokenManager
             ->method('generate')
             ->willReturnCallback(
-                function (GenericUser $user) {
+                function (UserInterface $user) {
                     $user->setTokenDate(new \DateTime());
                     return ('mock_token_' . $user->getId());
                 }
@@ -50,7 +34,7 @@ class SpipuUserMock extends TestCase
         $userTokenManager
             ->method('isValid')
             ->willReturnCallback(
-                function (GenericUser $user, string $token) {
+                function (UserInterface $user, string $token) {
                     if (!$user->getTokenDate()) {
                         return false;
                     }
@@ -61,12 +45,41 @@ class SpipuUserMock extends TestCase
         $userTokenManager
             ->method('reset')
             ->willReturnCallback(
-                function (GenericUser $user) {
+                function (UserInterface $user) {
                     $user->setTokenDate(null);
                 }
             );
 
         /** @var UserTokenManager $userTokenManager */
         return $userTokenManager;
+    }
+}
+
+class GenericUser extends AbstractUser implements UserInterface
+{
+    /**
+     * @var int|null
+     */
+    private $id;
+
+    /**
+     * GenericUser constructor.
+     * @param int|null $id
+     */
+    public function __construct(?int $id = null)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        if ($this->id !== null) {
+            return $this->id;
+        }
+
+        return parent::getId();
     }
 }

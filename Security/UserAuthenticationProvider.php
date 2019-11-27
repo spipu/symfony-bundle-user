@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Spipu\UserBundle\Security;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface as SpipuUserInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
@@ -51,7 +51,7 @@ class UserAuthenticationProvider extends DaoAuthenticationProvider
      */
     protected function checkAuthentication(UserInterface $user, UsernamePasswordToken $token)
     {
-        /** @var GenericUser $user */
+        /** @var SpipuUserInterface $user */
         try {
             parent::checkAuthentication($user, $token);
 

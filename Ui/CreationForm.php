@@ -4,10 +4,11 @@ declare(strict_types = 1);
 namespace Spipu\UserBundle\Ui;
 
 use Exception;
-use Spipu\UserBundle\Entity\GenericUser;
+use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
 use Spipu\UiBundle\Entity\Form\FieldSet;
+use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -25,11 +26,15 @@ class CreationForm extends ProfileForm
 
     /**
      * UserForm constructor.
+     * @param ModuleConfigurationInterface $moduleConfiguration
      * @param UserPasswordEncoderInterface $encoder
      */
     public function __construct(
+        ModuleConfigurationInterface $moduleConfiguration,
         UserPasswordEncoderInterface $encoder
     ) {
+        parent::__construct($moduleConfiguration);
+
         $this->encoder = $encoder;
     }
 
@@ -72,7 +77,7 @@ class CreationForm extends ProfileForm
      */
     public function setSpecificFields(FormInterface $form, EntityInterface $resource = null): void
     {
-        /** @var GenericUser $resource */
+        /** @var UserInterface $resource */
         if (empty($resource->getPlainPassword())) {
             throw new Exception('The password is required');
         }
