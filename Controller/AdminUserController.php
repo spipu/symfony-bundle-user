@@ -58,7 +58,6 @@ class AdminUserController extends AbstractController
      * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_EDIT')")
      * @param FormFactory $formFactory
      * @param UserForm $userForm
-     * @param ModuleConfigurationInterface $moduleConfiguration
      * @param UserRepository $userRepository
      * @param int $id
      * @return Response
@@ -67,7 +66,6 @@ class AdminUserController extends AbstractController
     public function edit(
         FormFactory $formFactory,
         UserForm $userForm,
-        ModuleConfigurationInterface $moduleConfiguration,
         UserRepository $userRepository,
         int $id
     ): Response {
