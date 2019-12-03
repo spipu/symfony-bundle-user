@@ -235,6 +235,81 @@ class AdminUserTest extends WebTestCase
 
         // Reset the filter
         $crawler = $client->submit($crawler->selectButton('Search')->form(), ['fl[id][from]' => '', 'fl[id][to]' => '', 'fl[is_active]' => '']);
+
+        // The ids to disable
+        $userIds = [2, 3];
+
+        // The users 2 and 3 must be disabled
+        foreach ($userIds as $userId) {
+            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id='.$userId.'] td[data-grid-field-name=is_active]:contains("Yes")')->count());
+        }
+
+        // The mass action "Enable" must exists
+        $linkAction = $crawler->filter('span[data-grid-role="action"]:contains("Enable")');
+        $this->assertEquals(1, $linkAction->count());
+        $linkUrl = $linkAction->first()->attr('data-grid-href');
+
+        // Post the mass action "Enable"
+        $client->request('POST', $linkUrl, ['selected' => json_encode($userIds)]);
+        $this->assertTrue($client->getResponse()->isRedirect());
+
+        // Show grid result
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("' . count($userIds) . ' items have been enabled")')->count());
+
+        // The users must be enabled
+        foreach ($userIds as $userId) {
+            $this->assertEquals(1, $crawler->filter('tr[data-grid-row-id='.$userId.'] td[data-grid-field-name=is_active]:contains("Yes")')->count());
+        }
+
+        // The mass action "Disable" must exists
+        $linkAction = $crawler->filter('span[data-grid-role="action"]:contains("Disable")');
+        $this->assertEquals(1, $linkAction->count());
+        $linkUrl = $linkAction->first()->attr('data-grid-href');
+
+        // Post the mass action "Disable"
+        $client->request('POST', $linkUrl, ['selected' => json_encode($userIds)]);
+        $this->assertTrue($client->getResponse()->isRedirect());
+
+        // Show grid result
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("' . count($userIds) . ' items have been disabled")')->count());
+
+        // The users must be disables
+        foreach ($userIds as $userId) {
+            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id='.$userId.'] td[data-grid-field-name=is_active]:contains("Yes")')->count());
+        }
+
+        // Post the mass action "Disable" on the same users
+        $client->request('POST', $linkUrl, ['selected' => json_encode($userIds)]);
+        $this->assertTrue($client->getResponse()->isRedirect());
+
+        // Show grid result
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("0 items have been disabled")')->count());
+
+        // Post the mass action "Disable" on our user
+        $client->request('POST', $linkUrl, ['selected' => json_encode([1])]);
+        $this->assertTrue($client->getResponse()->isRedirect());
+
+        // Show grid result
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("You can not disable yourself!")')->count());
+        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("0 items have been disabled")')->count());
+
+
+        // Post the mass action "Disable" on empty list
+        $client->request('POST', $linkUrl, ['selected' => json_encode([])]);
+        $this->assertTrue($client->getResponse()->isRedirect());
+
+        // Show grid result
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("You must select at least one item")')->count());
     }
 
     public function testBadAccess()
