@@ -396,13 +396,9 @@ class AdminUserController extends AbstractController
         /** @var UserInterface[] $rows */
         $rows = $userRepository->findBy(['id' => $selected]);
         foreach ($rows as $row) {
-            try {
-                if ($this->massActionRow($row, $action)) {
-                    $entityManager->persist($row);
-                    $count++;
-                }
-            } catch (\Exception $e) {
-                $this->addFlash('danger', $e->getMessage());
+            if ($this->massActionRow($row, $action)) {
+                $entityManager->persist($row);
+                $count++;
             }
         }
         $entityManager->flush();
