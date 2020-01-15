@@ -100,6 +100,7 @@ class AdminUserController extends AbstractController
      * @param MailManager $mailManager
      * @return Response
      * @throws UiException
+     * @throws Throwable
      */
     public function create(
         FormFactory $formFactory,
