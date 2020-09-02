@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\DependencyInjection;
 
-use Spipu\CoreBundle\DependencyInjection\RolesHierarchiExtensionExtensionInterface;
+use Spipu\CoreBundle\DependencyInjection\RolesHierarchyExtensionExtensionInterface;
 use Spipu\CoreBundle\Service\RoleDefinitionInterface;
 use Spipu\UserBundle\Service\RoleDefinition;
 use Symfony\Component\Config\FileLocator;
@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-final class SpipuUserExtension extends Extension implements RolesHierarchiExtensionExtensionInterface
+final class SpipuUserExtension extends Extension implements RolesHierarchyExtensionExtensionInterface
 {
     /**
      * @param array $config

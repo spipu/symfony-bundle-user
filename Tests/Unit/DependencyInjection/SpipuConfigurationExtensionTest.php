@@ -2,13 +2,13 @@
 namespace Spipu\UserBundle\Tests\Unit\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
-use Spipu\CoreBundle\DependencyInjection\RolesHierarchiExtensionExtensionInterface;
+use Spipu\CoreBundle\DependencyInjection\RolesHierarchyExtensionExtensionInterface;
 use Spipu\CoreBundle\Service\RoleDefinitionInterface;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\DependencyInjection\SpipuUserExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
-class SpipuUserExtensionTest extends TestCase
+class SpipuConfigurationExtensionTest extends TestCase
 {
     public function testBase()
     {
@@ -20,7 +20,7 @@ class SpipuUserExtensionTest extends TestCase
 
         $extension->load([], $builder);
 
-        $this->assertInstanceOf(RolesHierarchiExtensionExtensionInterface::class, $extension);
+        $this->assertInstanceOf(RolesHierarchyExtensionExtensionInterface::class, $extension);
         $this->assertInstanceOf(RoleDefinitionInterface::class, $extension->getRolesHierarchy());
     }
 }
