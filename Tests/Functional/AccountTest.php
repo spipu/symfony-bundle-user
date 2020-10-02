@@ -92,7 +92,7 @@ class AccountTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect());
 
         // Get the sent email
-        $messageBody = $this->assertHasEmail($client, 'no-reply@mysite.fr', 'user@test.fr', 'Account Creation', 'user@test.fr');
+        $messageBody = $this->assertHasEmail('no-reply@mysite.fr', 'user@test.fr', 'Account Creation', 'user@test.fr');
 
         // Get the activation url
         $this->assertGreaterThan(0, preg_match(self::REGEX_URL, $messageBody, $match));
@@ -246,7 +246,7 @@ class AccountTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect());
 
         // No email
-        $this->assertHasNoEmail($client);
+        $this->assertHasNoEmail();
 
         // Generic result
         $crawler = $client->followRedirect();
@@ -284,7 +284,7 @@ class AccountTest extends WebTestCase
         );
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        $messageBody = $this->assertHasEmail($client, 'no-reply@mysite.fr', 'user@test.fr', 'Account Recovery');
+        $messageBody = $this->assertHasEmail('no-reply@mysite.fr', 'user@test.fr', 'Account Recovery');
 
         // Get the activation url
         $this->assertGreaterThan(0, preg_match(self::REGEX_URL, $messageBody, $match));

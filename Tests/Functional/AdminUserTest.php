@@ -108,7 +108,7 @@ class AdminUserTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect());
 
         // Get the sent email
-        $this->assertHasEmail($client, 'no-reply@mysite.fr', 'user2@test.fr', 'Account Recovery', 'user2@test.fr');
+        $this->assertHasEmail('no-reply@mysite.fr', 'user2@test.fr', 'Account Recovery', 'user2@test.fr');
 
         // Show user page - Enabled
         $crawler = $client->followRedirect();
@@ -160,7 +160,7 @@ class AdminUserTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect());
 
         // Get the sent email
-        $this->assertHasEmail($client, 'no-reply@mysite.fr', 'user2@test.fr', 'Account Recovery', 'user2@test.fr');
+        $this->assertHasEmail('no-reply@mysite.fr', 'user2@test.fr', 'Account Recovery', 'user2@test.fr');
 
         // Show user page - Reset
         $crawler = $client->followRedirect();
