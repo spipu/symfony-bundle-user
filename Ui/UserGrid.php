@@ -80,19 +80,19 @@ class UserGrid implements GridDefinitionInterface
             ->addColumn(
                 (new Grid\Column('id', 'spipu.user.field.id', 'id', 10))
                     ->setType((new Grid\ColumnType(Grid\ColumnType::TYPE_INTEGER)))
-                    ->setFilter((new Grid\ColumnFilter(true))->useRange())
+                    ->setFilter((new Grid\ColumnFilter(true, true))->useRange())
                     ->useSortable()
             )
             ->addColumn(
                 (new Grid\Column('username', 'spipu.user.field.username', 'username', 20))
                     ->setType((new Grid\ColumnType(Grid\ColumnType::TYPE_TEXT)))
-                    ->setFilter((new Grid\ColumnFilter(true)))
+                    ->setFilter((new Grid\ColumnFilter(true, true)))
                     ->useSortable()
             )
             ->addColumn(
                 (new Grid\Column('email', 'spipu.user.field.email', 'email', 30))
                     ->setType((new Grid\ColumnType(Grid\ColumnType::TYPE_TEXT)))
-                    ->setFilter((new Grid\ColumnFilter(true)))
+                    ->setFilter((new Grid\ColumnFilter(true, true)))
                     ->useSortable()
             )
             ->addColumn(
@@ -102,7 +102,7 @@ class UserGrid implements GridDefinitionInterface
                             ->setOptions($this->optionsYesNo)
                             ->setTemplateField('@SpipuUi/grid/field/yes-no.html.twig')
                     )
-                    ->setFilter((new Grid\ColumnFilter(true)))
+                    ->setFilter((new Grid\ColumnFilter(true, true)))
                     ->useSortable()
             )
             ->addColumn(
