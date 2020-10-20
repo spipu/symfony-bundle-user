@@ -61,6 +61,7 @@ class NewPasswordForm extends AbstractForm
                         ]
                     )))
             )
+            ->setValidateSuccessMessage('spipu.user.success.recover')
         ;
     }
 

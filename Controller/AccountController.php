@@ -262,14 +262,12 @@ class AccountController extends AbstractController
         $manager->setResource($user);
         $manager->setSubmitButton('spipu.ui.action.update');
         if ($manager->validate()) {
-            $this->container->get('session')->getFlashBag()->clear();
             $user->setActive(true);
             $userTokenManager->reset($user);
 
             $event = new UserEvent($user, 'recovery_update');
             $this->eventDispatcher->dispatch($event, $event->getEventCode());
 
-            $this->addFlash('success', $this->trans('spipu.user.success.recover'));
             return $this->redirectToRoute('spipu_user_security_login');
         }
 
