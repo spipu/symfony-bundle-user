@@ -1,16 +1,17 @@
 <?php
 namespace Spipu\UserBundle\Tests\Unit\Entity;
 
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Tests\GenericUser;
 use Spipu\UserBundle\Tests\SpipuUserMock;
 
-class GenericUserTest extends TestCase
+class UserTest extends TestCase
 {
     public function testEntity()
     {
-        $date = new \DateTime();
+        $date = new DateTime();
 
         $entity = SpipuUserMock::getUserEntity(1);
         $this->assertInstanceOf(UserInterface::class, $entity);

@@ -1,5 +1,5 @@
 <?php
-namespace Spipu\UserBundle\Tests\Functional\Entity;
+namespace Spipu\UserBundle\Tests\Functional;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
 use Spipu\UserBundle\Controller\SecurityController;
