@@ -32,10 +32,6 @@ services:
             - '@Spipu\UserBundle\Repository\UserRepository'
 
     # Internal Services
-    Spipu\UserBundle\Form\Options\Role:
-        arguments:
-            - !tagged 'spipu.user.role'
-
     Spipu\UserBundle\Service\UserTokenManager:
         arguments:
             - '@doctrine.orm.default_entity_manager'

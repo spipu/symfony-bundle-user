@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Spipu\UserBundle\Ui;
 
 use Spipu\UiBundle\Exception\FormException;
-use Spipu\UserBundle\Form\Options\Role;
+use Spipu\UserBundle\Form\Options\AdminRole;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
 use Spipu\UiBundle\Entity\Form\FieldSet;
@@ -25,7 +25,7 @@ class UserForm extends AbstractForm
     private $yesNoOptions;
 
     /**
-     * @var Role
+     * @var AdminRole
      */
     private $roleOptions;
 
@@ -33,12 +33,12 @@ class UserForm extends AbstractForm
      * UserForm constructor.
      * @param ModuleConfigurationInterface $moduleConfiguration
      * @param YesNo $yesNoOptions
-     * @param Role $roleOptions
+     * @param AdminRole $roleOptions
      */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
         YesNo $yesNoOptions,
-        Role $roleOptions
+        AdminRole $roleOptions
     ) {
         parent::__construct($moduleConfiguration);
 

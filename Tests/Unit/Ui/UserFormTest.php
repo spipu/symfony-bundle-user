@@ -2,10 +2,11 @@
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
 use PHPUnit\Framework\TestCase;
+use Spipu\CoreBundle\Service\RoleDefinitionList;
 use Spipu\UiBundle\Entity\Form;
 use Spipu\UiBundle\Form\Options\YesNo;
 use Spipu\UserBundle\Tests\GenericUser;
-use Spipu\UserBundle\Form\Options\Role;
+use Spipu\UserBundle\Form\Options\AdminRole;
 use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\UserForm;
 use Symfony\Component\Form\FormInterface;
@@ -14,8 +15,9 @@ class UserFormTest extends TestCase
 {
     public function testForm()
     {
+        $roleDefinitionList = new RoleDefinitionList([]);
         $yesNo = new YesNo();
-        $roles = new Role([]);
+        $roles = new AdminRole($roleDefinitionList);
 
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 

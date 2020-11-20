@@ -4,26 +4,23 @@ declare(strict_types = 1);
 namespace Spipu\UserBundle\Form\Options;
 
 use Spipu\CoreBundle\Entity\Role\Item;
-use Spipu\CoreBundle\Service\RoleDefinitionInterface;
+use Spipu\CoreBundle\Service\RoleDefinitionList;
 use Spipu\UiBundle\Form\Options\AbstractOptions;
 
-class Role extends AbstractOptions
+abstract class AbstractRole extends AbstractOptions
 {
     /**
-     * @var RoleDefinitionInterface[]
+     * @var RoleDefinitionList
      */
-    private $roleDefinitions;
+    private $roleDefinitionList;
 
     /**
      * Role constructor.
-     * @param iterable $roleDefinitions
+     * @param RoleDefinitionList $roleDefinitionList
      */
-    public function __construct(iterable $roleDefinitions)
+    public function __construct(RoleDefinitionList $roleDefinitionList)
     {
-        $this->roleDefinitions = [];
-        foreach ($roleDefinitions as $roleDefinition) {
-            $this->roleDefinitions[] = $roleDefinition;
-        }
+        $this->roleDefinitionList = $roleDefinitionList;
     }
 
     /**
@@ -32,9 +29,7 @@ class Role extends AbstractOptions
      */
     protected function buildOptions(): array
     {
-        foreach ($this->roleDefinitions as $roleDefinition) {
-            $roleDefinition->buildDefinition();
-        }
+        $this->roleDefinitionList->buildDefinitions();
 
         $profiles = $this->buildProfiles();
         $roles = $this->buildRoles();
@@ -56,36 +51,24 @@ class Role extends AbstractOptions
      */
     private function buildProfiles(): array
     {
-        $list = [];
-        foreach (Item::getAll() as $item) {
-            if ($item->getType() === Item::TYPE_PROFILE) {
-                $list[$item->getCode()] = $item;
-            }
-        }
+        $items = $this->roleDefinitionList->getItems($this->getPurpose(), Item::TYPE_PROFILE);
 
         uasort(
-            $list,
+            $items,
             function (Item $itemA, Item  $itemB) {
                 return $itemA->getWeight() <=> $itemB->getWeight();
             }
         );
 
-        return $list;
+        return $items;
     }
 
     /**
      * @return array
-     * @SuppressWarnings(PMD.StaticAccess)
      */
     private function buildRoles(): array
     {
-        /** @var Item[] $items */
-        $items = [];
-        foreach (Item::getAll() as $item) {
-            if ($item->getType() === Item::TYPE_ROLE) {
-                $items[$item->getCode()] = $item;
-            }
-        }
+        $items = $this->roleDefinitionList->getItems($this->getPurpose(), Item::TYPE_ROLE);
 
         $parents = [];
         foreach ($items as $item) {
@@ -141,4 +124,9 @@ class Role extends AbstractOptions
     {
         return 'ROLE_USER';
     }
+
+    /**
+     * @return string
+     */
+    abstract protected function getPurpose(): string;
 }

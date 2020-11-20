@@ -3,18 +3,20 @@ namespace Spipu\UserBundle\Tests\Unit\Form\Options;
 
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Entity\Role\Item;
+use Spipu\CoreBundle\Service\RoleDefinitionList;
 use Spipu\UiBundle\Form\Options\OptionsInterface;
-use Spipu\UserBundle\Form\Options\Role;
+use Spipu\UserBundle\Form\Options\AdminRole;
 use Spipu\CoreBundle\Service\RoleDefinition as CoreRoleDefinition;
 use Spipu\UserBundle\Service\RoleDefinition as UserRoleDefinition;
 
-class RoleTest extends TestCase
+class AdminRoleTest extends TestCase
 {
     public function testEmptyRole()
     {
         Item::resetAll();
 
-        $options =  new Role([]);
+        $roleDefinitionList = new RoleDefinitionList([]);
+        $options =  new AdminRole($roleDefinitionList);
 
         $this->assertInstanceOf(OptionsInterface::class, $options);
 
@@ -28,12 +30,12 @@ class RoleTest extends TestCase
     {
         Item::resetAll();
 
-        $definitions = [
-            new CoreRoleDefinition(),
-            new UserRoleDefinition(),
-        ];
+        $roleDefinitionList = new RoleDefinitionList([
+                new CoreRoleDefinition(),
+                new UserRoleDefinition(),
+        ]);
 
-        $options =  new Role($definitions);
+        $options =  new AdminRole($roleDefinitionList);
 
         $this->assertSame(
             [
