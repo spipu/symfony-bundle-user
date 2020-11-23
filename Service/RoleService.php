@@ -108,4 +108,16 @@ class RoleService
     {
         return in_array($role->getCode(), $roleCodes);
     }
+
+    /**
+     * @param string[] $roleCodes
+     * @return bool
+     */
+    public function validateRoles(array $roleCodes): bool
+    {
+        $this->roleDefinitionList->buildDefinitions();
+        $validCodes = array_keys($this->roleDefinitionList->getItems($this->purpose));
+
+        return count(array_diff($roleCodes, $validCodes)) === 0;
+    }
 }

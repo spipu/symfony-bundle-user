@@ -183,6 +183,7 @@ class AdminUserController extends AbstractController
      * @param UserRepository $userRepository
      * @param Request $request
      * @param EntityManagerInterface $entityManager
+     * @param RoleService $roleService
      * @param int $id
      * @return Response
      */
@@ -190,6 +191,7 @@ class AdminUserController extends AbstractController
         UserRepository $userRepository,
         Request $request,
         EntityManagerInterface $entityManager,
+        RoleService $roleService,
         int $id
     ): Response {
         /** @var UserInterface $resource */
@@ -201,7 +203,8 @@ class AdminUserController extends AbstractController
         $redirectResponse = $this->redirectToRoute('spipu_user_admin_show', ['id' => $resource->getId()]);
 
         $roleCodes = $request->request->get('acl');
-        if (empty($roleCodes)) {
+        if (empty($roleCodes) || !is_array($roleCodes) || !$roleService->validateRoles($roleCodes)) {
+            $this->addFlashTrans('danger', 'What you doing ???');
             return $redirectResponse;
         }
 
