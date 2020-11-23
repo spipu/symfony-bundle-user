@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Spipu\UiBundle\Exception\UiException;
 use Spipu\UiBundle\Service\Ui\FormFactory;
@@ -12,6 +14,7 @@ use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\MailManager;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
+use Spipu\UserBundle\Service\RoleService;
 use Spipu\UserBundle\Ui\UserForm;
 use Spipu\UserBundle\Ui\UserGrid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +28,7 @@ use Throwable;
  * @Route("/user")
  * @SuppressWarnings(PMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PMD.TooManyPublicMethods)
  */
 class AdminUserController extends AbstractController
 {
@@ -118,7 +122,7 @@ class AdminUserController extends AbstractController
         if ($manager->validate()) {
             try {
                 $mailManager->sendRecoveryEmail($resource);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->addFlash('danger', $e->getMessage());
             }
 
@@ -138,6 +142,7 @@ class AdminUserController extends AbstractController
      * @param ShowFactory $showFactory
      * @param UserForm $userForm
      * @param UserRepository $userRepository
+     * @param RoleService $roleService
      * @param int $id
      * @return Response
      * @throws UiException
@@ -146,6 +151,7 @@ class AdminUserController extends AbstractController
         ShowFactory $showFactory,
         UserForm $userForm,
         UserRepository $userRepository,
+        RoleService $roleService,
         int $id
     ): Response {
         /** @var UserInterface $resource */
@@ -154,11 +160,60 @@ class AdminUserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $manager = $showFactory->create($userForm);
-        $manager->setResource($resource);
-        $manager->validate();
+        $showManager = $showFactory->create($userForm);
+        $showManager->setResource($resource);
+        $showManager->validate();
 
-        return $this->render('@SpipuUser/admin/show.html.twig', ['manager' => $manager]);
+        return $this->render(
+            '@SpipuUser/admin/show.html.twig',
+            [
+                'showManager' => $showManager,
+                'roleService' => $roleService
+            ]
+        );
+    }
+
+    /**
+     * @Route(
+     *     "/update-acl/{id}",
+     *     name="spipu_user_admin_acl",
+     *     methods="POST"
+     * )
+     * @Security("is_granted('ROLE_ADMIN_MANAGE_USER_SHOW')")
+     * @param UserRepository $userRepository
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @param int $id
+     * @return Response
+     */
+    public function updateAcl(
+        UserRepository $userRepository,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        int $id
+    ): Response {
+        /** @var UserInterface $resource */
+        $resource = $userRepository->findOneBy(['id' => $id]);
+        if (!$resource) {
+            throw $this->createNotFoundException();
+        }
+
+        $redirectResponse = $this->redirectToRoute('spipu_user_admin_show', ['id' => $resource->getId()]);
+
+        $roleCodes = $request->request->get('acl');
+        if (empty($roleCodes)) {
+            return $redirectResponse;
+        }
+
+        try {
+            $resource->setRoles($roleCodes);
+            $entityManager->flush();
+            $this->addFlashTrans('success', 'spipu.ui.success.updated');
+        } catch (Exception $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
+
+        return $redirectResponse;
     }
 
     /**
@@ -204,7 +259,7 @@ class AdminUserController extends AbstractController
             $entityManager->flush();
 
             $this->addFlashTrans('success', 'spipu.ui.success.deleted');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash('danger', $e->getMessage());
         }
 
@@ -249,7 +304,7 @@ class AdminUserController extends AbstractController
             $entityManager->flush();
 
             $this->addFlashTrans('success', 'spipu.user.success.enabled');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash('danger', $e->getMessage());
         }
 
@@ -294,7 +349,7 @@ class AdminUserController extends AbstractController
             $entityManager->flush();
 
             $this->addFlashTrans('success', 'spipu.user.success.disabled');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash('danger', $e->getMessage());
         }
 
@@ -330,7 +385,7 @@ class AdminUserController extends AbstractController
         try {
             $mailManager->sendRecoveryEmail($resource);
             $this->addFlashTrans('success', 'spipu.user.success.reset');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash('danger', $e->getMessage());
         }
 

@@ -6,7 +6,6 @@ use Spipu\CoreBundle\Service\RoleDefinitionList;
 use Spipu\UiBundle\Entity\Form;
 use Spipu\UiBundle\Form\Options\YesNo;
 use Spipu\UserBundle\Tests\GenericUser;
-use Spipu\UserBundle\Form\Options\AdminRole;
 use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\UserForm;
 use Symfony\Component\Form\FormInterface;
@@ -15,13 +14,11 @@ class UserFormTest extends TestCase
 {
     public function testForm()
     {
-        $roleDefinitionList = new RoleDefinitionList([]);
         $yesNo = new YesNo();
-        $roles = new AdminRole($roleDefinitionList);
 
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new UserForm($moduleConfiguration, $yesNo, $roles);
+        $form = new UserForm($moduleConfiguration, $yesNo);
 
         $definition = $form->getDefinition();
 
@@ -49,14 +46,7 @@ class UserFormTest extends TestCase
         $this->assertInstanceOf(Form\Field::class, $field);
         $this->assertSame(\Symfony\Component\Form\Extension\Core\Type\TextType::class, $field->getType());
 
-        $fieldSet = $definition->getFieldSet('acl');
-        $this->assertInstanceOf(Form\FieldSet::class, $fieldSet);
-
         $field = $fieldSet->getField('active');
-        $this->assertInstanceOf(Form\Field::class, $field);
-        $this->assertSame(\Symfony\Component\Form\Extension\Core\Type\ChoiceType::class, $field->getType());
-
-        $field = $fieldSet->getField('roles');
         $this->assertInstanceOf(Form\Field::class, $field);
         $this->assertSame(\Symfony\Component\Form\Extension\Core\Type\ChoiceType::class, $field->getType());
 

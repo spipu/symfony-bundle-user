@@ -1,0 +1,50 @@
+{% macro treeLabel(roleService, userRoles, role) %}{% apply spaceless %}
+    <input type="checkbox" class="form-check-input" id="acl-tree-{{ role.code }}" name="acl[]" {% if roleService.hasRole(userRoles, role) %}checked{% endif %} value="{{ role.code }}">
+    <label class="form-check-label" for="acl-tree-{{ role.code }}">{{- role.label|trans -}}</label>
+{% endapply %}{% endmacro %}
+
+{% macro tree(roleService, userRoles, role) %}{% apply spaceless %}
+    <li>
+        {{- _self.treeLabel(roleService, userRoles, role) -}}
+        {% set children = roleService.getRoleChildren(role) %}
+        {% if children %}<ul>
+                {% for child in children %}
+                    {{- _self.tree(roleService, userRoles, child) -}}
+                {%  endfor %}
+        </ul>{% endif %}
+    </li>
+{% endapply %}{% endmacro %}
+
+<form method="POST" action="{{ submitUrl }}">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="card mb-3">
+                <div class="card-header font-weight-bold">{{ 'spipu.core.role-type.profile'|trans }}</div>
+                <div class="card-body">
+                    <ul class="checkbox-tree">
+                        {% for profile in roleService.profiles %}
+                            <li>{{ _self.treeLabel(roleService, userRoles, profile) }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card mb-3">
+                <div class="card-header font-weight-bold">{{ 'spipu.core.role-type.role'|trans }}</div>
+                <div class="card-body">
+                    <ul class="checkbox-tree">
+                        {% for role in roleService.roles %}
+                            {{ _self.tree(roleService, userRoles, role) }}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <button class="btn-success btn col-12"><i class="fas fa-edit"></i> {{ 'spipu.ui.action.save'|trans }}</button>
+        </div>
+    </div>
+</form>

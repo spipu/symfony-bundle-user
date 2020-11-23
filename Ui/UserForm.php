@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Spipu\UserBundle\Ui;
 
 use Spipu\UiBundle\Exception\FormException;
-use Spipu\UserBundle\Form\Options\AdminRole;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
 use Spipu\UiBundle\Entity\Form\FieldSet;
@@ -25,25 +24,17 @@ class UserForm extends AbstractForm
     private $yesNoOptions;
 
     /**
-     * @var AdminRole
-     */
-    private $roleOptions;
-
-    /**
      * UserForm constructor.
      * @param ModuleConfigurationInterface $moduleConfiguration
      * @param YesNo $yesNoOptions
-     * @param AdminRole $roleOptions
      */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
-        YesNo $yesNoOptions,
-        AdminRole $roleOptions
+        YesNo $yesNoOptions
     ) {
         parent::__construct($moduleConfiguration);
 
         $this->yesNoOptions = $yesNoOptions;
-        $this->roleOptions = $roleOptions;
     }
 
     /**
@@ -99,15 +90,11 @@ class UserForm extends AbstractForm
                             'trim'     => true
                         ]
                     ))
-            )
-            ->addFieldSet(
-                (new FieldSet('acl', 'spipu.user.fieldset.acl', 20))
-                    ->setCssClass('col-xs-12 col-md-6')
                     ->addField(
                         (new Field(
                             'active',
                             Type\ChoiceType::class,
-                            10,
+                            50,
                             [
                                 'label'    => 'spipu.user.field.active',
                                 'expanded' => false,
@@ -116,23 +103,11 @@ class UserForm extends AbstractForm
                             ]
                         ))->setTemplateView('@SpipuUi/entity/view/yes-no.html.twig')
                     )
-                    ->addField((new Field(
-                        'roles',
-                        Type\ChoiceType::class,
-                        20,
-                        [
-                            'label'    => 'spipu.user.field.roles',
-                            'expanded' => true,
-                            'multiple' => true,
-                            'choices'  => $this->roleOptions,
-                            'required' => true,
-                        ]
-                    ))->useList())
             )
             ->addFieldSet(
-                (new FieldSet('others', 'spipu.user.fieldset.others', 40))
+                (new FieldSet('others', 'spipu.user.fieldset.others', 20))
                     ->useHiddenInForm()
-                    ->setCssClass('col-12')
+                    ->setCssClass('col-xs-12 col-md-6')
                     ->addField(
                         (new Field(
                             'id',

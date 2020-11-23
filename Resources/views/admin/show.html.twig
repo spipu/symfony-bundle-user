@@ -5,26 +5,53 @@
 
 {% block header_title %}{{ parent() }} - {{ 'spipu.user.page.admin.list'|trans() }} - {{ block('main_title') }}{% endblock %}
 
-{% block main_title %}{{ 'spipu.user.page.admin.show'|trans({'%id': manager.resource.id}) }}{% endblock %}
+{% block main_title %}{{ 'spipu.user.page.admin.show'|trans({'%id': showManager.resource.id}) }}{% endblock %}
 
 {% block main_actions %}
     {{ buttons.back(path('spipu_user_admin_list')) }}
-    {% if is_granted('ROLE_ADMIN_MANAGE_USER_EDIT') %}
-        {{ buttons.edit(path('spipu_user_admin_edit', {'id': manager.resource.id})) }}
-    {% endif %}
-    {% if manager.resource.id != app.user.id %}
+    {% if showManager.resource.id != app.user.id %}
         {% if is_granted('ROLE_ADMIN_MANAGE_USER_EDIT') %}
-            {{ buttons.defaultLink(path('spipu_user_admin_reset', {'id': manager.resource.id}), 'spipu.user.action.reset', 'primary confirm-action', 'key', null, 'reset the password of') }}
-            {% if manager.resource.active %}
-                {{ buttons.defaultLink(path('spipu_user_admin_disable', {'id': manager.resource.id, 'backTo': 'show'}), 'spipu.user.action.disable', 'warning', 'times') }}
+            {{ buttons.defaultLink(path('spipu_user_admin_reset', {'id': showManager.resource.id}), 'spipu.user.action.reset', 'primary confirm-action', 'key', null, 'reset the password of') }}
+            {% if showManager.resource.active %}
+                {{ buttons.defaultLink(path('spipu_user_admin_disable', {'id': showManager.resource.id, 'backTo': 'show'}), 'spipu.user.action.disable', 'warning', 'times') }}
             {% else %}
-                {{ buttons.defaultLink(path('spipu_user_admin_enable', {'id': manager.resource.id, 'backTo': 'show'}), 'spipu.user.action.enable', 'info', 'check') }}
+                {{ buttons.defaultLink(path('spipu_user_admin_enable', {'id': showManager.resource.id, 'backTo': 'show'}), 'spipu.user.action.enable', 'info', 'check') }}
             {% endif %}
         {% endif %}
         {% if is_granted('ROLE_ADMIN_MANAGE_USER_DELETE') %}
-            {{ buttons.delete(path('spipu_user_admin_delete', {'id': manager.resource.id}), 'user_' ~ manager.resource.id) }}
+            {{ buttons.delete(path('spipu_user_admin_delete', {'id': showManager.resource.id}), 'user_' ~ showManager.resource.id) }}
         {% endif %}
     {% endif %}
 {% endblock %}
 
-{% block body %}{{ renderManager(manager) }}{% endblock %}
+{% block body %}
+    <ul class="nav nav-tabs" role="tablist" id="myTab">
+        <li class="nav-item"><a class="nav-link font-weight-bold active" aria-selected="false" data-toggle="tab" role="tab" id="info-tab" href="#info" aria-controls="info" >{{ 'spipu.user.fieldset.information'|trans }}</a></li>
+        <li class="nav-item"><a class="nav-link font-weight-bold"        aria-selected="false" data-toggle="tab" role="tab" id="acl-tab"  href="#acl"  aria-controls="services">{{ 'spipu.user.fieldset.acl'|trans }}</a></li>
+    </ul>
+    <div class="tab-content" id="user-tabs">
+        <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab" >
+            <div class="card border-top-0 rounded-0">
+                <div class="card-body">
+                    {{ renderManager(showManager) }}
+                    {% if is_granted('ROLE_ADMIN_MANAGE_USER_EDIT') %}
+                        <div class="tab-sub-actions">
+                            {{ buttons.edit(path('spipu_user_admin_edit', {'id': showManager.resource.id})) }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="acl" role="tabpanel" aria-labelledby="acl-tab">
+            <div class="card border-top-0 rounded-0">
+                <div class="card-body">
+                    {% include '@SpipuUser/admin/_acl.html.twig' with {
+                        roleService: roleService,
+                        userRoles: showManager.resource.roles,
+                        submitUrl :  path('spipu_user_admin_acl', {id: showManager.resource.id})
+                    } %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
