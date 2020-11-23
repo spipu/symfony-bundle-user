@@ -21,7 +21,7 @@
             <div class="card mb-3">
                 <div class="card-header font-weight-bold">{{ 'spipu.core.role-type.profile'|trans }}</div>
                 <div class="card-body">
-                    <ul class="checkbox-tree">
+                    <ul>
                         {% for profile in roleService.profiles %}
                             <li>{{ _self.treeLabel(roleService, userRoles, profile) }}</li>
                         {% endfor %}
@@ -33,7 +33,7 @@
             <div class="card mb-3">
                 <div class="card-header font-weight-bold">{{ 'spipu.core.role-type.role'|trans }}</div>
                 <div class="card-body">
-                    <ul class="checkbox-tree">
+                    <ul class="checkbox-tree" data-tree-code="acl-roles">
                         {% for role in roleService.roles %}
                             {{ _self.tree(roleService, userRoles, role) }}
                         {% endfor %}
