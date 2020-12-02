@@ -19,6 +19,8 @@ abstract class AbstractUser implements UserInterface
 {
     use TimestampableTrait;
 
+    const DEFAULT_ROLE = 'ROLE_USER';
+
     /**
      * @var int|null
      * @ORM\Id()
@@ -73,7 +75,7 @@ abstract class AbstractUser implements UserInterface
      * @var string[]
      * @ORM\Column(type="json")
      */
-    private $roles = ['ROLE_USER'];
+    private $roles = [];
 
     /**
      * @var int
@@ -241,7 +243,7 @@ abstract class AbstractUser implements UserInterface
     public function getRoles(): ?array
     {
         if (empty($this->roles)) {
-            return ['ROLE_USER'];
+            return [static::DEFAULT_ROLE];
         }
 
         return $this->roles;
