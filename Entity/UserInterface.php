@@ -137,4 +137,9 @@ interface UserInterface extends EntityInterface, BaseUserInterface, Timestampabl
      * @return self
      */
     public function setTokenDate(?DateTime $tokenDate): self;
+
+    /**
+     * @return string|null
+     */
+    public function getUserIdentifier(): ?string;
 }

@@ -147,7 +147,7 @@ class AccountTest extends WebTestCase
         // Login page with "Bad credentials"
         $crawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertCrawlerHasAlert($crawler, 'Bad credentials');
+        $this->assertCrawlerHasAlert($crawler, 'The presented password is invalid.');
     }
 
     public function test04GoodPassword()
@@ -353,7 +353,7 @@ class AccountTest extends WebTestCase
         // bad credentials
         $crawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertCrawlerHasAlert($crawler, 'Bad credentials');
+        $this->assertCrawlerHasAlert($crawler, 'The presented password is invalid.');
 
         // Login page
         $crawler = $client->clickLink("Log In");

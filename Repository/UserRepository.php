@@ -6,8 +6,8 @@ namespace Spipu\UserBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
-use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\User;
 
 /**
  * @method UserInterface|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method UserInterface[]    findAll()
  * @method UserInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements UserLoaderInterface
+class UserRepository extends ServiceEntityRepository
 {
     /**
      * UserRepository constructor.
@@ -34,9 +34,9 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
      * This method must return null if the user is not found.
      *
      * @param string $username
-     * @return UserInterface|null
+     * @return User|null
      */
-    public function loadUserByUsername($username): ?UserInterface //@codingStandardsIgnoreLine
+    public function loadUserByIdentifier(string $username): ?User
     {
         try {
             return $this->createQueryBuilder('u')

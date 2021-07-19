@@ -38,7 +38,7 @@ class FirstUserFixtureTest extends TestCase
                 function ($object) {
                     /** @var UserInterface $object */
                     $this->assertInstanceOf(UserInterface::class, $object);
-                    $this->assertSame('admin', $object->getUsername());
+                    $this->assertSame('admin', $object->getUserIdentifier());
                     $this->assertSame('admin@admin.fr', $object->getEmail());
                     $this->assertSame('encoded_password', $object->getPassword());
                     $this->assertSame(['ROLE_SUPER_ADMIN'], $object->getRoles());

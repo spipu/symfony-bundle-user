@@ -11,7 +11,7 @@ use Spipu\UiBundle\Entity\Form\FieldSet;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Account Creation
@@ -20,18 +20,18 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class CreationForm extends ProfileForm
 {
     /**
-     * @var UserPasswordEncoderInterface
+     * @var UserPasswordHasherInterface
      */
     private $encoder;
 
     /**
      * UserForm constructor.
      * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserPasswordEncoderInterface $encoder
+     * @param UserPasswordHasherInterface $encoder
      */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
-        UserPasswordEncoderInterface $encoder
+        UserPasswordHasherInterface $encoder
     ) {
         parent::__construct($moduleConfiguration);
 
@@ -82,6 +82,6 @@ class CreationForm extends ProfileForm
             throw new Exception('The password is required');
         }
 
-        $resource->setPassword($this->encoder->encodePassword($resource, $resource->getPlainPassword()));
+        $resource->setPassword($this->encoder->hashPassword($resource, $resource->getPlainPassword()));
     }
 }

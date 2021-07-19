@@ -17,12 +17,12 @@ class UserRepositoryTest extends TestCase
 
         $this->assertInstanceOf(ServiceEntityRepository::class, $repository);
 
-        $this->assertNull($repository->loadUserByUsername('test'));
+        $this->assertNull($repository->loadUserByIdentifier('test'));
 
         /** @var MockObject $query */
         $query = $repository->createQueryBuilder('u')->getQuery();
         $query->method('getOneOrNullResult')->willThrowException(new \Exception('in mock'));
 
-        $this->assertNull($repository->loadUserByUsername('test'));
+        $this->assertNull($repository->loadUserByIdentifier('test'));
     }
 }

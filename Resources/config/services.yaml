@@ -27,7 +27,7 @@ services:
         tags: ['spipu.fixture']
         arguments:
             - '@doctrine.orm.default_entity_manager'
-            - '@security.user_password_encoder.generic'
+            - '@Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface'
             - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
             - '@Spipu\UserBundle\Repository\UserRepository'
 
@@ -40,17 +40,17 @@ services:
     Spipu\UserBundle\Ui\CreationForm:
         arguments:
             - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-            - '@security.user_password_encoder.generic'
+            - '@Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface'
 
     Spipu\UserBundle\Ui\NewPasswordForm:
         arguments:
             - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-            - '@security.user_password_encoder.generic'
+            - '@Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface'
 
     Spipu\UserBundle\Ui\PasswordForm:
         arguments:
             - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-            - '@security.user_password_encoder.generic'
+            - '@Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface'
 
     Spipu\UserBundle\Ui\ProfileForm:
         arguments:
@@ -65,13 +65,3 @@ services:
             - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
             - '@security.token_storage'
             - '@Spipu\UiBundle\Form\Options\YesNo'
-
-    security.authentication.provider.dao:
-        class: Spipu\UserBundle\Security\UserAuthenticationProvider
-        arguments:
-            - ~
-            - ~
-            - ~
-            - '@security.encoder_factory'
-            - '%security.authentication.hide_user_not_found%'
-            - '@doctrine.orm.default_entity_manager'

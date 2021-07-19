@@ -9,7 +9,7 @@ use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Users Creation
@@ -22,7 +22,7 @@ class FirstUserFixture implements FixtureInterface
     private $entityManager;
 
     /**
-     * @var UserPasswordEncoderInterface
+     * @var UserPasswordHasherInterface
      */
     private $encoder;
 
@@ -40,13 +40,13 @@ class FirstUserFixture implements FixtureInterface
      * PHP constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param UserPasswordEncoderInterface $encoder
+     * @param UserPasswordHasherInterface $encoder
      * @param ModuleConfigurationInterface $moduleConfiguration
      * @param UserRepository $userRepository
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserPasswordEncoderInterface $encoder,
+        UserPasswordHasherInterface $encoder,
         ModuleConfigurationInterface $moduleConfiguration,
         UserRepository $userRepository
     ) {
@@ -82,7 +82,7 @@ class FirstUserFixture implements FixtureInterface
         $object
             ->setUsername($data['username'])
             ->setEmail($data['email'])
-            ->setPassword($this->encoder->encodePassword($object, $data['password']))
+            ->setPassword($this->encoder->hashPassword($object, $data['password']))
             ->setFirstName($data['firstname'])
             ->setLastName($data['lastname'])
             ->setRoles($data['roles'])
