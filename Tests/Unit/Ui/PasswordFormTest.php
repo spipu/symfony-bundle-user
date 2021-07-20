@@ -15,7 +15,7 @@ class PasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
 
         $definition = $form->getDefinition();
 
@@ -50,7 +50,7 @@ class PasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
         $symfonyForm->expects($this->once())->method('offsetGet')->with('oldPassword')->willReturn($symfonyForm);
@@ -69,7 +69,7 @@ class PasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
         $symfonyForm->expects($this->once())->method('offsetGet')->with('oldPassword')->willReturn($symfonyForm);
@@ -88,7 +88,7 @@ class PasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
         $symfonyForm->expects($this->once())->method('offsetGet')->with('oldPassword')->willReturn($symfonyForm);

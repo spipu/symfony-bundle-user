@@ -22,20 +22,20 @@ class CreationForm extends ProfileForm
     /**
      * @var UserPasswordHasherInterface
      */
-    private $encoder;
+    private $hasher;
 
     /**
      * UserForm constructor.
      * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserPasswordHasherInterface $encoder
+     * @param UserPasswordHasherInterface $hasher
      */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
-        UserPasswordHasherInterface $encoder
+        UserPasswordHasherInterface $hasher
     ) {
         parent::__construct($moduleConfiguration);
 
-        $this->encoder = $encoder;
+        $this->hasher = $hasher;
     }
 
     /**
@@ -82,6 +82,6 @@ class CreationForm extends ProfileForm
             throw new Exception('The password is required');
         }
 
-        $resource->setPassword($this->encoder->hashPassword($resource, $resource->getPlainPassword()));
+        $resource->setPassword($this->hasher->hashPassword($resource, $resource->getPlainPassword()));
     }
 }

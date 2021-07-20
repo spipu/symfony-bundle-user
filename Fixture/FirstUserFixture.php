@@ -24,7 +24,7 @@ class FirstUserFixture implements FixtureInterface
     /**
      * @var UserPasswordHasherInterface
      */
-    private $encoder;
+    private $hasher;
 
     /**
      * @var ModuleConfigurationInterface
@@ -40,19 +40,19 @@ class FirstUserFixture implements FixtureInterface
      * PHP constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param UserPasswordHasherInterface $encoder
+     * @param UserPasswordHasherInterface $hasher
      * @param ModuleConfigurationInterface $moduleConfiguration
      * @param UserRepository $userRepository
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $encoder,
+        UserPasswordHasherInterface $hasher,
         ModuleConfigurationInterface $moduleConfiguration,
         UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->moduleConfiguration = $moduleConfiguration;
-        $this->encoder = $encoder;
+        $this->hasher = $hasher;
         $this->userRepository = $userRepository;
     }
 
@@ -82,7 +82,7 @@ class FirstUserFixture implements FixtureInterface
         $object
             ->setUsername($data['username'])
             ->setEmail($data['email'])
-            ->setPassword($this->encoder->hashPassword($object, $data['password']))
+            ->setPassword($this->hasher->hashPassword($object, $data['password']))
             ->setFirstName($data['firstname'])
             ->setLastName($data['lastname'])
             ->setRoles($data['roles'])

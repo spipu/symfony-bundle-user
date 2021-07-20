@@ -20,20 +20,20 @@ class PasswordForm extends AbstractForm
     /**
      * @var UserPasswordHasherInterface
      */
-    private $encoder;
+    private $hasher;
 
     /**
      * UserForm constructor.
      * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserPasswordHasherInterface $encoder
+     * @param UserPasswordHasherInterface $hasher
      */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
-        UserPasswordHasherInterface $encoder
+        UserPasswordHasherInterface $hasher
     ) {
         parent::__construct($moduleConfiguration);
 
-        $this->encoder = $encoder;
+        $this->hasher = $hasher;
     }
 
     /**
@@ -90,7 +90,7 @@ class PasswordForm extends AbstractForm
     {
         /** @var UserInterface $resource */
         $oldPassword = $form['oldPassword']->getData();
-        if (!$this->encoder->isPasswordValid($resource, $oldPassword)) {
+        if (!$this->hasher->isPasswordValid($resource, $oldPassword)) {
             throw new Exception('spipu.user.error.bad_old_password');
         }
 
@@ -98,6 +98,6 @@ class PasswordForm extends AbstractForm
             throw new Exception('The password is required');
         }
 
-        $resource->setPassword($this->encoder->hashPassword($resource, $resource->getPlainPassword()));
+        $resource->setPassword($this->hasher->hashPassword($resource, $resource->getPlainPassword()));
     }
 }

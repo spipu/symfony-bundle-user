@@ -6,8 +6,8 @@ namespace Spipu\UserBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use App\Entity\User;
 
 /**
  * @method UserInterface|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,7 +15,7 @@ use App\Entity\User;
  * @method UserInterface[]    findAll()
  * @method UserInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository
+class UserRepository extends ServiceEntityRepository implements UserLoaderInterface
 {
     /**
      * UserRepository constructor.
@@ -33,20 +33,29 @@ class UserRepository extends ServiceEntityRepository
      * Loads the user for the given username.
      * This method must return null if the user is not found.
      *
-     * @param string $username
-     * @return User|null
+     * @param string $identifier
+     * @return UserInterface|null
      */
-    public function loadUserByIdentifier(string $username): ?User
+    public function loadUserByIdentifier(string $identifier): ?UserInterface //@codingStandardsIgnoreLine
     {
         try {
             return $this->createQueryBuilder('u')
                 ->where('u.username = :username OR u.email = :email')
-                ->setParameter('username', $username)
-                ->setParameter('email', $username)
+                ->setParameter('username', $identifier)
+                ->setParameter('email', $identifier)
                 ->getQuery()
                 ->getOneOrNullResult();
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * @param string $username
+     * @return UserInterface|null
+     */
+    public function loadUserByUsername(string $username): ?UserInterface //@codingStandardsIgnoreLine
+    {
+        return $this->loadUserByIdentifier($username);
     }
 }

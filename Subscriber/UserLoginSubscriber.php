@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Spipu\UserBundle\Subscriber;
 
-use App\Entity\User;
+use Spipu\UserBundle\Entity\UserInterface;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +15,7 @@ class UserLoginSubscriber implements EventSubscriberInterface
     /**
      * @var EntityManagerInterface
      */
-    private EntityManagerInterface $entityManager;
+    private $entityManager;
 
     /**
      * UserLoginSubscriber constructor.
@@ -43,6 +43,7 @@ class UserLoginSubscriber implements EventSubscriberInterface
      */
     public function onLoginSuccess(LoginSuccessEvent $event): void
     {
+        /** @var UserInterface $user */
         $user = $event->getUser();
         $user->setTokenDate(null);
         $user->setNbTryLogin(0);
@@ -63,7 +64,7 @@ class UserLoginSubscriber implements EventSubscriberInterface
         }
         $badges = $passport->getBadges();
         if (is_array($passport->getBadges()) && isset($badges[UserBadge::class])) {
-            /** @var User $user */
+            /** @var UserInterface $user */
             $user = $badges[UserBadge::class]->getUser();
             $user->setNbTryLogin($user->getNbTryLogin() + 1);
 

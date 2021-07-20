@@ -8,8 +8,14 @@ use Serializable;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\TimestampableInterface;
 use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-interface UserInterface extends EntityInterface, BaseUserInterface, TimestampableInterface, Serializable
+interface UserInterface extends
+    EntityInterface,
+    BaseUserInterface,
+    TimestampableInterface,
+    Serializable,
+    PasswordAuthenticatedUserInterface
 {
     /**
      * Get the PK id
@@ -29,6 +35,18 @@ interface UserInterface extends EntityInterface, BaseUserInterface, Timestampabl
      * @return self
      */
     public function setEmail(string $email): self;
+
+    /**
+     * Temporary definition, will be removed in SF6 version, when the UserInterface will be clean
+     * @return string|null
+     */
+    public function getPassword(): ?string;
+
+    /**
+     * Temporary definition, will be fixed (strict) in SF6 version, when the UserInterface will be clean
+     * @return string
+     */
+    public function getUsername();
 
     /**
      * Set the username

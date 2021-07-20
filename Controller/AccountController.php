@@ -69,7 +69,7 @@ class AccountController extends AbstractController
         $manager->setResource($resource);
         $manager->setSubmitButton('spipu.ui.action.create');
         if ($manager->validate()) {
-            $this->container->get('session')->getFlashBag()->clear();
+            $this->container->get('request_stack')->getSession()->getFlashBag()->clear();
             try {
                 $mailManager->sendActivationEmail($resource);
 
@@ -174,7 +174,7 @@ class AccountController extends AbstractController
         $manager = $formFactory->create($recoveryForm);
         $manager->setSubmitButton('spipu.user.action.recover');
         if ($manager->validate()) {
-            $this->container->get('session')->getFlashBag()->clear();
+            $this->container->get('request_stack')->getSession()->getFlashBag()->clear();
             $redirect = $this->redirectToRoute('spipu_user_account_recovery_waiting');
 
             try {

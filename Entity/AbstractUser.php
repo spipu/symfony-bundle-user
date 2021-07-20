@@ -137,7 +137,7 @@ abstract class AbstractUser implements UserInterface
      */
     public function getUsername(): ?string
     {
-        return $this->getUserIdentifier();
+        return $this->username;
     }
 
     /**
@@ -145,7 +145,7 @@ abstract class AbstractUser implements UserInterface
      */
     public function getUserIdentifier(): ?string
     {
-        return $this->username;
+        return $this->getUsername();
     }
 
     /**
@@ -337,10 +337,10 @@ abstract class AbstractUser implements UserInterface
 
     /**
      * Constructs the object
-     * @param string $serialized
+     * @param string $data
      * @return void
      */
-    public function unserialize($serialized): void  //@codingStandardsIgnoreLine
+    public function unserialize($data): void  //@codingStandardsIgnoreLine
     {
         list(
             $this->id,
@@ -355,7 +355,7 @@ abstract class AbstractUser implements UserInterface
             $this->active,
             $this->createdAt,
             $this->updatedAt
-        ) = unserialize($serialized, ['allowed_classes' => false]);
+        ) = unserialize($data, ['allowed_classes' => false]);
     }
 
     /**
