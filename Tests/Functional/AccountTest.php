@@ -6,7 +6,7 @@ use Spipu\UserBundle\Controller\SecurityController;
 
 class AccountTest extends WebTestCase
 {
-    const REGEX_URL = '/<a [^>]*>([^<]+)<\/a>/';
+    public const REGEX_URL = '/<a [^>]*>([^<]+)<\/a>/';
 
     public function test01NotExist()
     {

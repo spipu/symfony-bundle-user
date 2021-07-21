@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Entity;
 
@@ -19,7 +19,7 @@ abstract class AbstractUser implements UserInterface
 {
     use TimestampableTrait;
 
-    const DEFAULT_ROLE = 'ROLE_USER';
+    public const DEFAULT_ROLE = 'ROLE_USER';
 
     /**
      * @var int|null

@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Event;
 
@@ -11,7 +11,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class UserEvent extends Event
 {
-    const PREFIX_NAME = 'spipu.user.action.';
+    public const PREFIX_NAME = 'spipu.user.action.';
 
     /**
      * @var UserInterface

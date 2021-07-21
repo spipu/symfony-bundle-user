@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Fixture;
 
@@ -68,7 +68,7 @@ class FirstUserFixture implements FixtureInterface
      * @param OutputInterface $output
      * @return void
      */
-    public function load(OutputInterface $output) : void
+    public function load(OutputInterface $output): void
     {
         $output->writeln("Add Admin User");
         $data = $this->getData();
@@ -96,7 +96,7 @@ class FirstUserFixture implements FixtureInterface
      * @param OutputInterface $output
      * @return void
      */
-    public function remove(OutputInterface $output) : void
+    public function remove(OutputInterface $output): void
     {
         $output->writeln("Remove Admin User");
         $data = $this->getData();
