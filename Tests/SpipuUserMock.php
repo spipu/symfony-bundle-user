@@ -1,6 +1,17 @@
 <?php
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Spipu\UserBundle\Tests;
 
+use DateTime;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Spipu\UserBundle\Entity\AbstractUser;
@@ -9,6 +20,10 @@ use Spipu\UserBundle\Service\UserTokenManager;
 
 class SpipuUserMock extends TestCase
 {
+    /**
+     * @param int|null $id
+     * @return UserInterface
+     */
     public static function getUserEntity(int $id = null)
     {
         return new GenericUser($id);
@@ -26,7 +41,7 @@ class SpipuUserMock extends TestCase
             ->method('generate')
             ->willReturnCallback(
                 function (UserInterface $user) {
-                    $user->setTokenDate(new \DateTime());
+                    $user->setTokenDate(new DateTime());
                     return ('mock_token_' . $user->getId());
                 }
             );

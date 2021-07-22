@@ -1,4 +1,14 @@
 <?php
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace Spipu\UserBundle\Controller;
@@ -7,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Spipu\UiBundle\Exception\UiException;
 use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UiBundle\Service\Ui\ShowFactory;
+use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Event\UserEvent;
 use Spipu\UserBundle\Ui\PasswordForm;
 use Spipu\UserBundle\Ui\ProfileForm;
@@ -49,6 +60,7 @@ class ProfileController extends AbstractController
      */
     public function show(ShowFactory $showFactory, ProfileForm $profileForm): Response
     {
+        /** @var UserInterface $resource */
         $resource = $this->getUser();
 
         $manager = $showFactory->create($profileForm);
@@ -74,6 +86,7 @@ class ProfileController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
+        /** @var UserInterface $resource */
         $resource = $this->getUser();
 
         $manager = $formFactory->create($profileForm);
@@ -105,6 +118,7 @@ class ProfileController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
+        /** @var UserInterface $resource */
         $resource = $this->getUser();
 
         $manager = $formFactory->create($passwordForm);

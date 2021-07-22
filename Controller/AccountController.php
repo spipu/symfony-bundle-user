@@ -1,8 +1,19 @@
 <?php
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace Spipu\UserBundle\Controller;
 
+use Exception;
 use Spipu\UiBundle\Exception\UiException;
 use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UserBundle\Event\UserEvent;
@@ -75,7 +86,7 @@ class AccountController extends AbstractController
 
                 $event = new UserEvent($resource, 'create');
                 $this->eventDispatcher->dispatch($event, $event->getEventCode());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->addFlash('danger', $e->getMessage());
             }
             return $this->redirectToRoute('spipu_user_account_create_waiting');
@@ -188,7 +199,7 @@ class AccountController extends AbstractController
 
                 $event = new UserEvent($user, 'recovery_asked');
                 $this->eventDispatcher->dispatch($event, $event->getEventCode());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->addFlash('danger', $e->getMessage());
             }
             return $this->redirectToRoute('spipu_user_account_recovery_waiting');

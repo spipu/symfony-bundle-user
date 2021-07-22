@@ -1,10 +1,21 @@
 <?php
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace Spipu\UserBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -45,7 +56,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
                 ->setParameter('email', $identifier)
                 ->getQuery()
                 ->getOneOrNullResult();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }

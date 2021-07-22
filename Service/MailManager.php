@@ -1,4 +1,14 @@
 <?php
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace Spipu\UserBundle\Service;
@@ -7,6 +17,7 @@ use Spipu\CoreBundle\Service\MailManager as BaseMailManager;
 use Spipu\UserBundle\Entity\UserInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Throwable;
 
 class MailManager
 {
@@ -60,7 +71,7 @@ class MailManager
     /**
      * @param UserInterface $user
      * @return void
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function sendActivationEmail(UserInterface $user): void
     {
@@ -88,7 +99,7 @@ class MailManager
     /**
      * @param UserInterface $user
      * @return void
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function sendRecoveryEmail(UserInterface $user): void
     {
