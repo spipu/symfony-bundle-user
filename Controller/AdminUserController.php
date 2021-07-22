@@ -485,7 +485,7 @@ class AdminUserController extends AbstractController
     private function massActionRow(UserInterface $row, string $action): bool
     {
         if ($this->getUser()->getId() === $row->getId()) {
-            $this->addFlashTrans('danger', 'spipu.user.error.yourself_'.$action);
+            $this->addFlashTrans('danger', 'spipu.user.error.yourself_' . $action);
             return false;
         }
 

@@ -241,7 +241,7 @@ class AdminUserTest extends WebTestCase
 
         // The users 2 and 3 must be disabled
         foreach ($userIds as $userId) {
-            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id='.$userId.'] td[data-grid-field-name=is_active]:contains("Yes")')->count());
+            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
         }
 
         // The mass action "Enable" must exists
@@ -260,7 +260,7 @@ class AdminUserTest extends WebTestCase
 
         // The users must be enabled
         foreach ($userIds as $userId) {
-            $this->assertEquals(1, $crawler->filter('tr[data-grid-row-id='.$userId.'] td[data-grid-field-name=is_active]:contains("Yes")')->count());
+            $this->assertEquals(1, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
         }
 
         // The mass action "Disable" must exists
@@ -279,7 +279,7 @@ class AdminUserTest extends WebTestCase
 
         // The users must be disables
         foreach ($userIds as $userId) {
-            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id='.$userId.'] td[data-grid-field-name=is_active]:contains("Yes")')->count());
+            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
         }
 
         // Post the mass action "Disable" on the same users
