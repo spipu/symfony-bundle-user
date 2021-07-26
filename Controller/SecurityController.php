@@ -39,7 +39,7 @@ class SecurityController extends AbstractController
     ): Response {
         $error = $authenticationUtils->getLastAuthenticationError();
         if ($error) {
-            $this->addFlash('danger', $error->getMessage());
+            $this->addFlash('danger', $error->getMessageKey());
         }
 
         return $this->render(
