@@ -212,7 +212,7 @@ class AdminUserController extends AbstractController
 
         $redirectResponse = $this->redirectToRoute('spipu_user_admin_show', ['id' => $resource->getId()]);
 
-        $roleCodes = $request->request->get('acl');
+        $roleCodes = $request->request->all('acl');
         if (empty($roleCodes) || !is_array($roleCodes) || !$roleService->validateRoles($roleCodes)) {
             $this->addFlashTrans('danger', 'What you doing ???');
             return $redirectResponse;
