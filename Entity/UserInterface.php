@@ -59,6 +59,11 @@ interface UserInterface extends
     public function getUsername();
 
     /**
+     * @return string|null
+     */
+    public function getUserIdentifier(): ?string;
+
+    /**
      * Set the username
      * @param string $username
      * @return self
@@ -165,9 +170,4 @@ interface UserInterface extends
      * @return self
      */
     public function setTokenDate(?DateTime $tokenDate): self;
-
-    /**
-     * @return string|null
-     */
-    public function getUserIdentifier(): ?string;
 }

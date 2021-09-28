@@ -126,10 +126,7 @@ class FirstUserFixture implements FixtureInterface
      */
     private function findObject(string $identifier): ?UserInterface
     {
-        /** @var UserInterface $object */
-        $object = $this->userRepository->findOneBy(['username' => $identifier]);
-
-        return $object;
+        return $this->userRepository->findOneBy(['username' => $identifier]);
     }
 
     /**
