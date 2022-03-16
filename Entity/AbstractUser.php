@@ -258,7 +258,7 @@ abstract class AbstractUser implements UserInterface
      * Get the roles
      * @return string[]
      */
-    public function getRoles(): ?array
+    public function getRoles(): array
     {
         if (empty($this->roles)) {
             return [static::DEFAULT_ROLE];
