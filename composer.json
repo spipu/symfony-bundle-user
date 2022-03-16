@@ -11,6 +11,7 @@
     ],
     "version": "1.0",
     "require": {
+        "symfony/framework-bundle": "^5.4",
         "spipu/ui-bundle": "*"
     },
     "autoload": {
