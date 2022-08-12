@@ -322,6 +322,10 @@ class AdminUserTest extends WebTestCase
         $crawler = $client->submit($crawler->selectButton('Search')->form(), ['qs[field]' => 'id', 'qs[value]' => '']);
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+
+        // Configure
+        $this->assertSame('default', $crawler->filter('select[data-grid-role=config-select] option[selected]')->text());
+        $this->assertSame(1, $crawler->filter('button:contains("Configure")')->count());
     }
 
     public function testBadAccess()
