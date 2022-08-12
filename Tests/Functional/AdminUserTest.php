@@ -75,6 +75,8 @@ class AdminUserTest extends WebTestCase
         // Users List
         $crawler = $client->clickLink('Users');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Advanced Search")')->count());
 
         // Users List with filter
@@ -315,6 +317,11 @@ class AdminUserTest extends WebTestCase
         $crawler = $client->submit($crawler->selectButton('Search')->form(), ['qs[field]' => 'email', 'qs[value]' => 'user_42@']);
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("1 item found")')->count());
+
+        // Reset Users List with quick search
+        $crawler = $client->submit($crawler->selectButton('Search')->form(), ['qs[field]' => 'id', 'qs[value]' => '']);
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
     }
 
     public function testBadAccess()
