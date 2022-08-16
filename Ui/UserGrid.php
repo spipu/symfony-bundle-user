@@ -113,7 +113,7 @@ class UserGrid implements GridDefinitionInterface
                             ->setOptions($this->optionsYesNo)
                             ->setTemplateField('@SpipuUi/grid/field/yes-no.html.twig')
                     )
-                    ->setFilter((new Grid\ColumnFilter(true, true)))
+                    ->setFilter((new Grid\ColumnFilter(true, false)))
                     ->useSortable()
             )
             ->addColumn(
