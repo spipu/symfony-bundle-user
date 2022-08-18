@@ -18,7 +18,7 @@ class FirstUserFixtureTest extends TestCase
 
         $fixture = new FirstUserFixture(
             SymfonyMock::getEntityManager($this),
-            SymfonyMock::getUserPasswordEncoder($this),
+            SymfonyMock::getUserPasswordHasher($this),
             ModuleConfigurationTest::getService($this, true, true),
             $repository
         );
@@ -38,21 +38,21 @@ class FirstUserFixtureTest extends TestCase
                 function ($object) {
                     /** @var UserInterface $object */
                     $this->assertInstanceOf(UserInterface::class, $object);
-                    $this->assertSame('admin', $object->getUsername());
+                    $this->assertSame('admin', $object->getUserIdentifier());
                     $this->assertSame('admin@admin.fr', $object->getEmail());
                     $this->assertSame('encoded_password', $object->getPassword());
                     $this->assertSame(['ROLE_SUPER_ADMIN'], $object->getRoles());
                 }
             );
 
-        $encoder = SymfonyMock::getUserPasswordEncoder($this);
+        $hasher = SymfonyMock::getUserPasswordHasher($this);
 
         $configuration = ModuleConfigurationTest::getService($this, true, true);
 
         $repository = $this->createMock(UserRepository::class);
         $repository->expects($this->once())->method('findOneBy')->willReturn(null);
 
-        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration, $repository);
+        $fixture = new FirstUserFixture($entityManager, $hasher, $configuration, $repository);
 
         $fixture->load(SymfonyMock::getConsoleOutput($this));
 
@@ -70,14 +70,14 @@ class FirstUserFixtureTest extends TestCase
         $entityManager->expects($this->never())->method('flush');
         $entityManager->expects($this->never())->method('persist');
 
-        $encoder = SymfonyMock::getUserPasswordEncoder($this);
+        $hasher = SymfonyMock::getUserPasswordHasher($this);
 
         $configuration = ModuleConfigurationTest::getService($this, true, true);
 
         $repository = $this->createMock(UserRepository::class);
         $repository->expects($this->once())->method('findOneBy')->willReturn($user);
 
-        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration, $repository);
+        $fixture = new FirstUserFixture($entityManager, $hasher, $configuration, $repository);
 
         $fixture->load(SymfonyMock::getConsoleOutput($this));
 
@@ -95,14 +95,14 @@ class FirstUserFixtureTest extends TestCase
         $entityManager->expects($this->once())->method('flush');
         $entityManager->expects($this->once())->method('remove')->with($user);
 
-        $encoder = SymfonyMock::getUserPasswordEncoder($this);
+        $hasher = SymfonyMock::getUserPasswordHasher($this);
 
         $configuration = ModuleConfigurationTest::getService($this, true, true);
 
         $repository = $this->createMock(UserRepository::class);
         $repository->expects($this->once())->method('findOneBy')->willReturn($user);
 
-        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration, $repository);
+        $fixture = new FirstUserFixture($entityManager, $hasher, $configuration, $repository);
 
         $fixture->remove(SymfonyMock::getConsoleOutput($this));
 
@@ -118,14 +118,14 @@ class FirstUserFixtureTest extends TestCase
         $entityManager->expects($this->never())->method('flush');
         $entityManager->expects($this->never())->method('remove');
 
-        $encoder = SymfonyMock::getUserPasswordEncoder($this);
+        $hasher = SymfonyMock::getUserPasswordHasher($this);
 
         $configuration = ModuleConfigurationTest::getService($this, true, true);
 
         $repository = $this->createMock(UserRepository::class);
         $repository->expects($this->once())->method('findOneBy')->willReturn(null);
 
-        $fixture = new FirstUserFixture($entityManager, $encoder, $configuration, $repository);
+        $fixture = new FirstUserFixture($entityManager, $hasher, $configuration, $repository);
 
         $fixture->remove(SymfonyMock::getConsoleOutput($this));
 

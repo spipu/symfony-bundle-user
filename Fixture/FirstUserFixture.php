@@ -1,5 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Fixture;
 
@@ -9,7 +19,7 @@ use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Users Creation
@@ -22,9 +32,9 @@ class FirstUserFixture implements FixtureInterface
     private $entityManager;
 
     /**
-     * @var UserPasswordEncoderInterface
+     * @var UserPasswordHasherInterface
      */
-    private $encoder;
+    private $hasher;
 
     /**
      * @var ModuleConfigurationInterface
@@ -40,19 +50,19 @@ class FirstUserFixture implements FixtureInterface
      * PHP constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param UserPasswordEncoderInterface $encoder
+     * @param UserPasswordHasherInterface $hasher
      * @param ModuleConfigurationInterface $moduleConfiguration
      * @param UserRepository $userRepository
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserPasswordEncoderInterface $encoder,
+        UserPasswordHasherInterface $hasher,
         ModuleConfigurationInterface $moduleConfiguration,
         UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->moduleConfiguration = $moduleConfiguration;
-        $this->encoder = $encoder;
+        $this->hasher = $hasher;
         $this->userRepository = $userRepository;
     }
 
@@ -68,7 +78,7 @@ class FirstUserFixture implements FixtureInterface
      * @param OutputInterface $output
      * @return void
      */
-    public function load(OutputInterface $output) : void
+    public function load(OutputInterface $output): void
     {
         $output->writeln("Add Admin User");
         $data = $this->getData();
@@ -82,7 +92,7 @@ class FirstUserFixture implements FixtureInterface
         $object
             ->setUsername($data['username'])
             ->setEmail($data['email'])
-            ->setPassword($this->encoder->encodePassword($object, $data['password']))
+            ->setPassword($this->hasher->hashPassword($object, $data['password']))
             ->setFirstName($data['firstname'])
             ->setLastName($data['lastname'])
             ->setRoles($data['roles'])
@@ -96,7 +106,7 @@ class FirstUserFixture implements FixtureInterface
      * @param OutputInterface $output
      * @return void
      */
-    public function remove(OutputInterface $output) : void
+    public function remove(OutputInterface $output): void
     {
         $output->writeln("Remove Admin User");
         $data = $this->getData();
@@ -116,10 +126,7 @@ class FirstUserFixture implements FixtureInterface
      */
     private function findObject(string $identifier): ?UserInterface
     {
-        /** @var UserInterface $object */
-        $object = $this->userRepository->findOneBy(['username' => $identifier]);
-
-        return $object;
+        return $this->userRepository->findOneBy(['username' => $identifier]);
     }
 
     /**

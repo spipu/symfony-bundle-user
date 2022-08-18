@@ -1,5 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Ui;
 
@@ -13,27 +23,27 @@ use Spipu\UiBundle\Entity\Form\Form;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class PasswordForm extends AbstractForm
 {
     /**
-     * @var UserPasswordEncoderInterface
+     * @var UserPasswordHasherInterface
      */
-    private $encoder;
+    private $hasher;
 
     /**
      * UserForm constructor.
      * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserPasswordEncoderInterface $encoder
+     * @param UserPasswordHasherInterface $hasher
      */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
-        UserPasswordEncoderInterface $encoder
+        UserPasswordHasherInterface $hasher
     ) {
         parent::__construct($moduleConfiguration);
 
-        $this->encoder = $encoder;
+        $this->hasher = $hasher;
     }
 
     /**
@@ -90,7 +100,7 @@ class PasswordForm extends AbstractForm
     {
         /** @var UserInterface $resource */
         $oldPassword = $form['oldPassword']->getData();
-        if (!$this->encoder->isPasswordValid($resource, $oldPassword)) {
+        if (!$this->hasher->isPasswordValid($resource, $oldPassword)) {
             throw new Exception('spipu.user.error.bad_old_password');
         }
 
@@ -98,6 +108,6 @@ class PasswordForm extends AbstractForm
             throw new Exception('The password is required');
         }
 
-        $resource->setPassword($this->encoder->encodePassword($resource, $resource->getPlainPassword()));
+        $resource->setPassword($this->hasher->hashPassword($resource, $resource->getPlainPassword()));
     }
 }

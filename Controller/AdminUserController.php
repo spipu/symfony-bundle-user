@@ -1,5 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Controller;
 
@@ -32,6 +42,20 @@ use Throwable;
  */
 class AdminUserController extends AbstractController
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager
+    ) {
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * @Route(
      *     "/",
@@ -202,7 +226,7 @@ class AdminUserController extends AbstractController
 
         $redirectResponse = $this->redirectToRoute('spipu_user_admin_show', ['id' => $resource->getId()]);
 
-        $roleCodes = $request->request->get('acl');
+        $roleCodes = $request->request->all('acl');
         if (empty($roleCodes) || !is_array($roleCodes) || !$roleService->validateRoles($roleCodes)) {
             $this->addFlashTrans('danger', 'What you doing ???');
             return $redirectResponse;
@@ -257,9 +281,8 @@ class AdminUserController extends AbstractController
         }
 
         try {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($resource);
-            $entityManager->flush();
+            $this->entityManager->remove($resource);
+            $this->entityManager->flush();
 
             $this->addFlashTrans('success', 'spipu.ui.success.deleted');
         } catch (Exception $e) {
@@ -302,9 +325,8 @@ class AdminUserController extends AbstractController
 
         try {
             $resource->setActive(true);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($resource);
-            $entityManager->flush();
+            $this->entityManager->persist($resource);
+            $this->entityManager->flush();
 
             $this->addFlashTrans('success', 'spipu.user.success.enabled');
         } catch (Exception $e) {
@@ -347,9 +369,8 @@ class AdminUserController extends AbstractController
 
         try {
             $resource->setActive(false);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($resource);
-            $entityManager->flush();
+            $this->entityManager->persist($resource);
+            $this->entityManager->flush();
 
             $this->addFlashTrans('success', 'spipu.user.success.disabled');
         } catch (Exception $e) {
@@ -449,18 +470,16 @@ class AdminUserController extends AbstractController
             return $this->redirectTo('list');
         }
 
-        $entityManager = $this->getDoctrine()->getManager();
-
         $count = 0;
         /** @var UserInterface[] $rows */
         $rows = $userRepository->findBy(['id' => $selected]);
         foreach ($rows as $row) {
             if ($this->massActionRow($row, $action)) {
-                $entityManager->persist($row);
+                $this->entityManager->persist($row);
                 $count++;
             }
         }
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         $this->addFlashTrans('success', $transLabel, ['%count' => $count]);
 
@@ -475,7 +494,7 @@ class AdminUserController extends AbstractController
     private function massActionRow(UserInterface $row, string $action): bool
     {
         if ($this->getUser()->getId() === $row->getId()) {
-            $this->addFlashTrans('danger', 'spipu.user.error.yourself_'.$action);
+            $this->addFlashTrans('danger', 'spipu.user.error.yourself_' . $action);
             return false;
         }
 

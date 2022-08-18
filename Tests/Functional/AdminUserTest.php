@@ -75,6 +75,8 @@ class AdminUserTest extends WebTestCase
         // Users List
         $crawler = $client->clickLink('Users');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Advanced Search")')->count());
 
         // Users List with filter
@@ -241,7 +243,7 @@ class AdminUserTest extends WebTestCase
 
         // The users 2 and 3 must be disabled
         foreach ($userIds as $userId) {
-            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id='.$userId.'] td[data-grid-field-name=is_active]:contains("Yes")')->count());
+            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
         }
 
         // The mass action "Enable" must exists
@@ -260,7 +262,7 @@ class AdminUserTest extends WebTestCase
 
         // The users must be enabled
         foreach ($userIds as $userId) {
-            $this->assertEquals(1, $crawler->filter('tr[data-grid-row-id='.$userId.'] td[data-grid-field-name=is_active]:contains("Yes")')->count());
+            $this->assertEquals(1, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
         }
 
         // The mass action "Disable" must exists
@@ -279,7 +281,7 @@ class AdminUserTest extends WebTestCase
 
         // The users must be disables
         foreach ($userIds as $userId) {
-            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id='.$userId.'] td[data-grid-field-name=is_active]:contains("Yes")')->count());
+            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
         }
 
         // Post the mass action "Disable" on the same users
@@ -315,6 +317,15 @@ class AdminUserTest extends WebTestCase
         $crawler = $client->submit($crawler->selectButton('Search')->form(), ['qs[field]' => 'email', 'qs[value]' => 'user_42@']);
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("1 item found")')->count());
+
+        // Reset Users List with quick search
+        $crawler = $client->submit($crawler->selectButton('Search')->form(), ['qs[field]' => 'id', 'qs[value]' => '']);
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+
+        // Configure
+        $this->assertSame('default', $crawler->filter('select[data-grid-role=config-select] option[selected]')->text());
+        $this->assertSame(1, $crawler->filter('button:contains("Configure")')->count());
     }
 
     public function testBadAccess()

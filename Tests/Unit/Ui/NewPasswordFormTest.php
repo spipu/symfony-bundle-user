@@ -15,7 +15,7 @@ class NewPasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new NewPasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
+        $form = new NewPasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
 
         $definition = $form->getDefinition();
 
@@ -43,7 +43,7 @@ class NewPasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new NewPasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
+        $form = new NewPasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
 
@@ -59,7 +59,7 @@ class NewPasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new NewPasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordEncoder($this));
+        $form = new NewPasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
 

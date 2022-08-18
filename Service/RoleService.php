@@ -1,5 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Service;
 
@@ -39,7 +49,7 @@ class RoleService
     {
         uasort(
             $items,
-            function (Item $itemA, Item  $itemB) {
+            function (Item $itemA, Item $itemB) {
                 return $itemA->getWeight() <=> $itemB->getWeight();
             }
         );
@@ -87,7 +97,8 @@ class RoleService
     {
         $list = [];
         foreach ($role->getChildren() as $child) {
-            if ($child->getType() === Item::TYPE_ROLE &&
+            if (
+                $child->getType() === Item::TYPE_ROLE &&
                 ($child->getPurpose() === null || $child->getPurpose() === $this->purpose)
             ) {
                 $list[$child->getCode()] = $child;

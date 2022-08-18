@@ -1,9 +1,20 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Ui;
 
 use Exception;
+use Spipu\UiBundle\Exception\FormException;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
@@ -11,7 +22,7 @@ use Spipu\UiBundle\Entity\Form\FieldSet;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Account Creation
@@ -20,27 +31,27 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class CreationForm extends ProfileForm
 {
     /**
-     * @var UserPasswordEncoderInterface
+     * @var UserPasswordHasherInterface
      */
-    private $encoder;
+    private $hasher;
 
     /**
      * UserForm constructor.
      * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserPasswordEncoderInterface $encoder
+     * @param UserPasswordHasherInterface $hasher
      */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
-        UserPasswordEncoderInterface $encoder
+        UserPasswordHasherInterface $hasher
     ) {
         parent::__construct($moduleConfiguration);
 
-        $this->encoder = $encoder;
+        $this->hasher = $hasher;
     }
 
     /**
      * @return void
-     * @throws \Spipu\UiBundle\Exception\FormException
+     * @throws FormException
      */
     protected function prepareForm(): void
     {
@@ -82,6 +93,6 @@ class CreationForm extends ProfileForm
             throw new Exception('The password is required');
         }
 
-        $resource->setPassword($this->encoder->encodePassword($resource, $resource->getPlainPassword()));
+        $resource->setPassword($this->hasher->hashPassword($resource, $resource->getPlainPassword()));
     }
 }

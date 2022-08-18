@@ -1,8 +1,19 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Ui;
 
+use Spipu\UiBundle\Exception\GridException;
 use Spipu\UiBundle\Service\Ui\Definition\GridDefinitionInterface;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UiBundle\Entity\Grid;
@@ -54,7 +65,7 @@ class UserGrid implements GridDefinitionInterface
 
     /**
      * @return Grid\Grid
-     * @throws \Spipu\UiBundle\Exception\GridException
+     * @throws GridException
      */
     public function getDefinition(): Grid\Grid
     {
@@ -67,7 +78,7 @@ class UserGrid implements GridDefinitionInterface
 
     /**
      * @return void
-     * @throws \Spipu\UiBundle\Exception\GridException
+     * @throws GridException
      */
     private function prepareGrid(): void
     {
@@ -102,7 +113,7 @@ class UserGrid implements GridDefinitionInterface
                             ->setOptions($this->optionsYesNo)
                             ->setTemplateField('@SpipuUi/grid/field/yes-no.html.twig')
                     )
-                    ->setFilter((new Grid\ColumnFilter(true, true)))
+                    ->setFilter((new Grid\ColumnFilter(true, false)))
                     ->useSortable()
             )
             ->addColumn(

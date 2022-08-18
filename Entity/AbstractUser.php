@@ -1,5 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Entity;
 
@@ -19,7 +29,7 @@ abstract class AbstractUser implements UserInterface
 {
     use TimestampableTrait;
 
-    const DEFAULT_ROLE = 'ROLE_USER';
+    public const DEFAULT_ROLE = 'ROLE_USER';
 
     /**
      * @var int|null
@@ -141,6 +151,14 @@ abstract class AbstractUser implements UserInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getUserIdentifier(): ?string
+    {
+        return $this->getUsername();
+    }
+
+    /**
      * Set the username
      * @param string $username
      * @return UserInterface
@@ -240,7 +258,7 @@ abstract class AbstractUser implements UserInterface
      * Get the roles
      * @return string[]
      */
-    public function getRoles(): ?array
+    public function getRoles(): array
     {
         if (empty($this->roles)) {
             return [static::DEFAULT_ROLE];
@@ -329,10 +347,10 @@ abstract class AbstractUser implements UserInterface
 
     /**
      * Constructs the object
-     * @param string $serialized
+     * @param string $data
      * @return void
      */
-    public function unserialize($serialized): void  //@codingStandardsIgnoreLine
+    public function unserialize($data): void  //@codingStandardsIgnoreLine
     {
         list(
             $this->id,
@@ -347,7 +365,7 @@ abstract class AbstractUser implements UserInterface
             $this->active,
             $this->createdAt,
             $this->updatedAt
-        ) = unserialize($serialized, ['allowed_classes' => false]);
+        ) = unserialize($data, ['allowed_classes' => false]);
     }
 
     /**

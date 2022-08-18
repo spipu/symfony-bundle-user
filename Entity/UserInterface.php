@@ -1,5 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Entity;
 
@@ -8,8 +18,14 @@ use Serializable;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\TimestampableInterface;
 use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-interface UserInterface extends EntityInterface, BaseUserInterface, TimestampableInterface, Serializable
+interface UserInterface extends
+    EntityInterface,
+    BaseUserInterface,
+    TimestampableInterface,
+    Serializable,
+    PasswordAuthenticatedUserInterface
 {
     /**
      * Get the PK id
@@ -29,6 +45,23 @@ interface UserInterface extends EntityInterface, BaseUserInterface, Timestampabl
      * @return self
      */
     public function setEmail(string $email): self;
+
+    /**
+     * Temporary definition, will be removed in SF6 version, when the UserInterface will be clean
+     * @return string|null
+     */
+    public function getPassword(): ?string;
+
+    /**
+     * Temporary definition, will be fixed (strict) in SF6 version, when the UserInterface will be clean
+     * @return string
+     */
+    public function getUsername();
+
+    /**
+     * @return string|null
+     */
+    public function getUserIdentifier(): ?string;
 
     /**
      * Set the username

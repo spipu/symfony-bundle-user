@@ -10,12 +10,11 @@ services:
     Spipu\UserBundle\Service\MailConfigurationInterface:
         class:  Spipu\UserBundle\Service\MailConfiguration
         public: true
+        autowire: true
 
     Spipu\UserBundle\Repository\UserRepository:
+        autowire: true
         tags: ['doctrine.repository_service']
-        arguments:
-            - '@doctrine'
-            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
 
     # Role Definition
     Spipu\UserBundle\Service\RoleDefinition:
@@ -24,54 +23,12 @@ services:
 
     # Fixture
     Spipu\UserBundle\Fixture\FirstUserFixture:
+        autowire: true
         tags: ['spipu.fixture']
-        arguments:
-            - '@doctrine.orm.default_entity_manager'
-            - '@security.user_password_encoder.generic'
-            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-            - '@Spipu\UserBundle\Repository\UserRepository'
 
     # Internal Services
     Spipu\UserBundle\Service\UserTokenManager:
+        autowire: true
         arguments:
-            - '@doctrine.orm.default_entity_manager'
-            - '%kernel.secret%'
+            $keySecret: '%kernel.secret%'
 
-    Spipu\UserBundle\Ui\CreationForm:
-        arguments:
-            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-            - '@security.user_password_encoder.generic'
-
-    Spipu\UserBundle\Ui\NewPasswordForm:
-        arguments:
-            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-            - '@security.user_password_encoder.generic'
-
-    Spipu\UserBundle\Ui\PasswordForm:
-        arguments:
-            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-            - '@security.user_password_encoder.generic'
-
-    Spipu\UserBundle\Ui\ProfileForm:
-        arguments:
-            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-
-    Spipu\UserBundle\Ui\RecoveryForm:
-        arguments:
-            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-
-    Spipu\UserBundle\Ui\UserGrid:
-        arguments:
-            - '@Spipu\UserBundle\Service\ModuleConfigurationInterface'
-            - '@security.token_storage'
-            - '@Spipu\UiBundle\Form\Options\YesNo'
-
-    security.authentication.provider.dao:
-        class: Spipu\UserBundle\Security\UserAuthenticationProvider
-        arguments:
-            - ~
-            - ~
-            - ~
-            - '@security.encoder_factory'
-            - '%security.authentication.hide_user_not_found%'
-            - '@doctrine.orm.default_entity_manager'
