@@ -9,9 +9,8 @@
             "email": "contact@minguet.fr"
         }
     ],
-    "version": "1.0",
     "require": {
-        "spipu/ui-bundle": "*"
+        "spipu/ui-bundle": "^1.0"
     },
     "autoload": {
         "psr-4": {
