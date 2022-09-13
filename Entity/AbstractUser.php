@@ -322,50 +322,63 @@ abstract class AbstractUser implements UserInterface
     }
 
     /**
-     * String representation of object
      * @return string
      */
     public function serialize(): string
     {
-        return serialize(
-            [
-                $this->getId(),
-                $this->getEmail(),
-                $this->getUsername(),
-                $this->getPassword(),
-                $this->getFirstName(),
-                $this->getLastName(),
-                $this->getRoles(),
-                $this->getNbLogin(),
-                $this->getNbTryLogin(),
-                $this->getActive(),
-                $this->getCreatedAt(),
-                $this->getUpdatedAt()
-            ]
-        );
+        return serialize($this->__serialize());
     }
 
     /**
-     * Constructs the object
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return [
+            'id'         => $this->getId(),
+            'email'      => $this->email,
+            'username'   => $this->username,
+            'password'   => $this->password,
+            'firstName'  => $this->firstName,
+            'lastName'   => $this->lastName,
+            'roles'      => $this->roles,
+            'nbLogin'    => $this->nbLogin,
+            'nbTryLogin' => $this->nbTryLogin,
+            'active'     => $this->active,
+            'createdAt'  => $this->createdAt,
+            'updatedAt'  => $this->updatedAt,
+        ];
+    }
+
+    /**
      * @param string $data
      * @return void
      */
     public function unserialize($data): void  //@codingStandardsIgnoreLine
     {
-        list(
-            $this->id,
-            $this->email,
-            $this->username,
-            $this->password,
-            $this->firstName,
-            $this->lastName,
-            $this->roles,
-            $this->nbLogin,
-            $this->nbTryLogin,
-            $this->active,
-            $this->createdAt,
-            $this->updatedAt
-        ) = unserialize($data, ['allowed_classes' => false]);
+        $this->__unserialize(
+            unserialize($data, ['allowed_classes' => false])
+        );
+    }
+
+    /**
+     * @param array $data
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->id           = $data['id'];
+        $this->email        = $data['email'];
+        $this->username     = $data['username'];
+        $this->password     = $data['password'];
+        $this->firstName    = $data['firstName'];
+        $this->lastName     = $data['lastName'];
+        $this->roles        = $data['roles'];
+        $this->nbLogin      = $data['nbLogin'];
+        $this->nbTryLogin   = $data['nbTryLogin'];
+        $this->active       = $data['active'];
+        $this->createdAt    = $data['createdAt'];
+        $this->updatedAt    = $data['updatedAt'];
     }
 
     /**
