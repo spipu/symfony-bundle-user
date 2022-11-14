@@ -1,5 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+/**
+ * This file is part of a Spipu Bundle
+ *
+ * (c) Laurent Minguet
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Spipu\UserBundle\Entity;
 
@@ -141,6 +151,14 @@ abstract class AbstractUser implements UserInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getUserIdentifier(): ?string
+    {
+        return $this->getUsername();
+    }
+
+    /**
      * Set the username
      * @param string $username
      * @return UserInterface
@@ -240,7 +258,7 @@ abstract class AbstractUser implements UserInterface
      * Get the roles
      * @return string[]
      */
-    public function getRoles(): ?array
+    public function getRoles(): array
     {
         if (empty($this->roles)) {
             return [static::DEFAULT_ROLE];
@@ -304,50 +322,63 @@ abstract class AbstractUser implements UserInterface
     }
 
     /**
-     * String representation of object
      * @return string
      */
     public function serialize(): string
     {
-        return serialize(
-            [
-                $this->getId(),
-                $this->getEmail(),
-                $this->getUsername(),
-                $this->getPassword(),
-                $this->getFirstName(),
-                $this->getLastName(),
-                $this->getRoles(),
-                $this->getNbLogin(),
-                $this->getNbTryLogin(),
-                $this->getActive(),
-                $this->getCreatedAt(),
-                $this->getUpdatedAt()
-            ]
+        return serialize($this->__serialize());
+    }
+
+    /**
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return [
+            'id'         => $this->getId(),
+            'email'      => $this->email,
+            'username'   => $this->username,
+            'password'   => $this->password,
+            'firstName'  => $this->firstName,
+            'lastName'   => $this->lastName,
+            'roles'      => $this->roles,
+            'nbLogin'    => $this->nbLogin,
+            'nbTryLogin' => $this->nbTryLogin,
+            'active'     => $this->active,
+            'createdAt'  => $this->createdAt,
+            'updatedAt'  => $this->updatedAt,
+        ];
+    }
+
+    /**
+     * @param string $data
+     * @return void
+     */
+    public function unserialize($data): void  //@codingStandardsIgnoreLine
+    {
+        $this->__unserialize(
+            unserialize($data, ['allowed_classes' => false])
         );
     }
 
     /**
-     * Constructs the object
-     * @param string $serialized
+     * @param array $data
      * @return void
      */
-    public function unserialize($serialized): void  //@codingStandardsIgnoreLine
+    public function __unserialize(array $data): void
     {
-        list(
-            $this->id,
-            $this->email,
-            $this->username,
-            $this->password,
-            $this->firstName,
-            $this->lastName,
-            $this->roles,
-            $this->nbLogin,
-            $this->nbTryLogin,
-            $this->active,
-            $this->createdAt,
-            $this->updatedAt
-        ) = unserialize($serialized, ['allowed_classes' => false]);
+        $this->id           = $data['id'];
+        $this->email        = $data['email'];
+        $this->username     = $data['username'];
+        $this->password     = $data['password'];
+        $this->firstName    = $data['firstName'];
+        $this->lastName     = $data['lastName'];
+        $this->roles        = $data['roles'];
+        $this->nbLogin      = $data['nbLogin'];
+        $this->nbTryLogin   = $data['nbTryLogin'];
+        $this->active       = $data['active'];
+        $this->createdAt    = $data['createdAt'];
+        $this->updatedAt    = $data['updatedAt'];
     }
 
     /**
