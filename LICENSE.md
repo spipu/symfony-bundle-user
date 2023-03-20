@@ -1,7 +1,7 @@
 The MIT License (MIT)
 =====================
 
-Copyright © 2019 Laurent Minguet
+Copyright © 2023 Laurent Minguet
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation

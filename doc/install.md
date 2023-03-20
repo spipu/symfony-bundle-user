@@ -6,7 +6,7 @@
 
 You must use Composer to install this symfony bundle.
 
-You must already have created a Symfony 4.3 project.
+You must already have created a Symfony 5.4 project.
 
 You have just to launch the following command on the root folder of your project:
 
