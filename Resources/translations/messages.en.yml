@@ -27,6 +27,7 @@ spipu:
             disable: "Disable"
             recover: "Recover"
             reset:   "Password"
+            save_acl: "Save ACL"
 
         form:
             profile:    "Edit My Profile"

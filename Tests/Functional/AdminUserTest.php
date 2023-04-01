@@ -216,6 +216,22 @@ class AdminUserTest extends WebTestCase
         $this->assertCrawlerHasFieldValue($crawler, 'active', 'No');
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Delete")')->count());
 
+        // Submit ACL
+        $client->submit(
+            $crawler->filter('button:contains("Save ACL")')->form(),
+            [
+                'acl[1]' => 'ROLE_ADMIN',
+            ]
+        );
+        $this->assertTrue($client->getResponse()->isRedirect());
+
+        // Show page
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertGreaterThan(0, $crawler->filter('h1:contains("Show User")')->count());
+        $this->assertCrawlerHasAlert($crawler, 'The item has been updated');
+        $this->assertCrawlerHasFieldValue($crawler, 'email', 'user3@test.fr');
+
         // Delete the account
         $client->submit($crawler->filter('button:contains("Delete")')->form());
         $this->assertTrue($client->getResponse()->isRedirect());

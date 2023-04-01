@@ -18,6 +18,7 @@ class UserRepositoryTest extends TestCase
         $this->assertInstanceOf(ServiceEntityRepository::class, $repository);
 
         $this->assertNull($repository->loadUserByIdentifier('test'));
+        $this->assertNull($repository->loadUserByUsername('test'));
 
         /** @var MockObject $query */
         $query = $repository->createQueryBuilder('u')->getQuery();

@@ -69,16 +69,15 @@ class UserLoginSubscriber implements EventSubscriberInterface
     {
         $passport = $event->getPassport();
 
-        if (null === $passport) {
-            return;
-        }
-        $badges = $passport->getBadges();
-        if (is_array($passport->getBadges()) && isset($badges[UserBadge::class])) {
-            /** @var UserInterface $user */
-            $user = $badges[UserBadge::class]->getUser();
-            $user->setNbTryLogin($user->getNbTryLogin() + 1);
+        if ($passport !== null) {
+            $badges = $passport->getBadges();
+            if (is_array($passport->getBadges()) && isset($badges[UserBadge::class])) {
+                /** @var UserInterface $user */
+                $user = $badges[UserBadge::class]->getUser();
+                $user->setNbTryLogin($user->getNbTryLogin() + 1);
 
-            $this->entityManager->flush();
+                $this->entityManager->flush();
+            }
         }
     }
 }
