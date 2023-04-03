@@ -73,6 +73,9 @@ class AdminUserController extends AbstractController
         $manager = $gridFactory->create($userGrid);
         $manager->setRoute('spipu_user_admin_list');
         $manager->validate();
+        if ($manager->needRefresh()) {
+            return $this->redirectToRoute('spipu_user_admin_list');
+        }
 
         return $this->render('@SpipuUser/admin/index.html.twig', ['manager' => $manager]);
     }

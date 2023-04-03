@@ -4,6 +4,7 @@ namespace Spipu\UserBundle\Tests\Functional;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
 use Spipu\UiBundle\Tests\UiWebTestCaseTrait;
+use Symfony\Component\DomCrawler\Crawler;
 
 class AdminUserTest extends WebTestCase
 {
@@ -326,6 +327,26 @@ class AdminUserTest extends WebTestCase
         $crawler = $client->clickLink('Users');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $configOptions = $crawler->filter('select[data-grid-role=config-select] option');
+        $this->assertSame(1, $configOptions->count());
+        $this->assertSame('default', $configOptions->first()->text());
+        $client->clickLink('Create a new display');
+
+        $form = $crawler->filter('button[data-grid-role=config-create-submit]')->form();
+        $client->submit($form, ['cf[action]' => 'create', 'cf[name]' => 'My display']);
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $configOptions = $crawler->filter('select[data-grid-role=config-select] option');
+        $options = [];
+        $configOptions->each(function (Crawler $configOption) use (&$options) {
+            $options[strtolower(trim($configOption->text()))] = !empty($configOption->attr('selected'));
+        });
+        ksort($options);
+        $this->assertSame(['default' => false, 'my display' => true], $options);
     }
 
     public function testBadAccess()
