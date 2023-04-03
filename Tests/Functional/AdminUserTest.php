@@ -1,10 +1,14 @@
-<?php
+<?php /** @noinspection CssInvalidPseudoSelector */
+
 namespace Spipu\UserBundle\Tests\Functional;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
+use Spipu\UiBundle\Tests\UiWebTestCaseTrait;
 
 class AdminUserTest extends WebTestCase
 {
+    use UiWebTestCaseTrait;
+
     public function testBadAcl()
     {
         $client = static::createClient();
@@ -39,38 +43,11 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(0, $crawler->filter('a:contains("Users")')->count());
     }
 
-    public function testAdmin()
+    public function testAdminCrud()
     {
         $client = static::createClient();
 
-        // Home page not logged
-        $crawler = $client->request('GET', '/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Log In")')->count());
-        $this->assertEquals(0, $crawler->filter('a:contains("Log Out")')->count());
-        $this->assertEquals(0, $crawler->filter('a:contains("Users")')->count());
-
-        // Login page
-        $crawler = $client->clickLink("Log In");
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertGreaterThan(0, $crawler->filter('button:contains("Log In")')->count());
-
-        // Login
-        $client->submit(
-            $crawler->selectButton('Log In')->form(),
-            [
-                '_username' => 'admin',
-                '_password' => 'password'
-            ]
-        );
-        $this->assertTrue($client->getResponse()->isRedirect());
-
-        // Home page logged with "Users" access
-        $crawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->filter('a:contains("Log In")')->count());
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Log Out")')->count());
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Users")')->count());
+        $this->adminLogin($client, 'Users');
 
         // Users List
         $crawler = $client->clickLink('Users');
@@ -109,7 +86,7 @@ class AdminUserTest extends WebTestCase
         );
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        // Get the sent email
+        // Get the email
         $this->assertHasEmail('no-reply@mysite.fr', 'user2@test.fr', 'Account Recovery', 'user2@test.fr');
 
         // Show user page - Enabled
@@ -161,7 +138,7 @@ class AdminUserTest extends WebTestCase
         $client->clickLink('Password');
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        // Get the sent email
+        // Get the email
         $this->assertHasEmail('no-reply@mysite.fr', 'user2@test.fr', 'Account Recovery', 'user2@test.fr');
 
         // Show user page - Reset
@@ -262,7 +239,7 @@ class AdminUserTest extends WebTestCase
             $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
         }
 
-        // The mass action "Enable" must exists
+        // The mass action "Enable" must exist
         $linkAction = $crawler->filter('span[data-grid-role="action"]:contains("Enable")');
         $this->assertEquals(1, $linkAction->count());
         $linkUrl = $linkAction->first()->attr('data-grid-href');
@@ -281,7 +258,7 @@ class AdminUserTest extends WebTestCase
             $this->assertEquals(1, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
         }
 
-        // The mass action "Disable" must exists
+        // The mass action "Disable" must exist
         $linkAction = $crawler->filter('span[data-grid-role="action"]:contains("Disable")');
         $this->assertEquals(1, $linkAction->count());
         $linkUrl = $linkAction->first()->attr('data-grid-href');
@@ -295,7 +272,7 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("' . count($userIds) . ' items have been disabled")')->count());
 
-        // The users must be disables
+        // The users must be disabled
         foreach ($userIds as $userId) {
             $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
         }
@@ -319,7 +296,6 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("You can not disable yourself!")')->count());
         $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("0 items have been disabled")')->count());
 
-
         // Post the mass action "Disable" on empty list
         $client->request('POST', $linkUrl, ['selected' => json_encode([])]);
         $this->assertTrue($client->getResponse()->isRedirect());
@@ -340,38 +316,23 @@ class AdminUserTest extends WebTestCase
         $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
     }
 
+    public function testAdminGridConfig()
+    {
+        $client = static::createClient();
+
+        $this->adminLogin($client, 'Users');
+
+        // Users List
+        $crawler = $client->clickLink('Users');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+    }
+
     public function testBadAccess()
     {
         $client = static::createClient();
 
-        // Home page not logged
-        $crawler = $client->request('GET', '/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Log In")')->count());
-        $this->assertEquals(0, $crawler->filter('a:contains("Log Out")')->count());
-        $this->assertEquals(0, $crawler->filter('a:contains("Users")')->count());
-
-        // Login page
-        $crawler = $client->clickLink("Log In");
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertGreaterThan(0, $crawler->filter('button:contains("Log In")')->count());
-
-        // Login
-        $client->submit(
-            $crawler->selectButton('Log In')->form(),
-            [
-                '_username' => 'admin',
-                '_password' => 'password'
-            ]
-        );
-        $this->assertTrue($client->getResponse()->isRedirect());
-
-        // Home page logged with "Users" access
-        $crawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->filter('a:contains("Log In")')->count());
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Log Out")')->count());
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Users")')->count());
+        $this->adminLogin($client, 'Users');
 
         $client->request('GET', '/user/show/999999999');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
