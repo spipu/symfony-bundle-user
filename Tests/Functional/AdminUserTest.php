@@ -323,30 +323,179 @@ class AdminUserTest extends WebTestCase
 
         $this->adminLogin($client, 'Users');
 
-        // Users List
+        // Users List - Only default display is available
         $crawler = $client->clickLink('Users');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
-        $configOptions = $crawler->filter('select[data-grid-role=config-select] option');
-        $this->assertSame(1, $configOptions->count());
-        $this->assertSame('default', $configOptions->first()->text());
-        $client->clickLink('Create a new display');
+        $options = $this->getGridDisplayList($crawler);
+        $expected = ['default' => ['id' => 1, 'selected' => true]];
+        $this->assertSame($expected, $options);
 
+        // Create new display - No name
+        $client->clickLink('Create a new display');
+        $form = $crawler->filter('button[data-grid-role=config-create-submit]')->form();
+        $form->setValues(['cf[action]' => 'create', 'cf[name]' => '']);
+        $client->request('GET', str_replace('&cf%5Bname%5D=', '', $form->getUri()));
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page - alert "Name is missing"
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'Name is missing');
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $options = $this->getGridDisplayList($crawler);
+        $expected = ['default' => ['id' => 1, 'selected' => true]];
+        $this->assertSame($expected, $options);
+
+        // Create new display - bad name
+        $client->clickLink('Create a new display');
+        $form = $crawler->filter('button[data-grid-role=config-create-submit]')->form();
+        $client->submit($form, ['cf[action]' => 'create', 'cf[name]' => '<b> </b>']);
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page - alert "Name is invalid"
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'Name is invalid');
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $options = $this->getGridDisplayList($crawler);
+        $expected = ['default' => ['id' => 1, 'selected' => true]];
+        $this->assertSame($expected, $options);
+
+        // Create new display - good name
+        $client->clickLink('Create a new display');
         $form = $crawler->filter('button[data-grid-role=config-create-submit]')->form();
         $client->submit($form, ['cf[action]' => 'create', 'cf[name]' => 'My display']);
         $this->assertTrue($client->getResponse()->isRedirect());
         $crawler = $client->followRedirect();
 
-        // Show page
+        // Show page - New display is selected
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
-        $configOptions = $crawler->filter('select[data-grid-role=config-select] option');
-        $options = [];
-        $configOptions->each(function (Crawler $configOption) use (&$options) {
-            $options[strtolower(trim($configOption->text()))] = !empty($configOption->attr('selected'));
-        });
-        ksort($options);
-        $this->assertSame(['default' => false, 'my display' => true], $options);
+        $options = $this->getGridDisplayList($crawler);
+        $expected = ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]];
+        $this->assertSame($expected, $options);
+
+        // Select display - default
+        $form = $crawler->filter('form[data-grid-role=config-select-form]')->form();
+        $client->submit($form, ['cf[action]' => 'select', 'cf[id]' => 1]);
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page - Default display is selected
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $options = $this->getGridDisplayList($crawler);
+        $expected = ['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]];
+        $this->assertSame($expected, $options);
+
+        // Select display - wrong display id
+        $form = $crawler->filter('form[data-grid-role=config-select-form]')->form();
+        $form->setValues(['cf[action]' => 'select', 'cf[id]' => '1']);
+        $client->request('GET', str_replace('=1', '=foo', $form->getUri()));
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page - alert "Id is invalid"
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'Id is invalid');
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $options = $this->getGridDisplayList($crawler);
+        $this->assertSame(2, count($options));
+
+        // Select display - wrong display id
+        $form = $crawler->filter('form[data-grid-role=config-select-form]')->form();
+        $form->setValues(['cf[action]' => 'select', 'cf[id]' => '1']);
+        $client->request('GET', str_replace('=1', '=3', $form->getUri()));
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page - alert "Id is unknown"
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'Id is unknown');
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $options = $this->getGridDisplayList($crawler);
+        $this->assertSame(2, count($options));
+
+        // Select display - New display
+        $form = $crawler->filter('form[data-grid-role=config-select-form]')->form();
+        $client->submit($form, ['cf[action]' => 'select', 'cf[id]' => 2]);
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page - New display is selected
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $options = $this->getGridDisplayList($crawler);
+        $expected = ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]];
+        $this->assertSame($expected, $options);
+
+        // Configure new display
+        $client->submit(
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+                'cf[columns][3]' => '----',
+                'cf[columns][4]' => 'middle_name',
+                'cf[columns][5]' => 'is_active',
+                'cf[columns][6]' => 'nb_login',
+                'cf[columns][7]' => 'updated_at',
+                'cf[sort][column]' => 'username',
+                'cf[sort][order]'  => 'desc',
+                'cf[filters][is_active]' => '0',
+            ]
+        );
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page - New display is selected
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('2000 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $options = $this->getGridDisplayList($crawler);
+        $expected = ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]];
+        $this->assertSame($expected, $options);
+
+        // Delete display - default display
+        $form = $crawler->filter('form[data-grid-role=config-form]')->form();
+        $form->setValues(['cf[action]' => 'delete', 'cf[id]' => '1']);
+        $client->request('GET', $form->getUri());
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page - alert "You can not delete the default display"
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'You can not delete the default display');
+        $options = $this->getGridDisplayList($crawler);
+        $this->assertSame(2, count($options));
+
+        // Delete display - New display
+        $form = $crawler->filter('form[data-grid-role=config-form]')->form();
+        $form->setValues(['cf[action]' => 'delete', 'cf[id]' => '2']);
+        $client->request('GET', $form->getUri());
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Only default display is available
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $options = $this->getGridDisplayList($crawler);
+        $expected = ['default' => ['id' => 1, 'selected' => true]];
+        $this->assertSame($expected, $options);
+
+        // Bad action
+        $form = $crawler->filter('button[data-grid-role=config-create-submit]')->form();
+        $form->setValues(['cf[action]' => 'foo']);
+        $client->request('GET', $form->getUri());
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+
+        // Show page - alert "Unknown grid config action: foo"
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'Unknown grid config action: foo');
+        $options = $this->getGridDisplayList($crawler);
+        $expected = ['default' => ['id' => 1, 'selected' => true]];
+        $this->assertSame($expected, $options);
     }
 
     public function testBadAccess()
@@ -396,5 +545,23 @@ class AdminUserTest extends WebTestCase
 
         $client->request('GET', '/user/edit/999999999');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @param Crawler|null $crawler
+     * @return array
+     */
+    public function getGridDisplayList(?Crawler $crawler): array
+    {
+        $configOptions = $crawler->filter('select[data-grid-role=config-select] option');
+        $options = [];
+        $configOptions->each(function (Crawler $configOption) use (&$options) {
+            $options[strtolower(trim($configOption->text()))] = [
+                'id' => (int) $configOption->attr('value'),
+                'selected' => !empty($configOption->attr('selected')),
+            ];
+        });
+        ksort($options);
+        return $options;
     }
 }
