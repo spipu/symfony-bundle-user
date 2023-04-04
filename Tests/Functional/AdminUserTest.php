@@ -403,7 +403,236 @@ class AdminUserTest extends WebTestCase
             ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
         );
 
-        // Configure new display
+        // Configure new display - bad data - column is not a array
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns]' => 'foo',
+                'cf[sort][column]' => 'username',
+                'cf[sort][order]'  => 'desc',
+                'cf[filters][is_active]' => '0',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - column name is not a string
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0][0]' => 1,
+                'cf[sort][column]' => 'username',
+                'cf[sort][order]'  => 'desc',
+                'cf[filters][is_active]' => '0',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - column is unknown
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'foo',
+                'cf[sort][column]' => 'username',
+                'cf[sort][order]'  => 'desc',
+                'cf[filters][is_active]' => '0',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - column is empty
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => '----',
+                'cf[sort][column]' => 'username',
+                'cf[sort][order]'  => 'desc',
+                'cf[filters][is_active]' => '0',
+            ],
+            'you must at least display one column',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - sort is not an array
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+                'cf[sort]' => 'foo',
+                'cf[filters][is_active]' => '0',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - sort.column is missing
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+                'cf[sort][order]'  => 'asc',
+                'cf[filters][is_active]' => '0',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - sort.order is missing
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+                'cf[sort][column]' => 'username',
+                'cf[filters][is_active]' => '0',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - sort.column is unknown
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+                'cf[sort][column]' => 'foo',
+                'cf[sort][order]'  => 'asc',
+                'cf[filters][is_active]' => '0',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - sort.order is invalid
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+                'cf[sort][column]' => 'username',
+                'cf[sort][order]'  => 'foo',
+                'cf[filters][is_active]' => '0',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - filters is not an array
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+                'cf[sort][column]' => 'username',
+                'cf[sort][order]'  => 'desc',
+                'cf[filters]' => 'foo',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - bad data - filters.column name is unknown
+        $this->submitFormWithWrongValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+                'cf[sort][column]' => 'username',
+                'cf[sort][order]'  => 'desc',
+                'cf[filters][foo]' => 'bar',
+            ],
+            'bad data',
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - ok but with no sort and no filter
+        $this->submitFormWithGoodValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+            ],
+            '2002 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - ok but without no sort
+        $this->submitFormWithGoodValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-form]')->form(),
+            [
+                'cf[action]' => 'update',
+                'cf[id]'     => '2',
+                'cf[columns][0]' => 'id',
+                'cf[columns][1]' => 'username',
+                'cf[columns][2]' => 'email',
+                'cf[filters][is_active]' => '0',
+            ],
+            '2000 items found',
+            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+        );
+
+        // Configure new display - OK
         $this->submitFormWithGoodValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
