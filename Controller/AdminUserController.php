@@ -72,8 +72,7 @@ class AdminUserController extends AbstractController
     {
         $manager = $gridFactory->create($userGrid);
         $manager->setRoute('spipu_user_admin_list');
-        $manager->validate();
-        if ($manager->needRefresh()) {
+        if ($manager->validate()) {
             return $this->redirectToRoute('spipu_user_admin_list');
         }
 
