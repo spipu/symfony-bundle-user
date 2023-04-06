@@ -52,13 +52,15 @@ class AdminUserTest extends WebTestCase
         // Users List
         $crawler = $client->clickLink('Users');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
 
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Advanced Search")')->count());
 
         // Users List with filter
         $crawler = $this->submitGridFilter($client, $crawler, ['fl[username]' => 'test2']);
-        $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("No item found")')->count());
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(0, $gridProperties['count']['nb']);
         $this->assertGreaterThan(0, $crawler->filter('a:contains("Create")')->count());
 
         // Reset filter
@@ -222,7 +224,8 @@ class AdminUserTest extends WebTestCase
 
         // Filter on ids
         $crawler = $this->submitGridFilter($client, $crawler, ['fl[id][from]' => '11', 'fl[id][to]' => '52', 'fl[is_active]' => '0']);
-        $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("42 items found")')->count());
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(42, $gridProperties['count']['nb']);
 
         // Reset the filter
         $crawler = $this->submitGridFilter($client, $crawler, ['fl[id][from]' => '', 'fl[id][to]' => '', 'fl[is_active]' => '']);
@@ -307,7 +310,8 @@ class AdminUserTest extends WebTestCase
 
         // Reset Users List with quick search
         $crawler = $this->submitGridQuickSearch($client, $crawler, 'id', '');
-        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
     }
 
     public function testAdminGridConfig()
@@ -319,83 +323,93 @@ class AdminUserTest extends WebTestCase
         // Users List - Only default display is available
         $crawler = $client->clickLink('Users');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
-        $options = $this->getGridConfigDisplayList($crawler);
-        $expected = ['default' => ['id' => 1, 'selected' => true]];
-        $this->assertSame($expected, $options);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true]], $gridProperties['display']);
+
 
         // Create new display - Name is missing
         $client->clickLink('Create a new display');
-        $crawler = $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('button[data-grid-role=config-create-submit]')->form(),
-            ['cf[action]' => 'create'],
-            'Name is missing',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => true]]
+            ['cf[action]' => 'create']
         );
+        $this->assertCrawlerHasAlert($crawler, 'Name is missing');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true]], $gridProperties['display']);
 
         // Create new display - Name is invalid
         $client->clickLink('Create a new display');
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('button[data-grid-role=config-create-submit]')->form(),
-            ['cf[action]' => 'create', 'cf[name]' => '<b> </b>'],
-            'Name is invalid',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => true]]
+            ['cf[action]' => 'create', 'cf[name]' => '<b> </b>']
         );
+        $this->assertCrawlerHasAlert($crawler, 'Name is invalid');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true]], $gridProperties['display']);
 
         // Create new display - good name
         $client->clickLink('Create a new display');
-        $this->submitGridConfigWithGoodValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('button[data-grid-role=config-create-submit]')->form(),
-            ['cf[action]' => 'create', 'cf[name]' => 'My display'],
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ['cf[action]' => 'create', 'cf[name]' => 'My display']
         );
+        $this->assertCrawlerHasNoAlert($crawler);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Select display - default
-        $this->submitGridConfigWithGoodValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-select-form]')->form(),
-            ['cf[action]' => 'select', 'cf[id]' => 1],
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]]
+            ['cf[action]' => 'select', 'cf[id]' => 1]
         );
+        $this->assertCrawlerHasNoAlert($crawler);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]], $gridProperties['display']);
 
         // Select display - id is invalid
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-select-form]')->form(),
-            ['cf[action]' => 'select', 'cf[id]' => 'foo'],
-            'Id is invalid',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]]
+            ['cf[action]' => 'select', 'cf[id]' => 'foo']
         );
+        $this->assertCrawlerHasAlert($crawler, 'Id is invalid');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]], $gridProperties['display']);
 
         // Select display - id is unknown
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-select-form]')->form(),
-            ['cf[action]' => 'select', 'cf[id]' => '3'],
-            'Id is unknown',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]]
+            ['cf[action]' => 'select', 'cf[id]' => '3']
         );
+        $this->assertCrawlerHasAlert($crawler, 'Id is unknown');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]], $gridProperties['display']);
 
         // Select display - New display
-        $this->submitGridConfigWithGoodValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-select-form]')->form(),
-            ['cf[action]' => 'select', 'cf[id]' => 2],
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ['cf[action]' => 'select', 'cf[id]' => 2]
         );
+        $this->assertCrawlerHasNoAlert($crawler);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
-        // Configure new display - bad data - column is not a array
-        $this->submitGridConfigWithWrongValues(
+        // Configure new display - bad data - column is not an array
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -405,14 +419,15 @@ class AdminUserTest extends WebTestCase
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'desc',
                 'cf[filters][is_active]' => '0',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - column name is not a string
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -422,14 +437,15 @@ class AdminUserTest extends WebTestCase
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'desc',
                 'cf[filters][is_active]' => '0',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - column is unknown
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -439,14 +455,15 @@ class AdminUserTest extends WebTestCase
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'desc',
                 'cf[filters][is_active]' => '0',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - column is empty
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -456,14 +473,15 @@ class AdminUserTest extends WebTestCase
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'desc',
                 'cf[filters][is_active]' => '0',
-            ],
-            'you must at least display one column',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'you must at least display one column');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - sort is not an array
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -474,14 +492,15 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][2]' => 'email',
                 'cf[sort]' => 'foo',
                 'cf[filters][is_active]' => '0',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - sort.column is missing
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -492,14 +511,15 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][2]' => 'email',
                 'cf[sort][order]'  => 'asc',
                 'cf[filters][is_active]' => '0',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - sort.order is missing
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -510,14 +530,15 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][2]' => 'email',
                 'cf[sort][column]' => 'username',
                 'cf[filters][is_active]' => '0',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - sort.column is unknown
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -529,14 +550,15 @@ class AdminUserTest extends WebTestCase
                 'cf[sort][column]' => 'foo',
                 'cf[sort][order]'  => 'asc',
                 'cf[filters][is_active]' => '0',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - sort.order is invalid
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -548,14 +570,15 @@ class AdminUserTest extends WebTestCase
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'foo',
                 'cf[filters][is_active]' => '0',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - filters is not an array
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -567,14 +590,15 @@ class AdminUserTest extends WebTestCase
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'desc',
                 'cf[filters]' => 'foo',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - bad data - filters.column name is unknown
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -586,14 +610,15 @@ class AdminUserTest extends WebTestCase
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'desc',
                 'cf[filters][foo]' => 'bar',
-            ],
-            'bad data',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasAlert($crawler, 'bad data');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - ok but with no sort and no filter
-        $this->submitGridConfigWithGoodValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -602,13 +627,15 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
-            ],
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasNoAlert($crawler);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - ok but without no sort
-        $this->submitGridConfigWithGoodValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -618,13 +645,15 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
                 'cf[filters][is_active]' => '0',
-            ],
-            '2000 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasNoAlert($crawler);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2000, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Configure new display - OK
-        $this->submitGridConfigWithGoodValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -641,39 +670,67 @@ class AdminUserTest extends WebTestCase
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'desc',
                 'cf[filters][is_active]' => '0',
-            ],
-            '2000 items found',
-            ['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]]
+            ]
         );
+        $this->assertCrawlerHasNoAlert($crawler);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2000, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
+
+        // Select default display
+        $crawler = $this->submitFormWithSpecificValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-select-form]')->form(),
+            ['cf[action]' => 'select', 'cf[id]' => 1]
+        );
+        $this->assertCrawlerHasNoAlert($crawler);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]], $gridProperties['display']);
 
         // Delete display - default display not allowed
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
-            ['cf[action]' => 'delete', 'cf[id]' => '1'],
-            'You can not delete the default display',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]]
+            ['cf[action]' => 'delete', 'cf[id]' => '1']
         );
+        $this->assertCrawlerHasAlert($crawler, 'You can not delete the default display');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]], $gridProperties['display']);
+
+        // Select new display
+        $crawler = $this->submitFormWithSpecificValues(
+            $client,
+            $crawler->filter('form[data-grid-role=config-select-form]')->form(),
+            ['cf[action]' => 'select', 'cf[id]' => 2]
+        );
+        $this->assertCrawlerHasNoAlert($crawler);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2000, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
 
         // Delete display - New display
-        $this->submitGridConfigWithGoodValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
-            ['cf[action]' => 'delete', 'cf[id]' => '2'],
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => true]]
+            ['cf[action]' => 'delete', 'cf[id]' => '2']
         );
+        $this->assertCrawlerHasNoAlert($crawler);
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true]], $gridProperties['display']);
+        $this->assertSame(2002, $gridProperties['count']['nb']);
 
         // Unknown action
-        $this->submitGridConfigWithWrongValues(
+        $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('button[data-grid-role=config-create-submit]')->form(),
-            ['cf[action]' => 'foo'],
-            'Unknown grid config action: foo',
-            '2002 items found',
-            ['default' => ['id' => 1, 'selected' => true]]
+            ['cf[action]' => 'foo']
         );
+        $this->assertCrawlerHasAlert($crawler, 'Unknown grid config action: foo');
+        $gridProperties = $this->getGridProperties($crawler, 'user');
+        $this->assertSame(2002, $gridProperties['count']['nb']);
+        $this->assertSame(['default' => ['id' => 1, 'selected' => true]], $gridProperties['display']);
     }
 
     public function testBadAccess()
