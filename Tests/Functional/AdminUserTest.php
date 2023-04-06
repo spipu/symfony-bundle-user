@@ -4,9 +4,6 @@ namespace Spipu\UserBundle\Tests\Functional;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
 use Spipu\UiBundle\Tests\UiWebTestCaseTrait;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
 
 class AdminUserTest extends WebTestCase
 {
@@ -60,13 +57,12 @@ class AdminUserTest extends WebTestCase
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Advanced Search")')->count());
 
         // Users List with filter
-        $crawler = $client->submit($crawler->selectButton('Advanced Search')->form(), ['fl[username]' => 'test2']);
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $crawler = $this->submitGridFilter($client, $crawler, ['fl[username]' => 'test2']);
         $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("No item found")')->count());
         $this->assertGreaterThan(0, $crawler->filter('a:contains("Create")')->count());
 
         // Reset filter
-        $client->submit($crawler->selectButton('Advanced Search')->form(), ['fl[username]' => '']);
+        $this->submitGridFilter($client, $crawler, ['fl[username]' => '']);
 
         // Create
         $crawler = $client->clickLink('Create');
@@ -154,11 +150,9 @@ class AdminUserTest extends WebTestCase
         // Users List page
         $crawler = $client->clickLink('Users');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertGreaterThan(0, $crawler->filter('button:contains("Advanced Search")')->count());
 
         // Users List with filter
-        $crawler = $client->submit($crawler->selectButton('Advanced Search')->form(), ['fl[username]' => 'test2']);
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $crawler = $this->submitGridFilter($client, $crawler, ['fl[username]' => 'test2']);
         $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("1 item found")')->count());
         $this->assertEquals(1, $crawler->filter('a:contains("Show")')->count());
 
@@ -224,15 +218,14 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("No item found")')->count());
 
         // Reset the filter
-        $crawler = $client->submit($crawler->selectButton('Advanced Search')->form(), ['fl[username]' => '']);
+        $crawler = $this->submitGridFilter($client, $crawler, ['fl[username]' => '']);
 
         // Filter on ids
-        $crawler = $client->submit($crawler->selectButton('Advanced Search')->form(), ['fl[id][from]' => '11', 'fl[id][to]' => '52', 'fl[is_active]' => '0']);
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $crawler = $this->submitGridFilter($client, $crawler, ['fl[id][from]' => '11', 'fl[id][to]' => '52', 'fl[is_active]' => '0']);
         $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("42 items found")')->count());
 
         // Reset the filter
-        $crawler = $client->submit($crawler->selectButton('Advanced Search')->form(), ['fl[id][from]' => '', 'fl[id][to]' => '', 'fl[is_active]' => '']);
+        $crawler = $this->submitGridFilter($client, $crawler, ['fl[id][from]' => '', 'fl[id][to]' => '', 'fl[is_active]' => '']);
 
         // The ids to disable
         $userIds = [2, 3];
@@ -309,13 +302,11 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("You must select at least one item")')->count());
 
         // Users List with quick search
-        $crawler = $client->submit($crawler->selectButton('Search')->form(), ['qs[field]' => 'email', 'qs[value]' => 'user_42@']);
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $crawler = $this->submitGridQuickSearch($client, $crawler, 'email', 'user_42@');
         $this->assertEquals(1, $crawler->filter('span[data-grid-role=total-rows]:contains("1 item found")')->count());
 
         // Reset Users List with quick search
-        $crawler = $client->submit($crawler->selectButton('Search')->form(), ['qs[field]' => 'id', 'qs[value]' => '']);
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $crawler = $this->submitGridQuickSearch($client, $crawler, 'id', '');
         $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
     }
 
