@@ -329,13 +329,13 @@ class AdminUserTest extends WebTestCase
         $crawler = $client->clickLink('Users');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertSame('2002 items found', $crawler->filter('span[data-grid-role=total-rows]')->text());
-        $options = $this->getGridDisplayList($crawler);
+        $options = $this->getGridConfigDisplayList($crawler);
         $expected = ['default' => ['id' => 1, 'selected' => true]];
         $this->assertSame($expected, $options);
 
         // Create new display - Name is missing
         $client->clickLink('Create a new display');
-        $crawler = $this->submitFormWithWrongValues(
+        $crawler = $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('button[data-grid-role=config-create-submit]')->form(),
             ['cf[action]' => 'create'],
@@ -346,7 +346,7 @@ class AdminUserTest extends WebTestCase
 
         // Create new display - Name is invalid
         $client->clickLink('Create a new display');
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('button[data-grid-role=config-create-submit]')->form(),
             ['cf[action]' => 'create', 'cf[name]' => '<b> </b>'],
@@ -357,7 +357,7 @@ class AdminUserTest extends WebTestCase
 
         // Create new display - good name
         $client->clickLink('Create a new display');
-        $this->submitFormWithGoodValues(
+        $this->submitGridConfigWithGoodValues(
             $client,
             $crawler->filter('button[data-grid-role=config-create-submit]')->form(),
             ['cf[action]' => 'create', 'cf[name]' => 'My display'],
@@ -366,7 +366,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Select display - default
-        $this->submitFormWithGoodValues(
+        $this->submitGridConfigWithGoodValues(
             $client,
             $crawler->filter('form[data-grid-role=config-select-form]')->form(),
             ['cf[action]' => 'select', 'cf[id]' => 1],
@@ -375,7 +375,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Select display - id is invalid
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-select-form]')->form(),
             ['cf[action]' => 'select', 'cf[id]' => 'foo'],
@@ -385,7 +385,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Select display - id is unknown
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-select-form]')->form(),
             ['cf[action]' => 'select', 'cf[id]' => '3'],
@@ -395,7 +395,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Select display - New display
-        $this->submitFormWithGoodValues(
+        $this->submitGridConfigWithGoodValues(
             $client,
             $crawler->filter('form[data-grid-role=config-select-form]')->form(),
             ['cf[action]' => 'select', 'cf[id]' => 2],
@@ -404,7 +404,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - column is not a array
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -421,7 +421,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - column name is not a string
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -438,7 +438,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - column is unknown
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -455,7 +455,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - column is empty
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -472,7 +472,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - sort is not an array
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -490,7 +490,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - sort.column is missing
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -508,7 +508,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - sort.order is missing
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -526,7 +526,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - sort.column is unknown
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -545,7 +545,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - sort.order is invalid
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -564,7 +564,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - filters is not an array
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -583,7 +583,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - bad data - filters.column name is unknown
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -602,7 +602,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - ok but with no sort and no filter
-        $this->submitFormWithGoodValues(
+        $this->submitGridConfigWithGoodValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -617,7 +617,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - ok but without no sort
-        $this->submitFormWithGoodValues(
+        $this->submitGridConfigWithGoodValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -633,7 +633,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Configure new display - OK
-        $this->submitFormWithGoodValues(
+        $this->submitGridConfigWithGoodValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             [
@@ -656,7 +656,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Delete display - default display not allowed
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             ['cf[action]' => 'delete', 'cf[id]' => '1'],
@@ -666,7 +666,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Delete display - New display
-        $this->submitFormWithGoodValues(
+        $this->submitGridConfigWithGoodValues(
             $client,
             $crawler->filter('form[data-grid-role=config-form]')->form(),
             ['cf[action]' => 'delete', 'cf[id]' => '2'],
@@ -675,7 +675,7 @@ class AdminUserTest extends WebTestCase
         );
 
         // Unknown action
-        $this->submitFormWithWrongValues(
+        $this->submitGridConfigWithWrongValues(
             $client,
             $crawler->filter('button[data-grid-role=config-create-submit]')->form(),
             ['cf[action]' => 'foo'],
@@ -732,92 +732,5 @@ class AdminUserTest extends WebTestCase
 
         $client->request('GET', '/user/edit/999999999');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @return array
-     */
-    private function getGridDisplayList(Crawler $crawler): array
-    {
-        $configOptions = $crawler->filter('select[data-grid-role=config-select] option');
-        $options = [];
-        $configOptions->each(function (Crawler $configOption) use (&$options) {
-            $options[strtolower(trim($configOption->text()))] = [
-                'id' => (int) $configOption->attr('value'),
-                'selected' => !empty($configOption->attr('selected')),
-            ];
-        });
-        ksort($options);
-        return $options;
-    }
-
-    private function submitFormWithWrongValues(
-        KernelBrowser $client,
-        Form $form,
-        array $values,
-        string $errorMessage,
-        string $totalLabel,
-        ?array $expectedDisplayList = null
-    ): Crawler {
-        $this->submitFormWithSpecificValues($client, $form, $values);
-
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $crawler = $client->followRedirect();
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertCrawlerHasAlert($crawler, $errorMessage);
-        $this->assertSame($totalLabel, $crawler->filter('span[data-grid-role=total-rows]')->text());
-
-        if ($expectedDisplayList !== null) {
-            $this->assertSame($expectedDisplayList, $this->getGridDisplayList($crawler));
-        }
-
-        return $crawler;
-    }
-
-    private function submitFormWithGoodValues(
-        KernelBrowser $client,
-        Form $form,
-        array $values,
-        string $totalLabel,
-        ?array $expectedDisplayList = null
-    ): Crawler {
-        $this->submitFormWithSpecificValues($client, $form, $values);
-
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $crawler = $client->followRedirect();
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertCrawlerHasNoAlert($crawler);
-        $this->assertSame($totalLabel, $crawler->filter('span[data-grid-role=total-rows]')->text());
-
-        if ($expectedDisplayList !== null) {
-            $this->assertSame($expectedDisplayList, $this->getGridDisplayList($crawler));
-        }
-
-        return $crawler;
-    }
-
-    private function submitFormWithSpecificValues(KernelBrowser $client, Form $form, array $values): Crawler
-    {
-        foreach ($form->all() as $field) {
-            $form->remove($field->getName());
-        }
-
-        $uri = $form->getUri();
-        $query = parse_url($uri, \PHP_URL_QUERY);
-        $currentParameters = [];
-        if ($query) {
-            parse_str($query, $currentParameters);
-        }
-
-        $queryString = http_build_query(array_merge($currentParameters, $values), '', '&');
-
-        $pos = strpos($uri, '?');
-        $base = false === $pos ? $uri : substr($uri, 0, $pos);
-        $uri = rtrim($base.'?'.$queryString, '?');
-
-        return $client->request('GET', $uri);
     }
 }
