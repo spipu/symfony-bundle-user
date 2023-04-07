@@ -326,6 +326,15 @@ class AdminUserTest extends WebTestCase
         $gridProperties = $this->getGridProperties($crawler, 'user');
         $this->assertSame(2002, $gridProperties['count']['nb']);
         $this->assertSame(['default' => ['id' => 1, 'selected' => true]], $gridProperties['display']);
+        $expectedColumns = [
+            'id',
+            'username',
+            'email',
+            'is_active',
+            'nb_login',
+            'updated_at',
+        ];
+        $this->assertSame($expectedColumns, array_keys($gridProperties['columns']));
 
 
         // Create new display - Name is missing
@@ -490,6 +499,7 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
+                'cf[columns][3]' => '----',
                 'cf[sort]' => 'foo',
                 'cf[filters][is_active]' => '0',
             ]
@@ -509,6 +519,7 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
+                'cf[columns][3]' => '----',
                 'cf[sort][order]'  => 'asc',
                 'cf[filters][is_active]' => '0',
             ]
@@ -528,6 +539,7 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
+                'cf[columns][3]' => '----',
                 'cf[sort][column]' => 'username',
                 'cf[filters][is_active]' => '0',
             ]
@@ -547,6 +559,7 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
+                'cf[columns][3]' => '----',
                 'cf[sort][column]' => 'foo',
                 'cf[sort][order]'  => 'asc',
                 'cf[filters][is_active]' => '0',
@@ -567,6 +580,7 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
+                'cf[columns][3]' => '----',
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'foo',
                 'cf[filters][is_active]' => '0',
@@ -587,6 +601,7 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
+                'cf[columns][3]' => '----',
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'desc',
                 'cf[filters]' => 'foo',
@@ -607,6 +622,7 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
+                'cf[columns][3]' => '----',
                 'cf[sort][column]' => 'username',
                 'cf[sort][order]'  => 'desc',
                 'cf[filters][foo]' => 'bar',
@@ -627,12 +643,21 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
+                'cf[columns][3]' => 'nb_login',
+                'cf[columns][4]' => '----',
             ]
         );
         $this->assertCrawlerHasNoAlert($crawler);
         $gridProperties = $this->getGridProperties($crawler, 'user');
         $this->assertSame(2002, $gridProperties['count']['nb']);
         $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
+        $expectedColumns = [
+            'id',
+            'username',
+            'email',
+            'nb_login',
+        ];
+        $this->assertSame($expectedColumns, array_keys($gridProperties['columns']));
 
         // Configure new display - ok but without no sort
         $crawler = $this->submitFormWithSpecificValues(
@@ -644,6 +669,8 @@ class AdminUserTest extends WebTestCase
                 'cf[columns][0]' => 'id',
                 'cf[columns][1]' => 'username',
                 'cf[columns][2]' => 'email',
+                'cf[columns][3]' => 'updated_at',
+                'cf[columns][4]' => '----',
                 'cf[filters][is_active]' => '0',
             ]
         );
@@ -651,6 +678,13 @@ class AdminUserTest extends WebTestCase
         $gridProperties = $this->getGridProperties($crawler, 'user');
         $this->assertSame(2000, $gridProperties['count']['nb']);
         $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
+        $expectedColumns = [
+            'id',
+            'username',
+            'email',
+            'updated_at',
+        ];
+        $this->assertSame($expectedColumns, array_keys($gridProperties['columns']));
 
         // Configure new display - OK
         $crawler = $this->submitFormWithSpecificValues(
@@ -676,6 +710,13 @@ class AdminUserTest extends WebTestCase
         $gridProperties = $this->getGridProperties($crawler, 'user');
         $this->assertSame(2000, $gridProperties['count']['nb']);
         $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
+        $expectedColumns = [
+            'id',
+            'username',
+            'email',
+        ];
+        $this->assertSame($expectedColumns, array_keys($gridProperties['columns']));
+        $this->assertArrayNotHasKey('1', $gridProperties['rows']);
 
         // Select default display
         $crawler = $this->submitFormWithSpecificValues(
@@ -687,6 +728,16 @@ class AdminUserTest extends WebTestCase
         $gridProperties = $this->getGridProperties($crawler, 'user');
         $this->assertSame(2002, $gridProperties['count']['nb']);
         $this->assertSame(['default' => ['id' => 1, 'selected' => true], 'my display' => ['id' => 2, 'selected' => false]], $gridProperties['display']);
+        $expectedColumns = [
+            'id',
+            'username',
+            'email',
+            'is_active',
+            'nb_login',
+            'updated_at',
+        ];
+        $this->assertSame($expectedColumns, array_keys($gridProperties['columns']));
+        $this->assertArrayHasKey('1', $gridProperties['rows']);
 
         // Delete display - default display not allowed
         $crawler = $this->submitFormWithSpecificValues(
@@ -709,6 +760,13 @@ class AdminUserTest extends WebTestCase
         $gridProperties = $this->getGridProperties($crawler, 'user');
         $this->assertSame(2000, $gridProperties['count']['nb']);
         $this->assertSame(['default' => ['id' => 1, 'selected' => false], 'my display' => ['id' => 2, 'selected' => true]], $gridProperties['display']);
+        $expectedColumns = [
+            'id',
+            'username',
+            'email',
+        ];
+        $this->assertSame($expectedColumns, array_keys($gridProperties['columns']));
+        $this->assertArrayNotHasKey('1', $gridProperties['rows']);
 
         // Delete display - New display
         $crawler = $this->submitFormWithSpecificValues(
@@ -720,6 +778,16 @@ class AdminUserTest extends WebTestCase
         $gridProperties = $this->getGridProperties($crawler, 'user');
         $this->assertSame(['default' => ['id' => 1, 'selected' => true]], $gridProperties['display']);
         $this->assertSame(2002, $gridProperties['count']['nb']);
+        $expectedColumns = [
+            'id',
+            'username',
+            'email',
+            'is_active',
+            'nb_login',
+            'updated_at',
+        ];
+        $this->assertSame($expectedColumns, array_keys($gridProperties['columns']));
+        $this->assertArrayHasKey('1', $gridProperties['rows']);
 
         // Unknown action
         $crawler = $this->submitFormWithSpecificValues(
