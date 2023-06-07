@@ -17,13 +17,18 @@ class UserTest extends TestCase
         $this->assertInstanceOf(UserInterface::class, $entity);
         $this->assertSame(1, $entity->getId());
 
+        $entity->setActive(false);
         $entity->setRoles([]);
 
-        $this->assertSame(['ROLE_USER'], $entity->getRoles());
         $this->assertSame(0, $entity->getNbLogin());
         $this->assertSame(0, $entity->getNbTryLogin());
-        $this->assertSame(false, $entity->getActive());
         $this->assertSame(null, $entity->getSalt());
+        $this->assertSame(false, $entity->getActive());
+        $this->assertSame([], $entity->getRoles());
+
+        $entity->setActive(true);
+        $this->assertSame(true, $entity->getActive());
+        $this->assertSame(['ROLE_USER'], $entity->getRoles());
 
         $entity->setEmail('mock_email');
         $entity->setUsername('mock_username');
