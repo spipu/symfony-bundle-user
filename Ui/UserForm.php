@@ -28,16 +28,8 @@ use Symfony\Component\Form\FormInterface;
  */
 class UserForm extends AbstractForm
 {
-    /**
-     * @var YesNo
-     */
-    private $yesNoOptions;
+    private YesNo $yesNoOptions;
 
-    /**
-     * UserForm constructor.
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param YesNo $yesNoOptions
-     */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
         YesNo $yesNoOptions

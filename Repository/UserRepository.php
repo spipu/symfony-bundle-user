@@ -28,11 +28,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserRepository extends ServiceEntityRepository implements UserLoaderInterface
 {
-    /**
-     * UserRepository constructor.
-     * @param ManagerRegistry $registry
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     */
     public function __construct(
         ManagerRegistry $registry,
         ModuleConfigurationInterface $moduleConfiguration
@@ -40,13 +35,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         parent::__construct($registry, trim($moduleConfiguration->getEntityClassName(), '\\'));
     }
 
-    /**
-     * Loads the user for the given username.
-     * This method must return null if the user is not found.
-     *
-     * @param string $identifier
-     * @return UserInterface|null
-     */
     public function loadUserByIdentifier(string $identifier): ?UserInterface //@codingStandardsIgnoreLine
     {
         try {
@@ -61,10 +49,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
     }
 
-    /**
-     * @param string $username
-     * @return UserInterface|null
-     */
     public function loadUserByUsername(string $username): ?UserInterface //@codingStandardsIgnoreLine
     {
         return $this->loadUserByIdentifier($username);

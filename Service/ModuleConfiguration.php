@@ -17,33 +17,11 @@ use Spipu\UserBundle\Entity\UserInterface;
 
 class ModuleConfiguration implements ModuleConfigurationInterface
 {
-    /**
-     * @var string
-     */
-    private $entityName;
+    private string $entityName;
+    private string $entityClassName;
+    private bool $allowAccountCreation;
+    private bool $allowPasswordRecovery;
 
-    /**
-     * @var string
-     */
-    private $entityClassName;
-
-    /**
-     * @var bool
-     */
-    private $allowAccountCreation;
-
-    /**
-     * @var bool
-     */
-    private $allowPasswordRecovery;
-
-    /**
-     * UserTokenService constructor.
-     * @param string $entityName
-     * @param string $entityClassName
-     * @param bool $allowAccountCreation
-     * @param bool $allowPasswordRecovery
-     */
     public function __construct(
         string $entityName,
         string $entityClassName,
@@ -56,41 +34,26 @@ class ModuleConfiguration implements ModuleConfigurationInterface
         $this->allowPasswordRecovery = $allowPasswordRecovery;
     }
 
-    /**
-     * @return bool
-     */
     public function hasAllowAccountCreation(): bool
     {
         return $this->allowAccountCreation;
     }
 
-    /**
-     * @return bool
-     */
     public function hasAllowPasswordRecovery(): bool
     {
         return $this->allowPasswordRecovery;
     }
 
-    /**
-     * @return string
-     */
     public function getEntityName(): string
     {
         return $this->entityName;
     }
 
-    /**
-     * @return string
-     */
     public function getEntityClassName(): string
     {
         return $this->entityClassName;
     }
 
-    /**
-     * @return UserInterface
-     */
     public function getNewEntity(): UserInterface
     {
         $className = $this->getEntityClassName();

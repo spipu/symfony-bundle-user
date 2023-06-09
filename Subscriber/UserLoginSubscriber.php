@@ -22,15 +22,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 
 class UserLoginSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
-    /**
-     * UserLoginSubscriber constructor.
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -47,10 +40,6 @@ class UserLoginSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param LoginSuccessEvent $event
-     * @return void
-     */
     public function onLoginSuccess(LoginSuccessEvent $event): void
     {
         /** @var UserInterface $user */
@@ -61,10 +50,6 @@ class UserLoginSubscriber implements EventSubscriberInterface
         $this->entityManager->flush();
     }
 
-    /**
-     * @param LoginFailureEvent $event
-     * @return void
-     */
     public function onLoginFailed(LoginFailureEvent $event): void
     {
         $passport = $event->getPassport();

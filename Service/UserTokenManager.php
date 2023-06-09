@@ -19,21 +19,9 @@ use Spipu\UserBundle\Entity\UserInterface;
 
 class UserTokenManager
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
+    private string $keySecret;
 
-    /**
-     * @var string
-     */
-    private $keySecret;
-
-    /**
-     * UserTokenService constructor.
-     * @param EntityManagerInterface $entityManager
-     * @param string $keySecret
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         string $keySecret
@@ -42,10 +30,6 @@ class UserTokenManager
         $this->keySecret = $keySecret;
     }
 
-    /**
-     * @param UserInterface $user
-     * @return string
-     */
     public function generate(UserInterface $user): string
     {
         $currentTime = new DateTime('NOW');
@@ -57,11 +41,6 @@ class UserTokenManager
         return $this->getCurrentToken($user);
     }
 
-    /**
-     * @param UserInterface $user
-     * @param string $token
-     * @return bool
-     */
     public function isValid(UserInterface $user, string $token): bool
     {
         if (!$user->getTokenDate()) {
@@ -71,10 +50,6 @@ class UserTokenManager
         return $this->getCurrentToken($user) === $token;
     }
 
-    /**
-     * @param UserInterface $user
-     * @return void
-     */
     public function reset(UserInterface $user): void
     {
         $user->setTokenDate(null);
@@ -83,10 +58,6 @@ class UserTokenManager
         $this->entityManager->flush();
     }
 
-    /**
-     * @param UserInterface $user
-     * @return string
-     */
     private function getCurrentToken(UserInterface $user): string
     {
         $data = [

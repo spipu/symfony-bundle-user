@@ -13,8 +13,7 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Spipu\UiBundle\Exception\UiException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UiBundle\Service\Ui\ShowFactory;
 use Spipu\UserBundle\Entity\UserInterface;
@@ -26,38 +25,18 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * Class ProfileController
- * @Route("/my-profile")
- */
+#[Route(path: '/my-profile')]
 class ProfileController extends AbstractController
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * AccountController constructor.
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @Route(
-     *     "/",
-     *     name="spipu_user_profile_show",
-     *     methods="GET"
-     * )
-     * @Security("is_granted('ROLE_USER')")
-     * @param ShowFactory $showFactory
-     * @param ProfileForm $profileForm
-     * @return Response
-     * @throws UiException
-     */
+    #[Route(path: '/', name: 'spipu_user_profile_show', methods: 'GET')]
+    #[IsGranted('ROLE_USER')]
     public function show(ShowFactory $showFactory, ProfileForm $profileForm): Response
     {
         /** @var UserInterface $resource */
@@ -70,18 +49,8 @@ class ProfileController extends AbstractController
         return $this->render('@SpipuUser/profile/show.html.twig', ['manager' => $manager]);
     }
 
-    /**
-     * @Route(
-     *     "/edit",
-     *     name="spipu_user_profile_edit",
-     *     methods="GET|POST"
-     * )
-     * @Security("is_granted('ROLE_USER')")
-     * @param FormFactory $formFactory
-     * @param ProfileForm $profileForm
-     * @return Response
-     * @throws UiException
-     */
+    #[Route(path: '/edit', name: 'spipu_user_profile_edit', methods: 'GET|POST')]
+    #[IsGranted('ROLE_USER')]
     public function edit(FormFactory $formFactory, ProfileForm $profileForm): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -102,18 +71,8 @@ class ProfileController extends AbstractController
         return $this->render('@SpipuUser/profile/edit.html.twig', ['manager' => $manager]);
     }
 
-    /**
-     * @Route(
-     *     "/password",
-     *     name="spipu_user_profile_password",
-     *     methods="GET|POST"
-     * )
-     * @Security("is_granted('ROLE_USER')")
-     * @param FormFactory $formFactory
-     * @param PasswordForm $passwordForm
-     * @return Response
-     * @throws UiException
-     */
+    #[Route(path: '/password', name: 'spipu_user_profile_password', methods: 'GET|POST')]
+    #[IsGranted('ROLE_USER')]
     public function password(FormFactory $formFactory, PasswordForm $passwordForm): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');

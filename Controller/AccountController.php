@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Controller;
 
 use Exception;
-use Spipu\UiBundle\Exception\UiException;
 use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UserBundle\Event\UserEvent;
 use Spipu\UserBundle\Repository\UserRepository;
@@ -28,42 +27,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Throwable;
 
-/**
- * Class AccountController
- * @Route("/account")
- * @SuppressWarnings(PMD.CouplingBetweenObjects)
- */
+#[Route(path: '/account')]
 class AccountController extends AbstractController
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * AccountController constructor.
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @Route(
-     *     "/create",
-     *     name="spipu_user_account_create",
-     *     methods="GET|POST"
-     * )
-     * @param FormFactory $formFactory
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param CreationForm $creationForm
-     * @param MailManager $mailManager
-     * @return Response
-     * @throws Throwable
-     */
+    #[Route(path: '/create', name: 'spipu_user_account_create', methods: 'GET|POST')]
     public function create(
         FormFactory $formFactory,
         ModuleConfigurationInterface $moduleConfiguration,
@@ -95,15 +70,7 @@ class AccountController extends AbstractController
         return $this->render('@SpipuUser/create.html.twig', ['manager' => $manager]);
     }
 
-    /**
-     * @Route(
-     *     "/create-waiting",
-     *     name="spipu_user_account_create_waiting",
-     *     methods="GET"
-     * )
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @return Response
-     */
+    #[Route(path: '/create-waiting', name: 'spipu_user_account_create_waiting', methods: 'GET')]
     public function createWaiting(ModuleConfigurationInterface $moduleConfiguration): Response
     {
         if (!$moduleConfiguration->hasAllowAccountCreation()) {
@@ -113,19 +80,7 @@ class AccountController extends AbstractController
         return $this->render('@SpipuUser/create-waiting.html.twig');
     }
 
-    /**
-     * @Route(
-     *     "/confirm/{email}/{token}",
-     *     name="spipu_user_account_create_confirm",
-     *     methods="GET"
-     * )
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserRepository $userRepository
-     * @param UserTokenManager $userTokenManager
-     * @param string $email
-     * @param string $token
-     * @return Response
-     */
+    #[Route(path: '/confirm/{email}/{token}', name: 'spipu_user_account_create_confirm', methods: 'GET')]
     public function createConfirm(
         ModuleConfigurationInterface $moduleConfiguration,
         UserRepository $userRepository,
@@ -158,20 +113,7 @@ class AccountController extends AbstractController
         return $this->redirectToRoute('spipu_user_security_login');
     }
 
-    /**
-     * @Route(
-     *     "/recovery",
-     *     name="spipu_user_account_recover",
-     *     methods="GET|POST"
-     * )
-     * @param FormFactory $formFactory
-     * @param RecoveryForm $recoveryForm
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserRepository $userRepository
-     * @param MailManager $mailManager
-     * @return Response
-     * @throws Throwable
-     */
+    #[Route(path: '/recovery', name: 'spipu_user_account_recover', methods: 'GET|POST')]
     public function passwordRecover(
         FormFactory $formFactory,
         RecoveryForm $recoveryForm,
@@ -208,15 +150,7 @@ class AccountController extends AbstractController
         return $this->render('@SpipuUser/recover.html.twig', ['manager' => $manager]);
     }
 
-    /**
-     * @Route(
-     *     "/recovery-waiting",
-     *     name="spipu_user_account_recovery_waiting",
-     *     methods="GET"
-     * )
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @return Response
-     */
+    #[Route(path: '/recovery-waiting', name: 'spipu_user_account_recovery_waiting', methods: 'GET')]
     public function recoveryWaiting(ModuleConfigurationInterface $moduleConfiguration): Response
     {
         if (!$moduleConfiguration->hasAllowPasswordRecovery()) {
@@ -226,22 +160,7 @@ class AccountController extends AbstractController
         return $this->render('@SpipuUser/recover-waiting.html.twig');
     }
 
-    /**
-     * @Route(
-     *     "/new-password/{email}/{token}",
-     *     name="spipu_user_account_recovery_confirm",
-     *     methods="GET|POST"
-     * )
-     * @param FormFactory $formFactory
-     * @param NewPasswordForm $newPasswordForm
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserRepository $userRepository
-     * @param UserTokenManager $userTokenManager
-     * @param string $email
-     * @param string $token
-     * @return Response
-     * @throws UiException
-     */
+    #[Route(path: '/new-password/{email}/{token}', name: 'spipu_user_account_recovery_confirm', methods: 'GET|POST')]
     public function recoveryConfirm(
         FormFactory $formFactory,
         NewPasswordForm $newPasswordForm,
@@ -285,20 +204,12 @@ class AccountController extends AbstractController
         return $this->render('@SpipuUser/recover-confirm.html.twig', ['manager' => $manager]);
     }
 
-    /**
-     * @param string $message
-     * @param array $params
-     * @return string
-     */
     private function trans(string $message, array $params = []): string
     {
         return $this->container->get('translator')->trans($message, $params);
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return parent::getSubscribedServices() + [
             'translator',

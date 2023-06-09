@@ -19,20 +19,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-/**
- * Class SecurityController
- */
 class SecurityController extends AbstractController
 {
-    /**
-     * @Route(
-     *     "/login",
-     *     name="spipu_user_security_login"
-     * )
-     * @param AuthenticationUtils $authenticationUtils
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @return Response
-     */
+    #[Route(path: '/login', name: 'spipu_user_security_login')]
     public function login(
         AuthenticationUtils $authenticationUtils,
         ModuleConfigurationInterface $moduleConfiguration
@@ -54,13 +43,7 @@ class SecurityController extends AbstractController
         );
     }
 
-    /**
-     * @Route(
-     *     "/logout",
-     *     name="spipu_user_security_logout"
-     * )
-     * @return void
-     */
+    #[Route(path: '/logout', name: 'spipu_user_security_logout')]
     public function logout(): void
     {
     }

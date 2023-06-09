@@ -21,37 +21,20 @@ use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractForm implements EntityDefinitionInterface
 {
-    /**
-     * @var ModuleConfigurationInterface
-     */
-    private $moduleConfiguration;
+    private ModuleConfigurationInterface $moduleConfiguration;
+    protected ?Form $definition = null;
 
-    /**
-     * @var Form
-     */
-    protected $definition;
-
-    /**
-     * AbstractForm constructor.
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration
     ) {
         $this->moduleConfiguration = $moduleConfiguration;
     }
 
-    /**
-     * @return string
-     */
     protected function getEntityClassName(): string
     {
         return $this->moduleConfiguration->getEntityClassName();
     }
 
-    /**
-     * @return Form
-     */
     public function getDefinition(): Form
     {
         if (!$this->definition) {
@@ -61,15 +44,7 @@ abstract class AbstractForm implements EntityDefinitionInterface
         return $this->definition;
     }
 
-    /**
-     * @return void
-     */
     abstract protected function prepareForm(): void;
 
-    /**
-     * @param FormInterface $form
-     * @param EntityInterface|null $resource
-     * @return void
-     */
     abstract public function setSpecificFields(FormInterface $form, EntityInterface $resource = null): void;
 }

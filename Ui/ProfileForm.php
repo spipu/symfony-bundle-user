@@ -17,19 +17,11 @@ use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
 use Spipu\UiBundle\Entity\Form\FieldSet;
 use Spipu\UiBundle\Entity\Form\Form;
-use Spipu\UiBundle\Exception\FormException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 
-/**
- * Users Creation
- */
 class ProfileForm extends AbstractForm
 {
-    /**
-     * @return void
-     * @throws FormException
-     */
     protected function prepareForm(): void
     {
         $this->definition = new Form('user_profile', $this->getEntityClassName());

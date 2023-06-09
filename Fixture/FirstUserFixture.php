@@ -21,39 +21,13 @@ use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-/**
- * Users Creation
- */
 class FirstUserFixture implements FixtureInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
+    private UserPasswordHasherInterface $hasher;
+    private ModuleConfigurationInterface $moduleConfiguration;
+    private UserRepository $userRepository;
 
-    /**
-     * @var UserPasswordHasherInterface
-     */
-    private $hasher;
-
-    /**
-     * @var ModuleConfigurationInterface
-     */
-    private $moduleConfiguration;
-
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    /**
-     * PHP constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param UserPasswordHasherInterface $hasher
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserRepository $userRepository
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $hasher,
@@ -66,18 +40,11 @@ class FirstUserFixture implements FixtureInterface
         $this->userRepository = $userRepository;
     }
 
-    /**
-     * @return string
-     */
     public function getCode(): string
     {
         return 'first-user';
     }
 
-    /**
-     * @param OutputInterface $output
-     * @return void
-     */
     public function load(OutputInterface $output): void
     {
         $output->writeln("Add Admin User");
@@ -102,10 +69,6 @@ class FirstUserFixture implements FixtureInterface
         $this->entityManager->flush();
     }
 
-    /**
-     * @param OutputInterface $output
-     * @return void
-     */
     public function remove(OutputInterface $output): void
     {
         $output->writeln("Remove Admin User");
@@ -120,18 +83,11 @@ class FirstUserFixture implements FixtureInterface
         $this->entityManager->flush();
     }
 
-    /**
-     * @param string $identifier
-     * @return UserInterface|null
-     */
     private function findObject(string $identifier): ?UserInterface
     {
         return $this->userRepository->findOneBy(['username' => $identifier]);
     }
 
-    /**
-     * @return array
-     */
     protected function getData(): array
     {
         return [
@@ -145,9 +101,6 @@ class FirstUserFixture implements FixtureInterface
         ];
     }
 
-    /**
-     * @return int
-     */
     public function getOrder(): int
     {
         return 10;

@@ -13,127 +13,77 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Entity;
 
-use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Spipu\UiBundle\Entity\TimestampableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-/**
- * @ORM\MappedSuperclass
- * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity(fields="username", message="Username already taken")
- * @UniqueEntity(fields="email", message="Email already taken")
- */
+#[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: "username", message: "Username already taken")]
+#[UniqueEntity(fields: "email", message: "Email already taken")]
 abstract class AbstractUser implements UserInterface
 {
     use TimestampableTrait;
 
     public const DEFAULT_ROLE = 'ROLE_USER';
 
-    /**
-     * @var int|null
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Email()
-     */
-    private $email;
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
+    private ?string $email = null;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Length(min = 4)
-     */
-    private $username;
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 4)]
+    private ?string $username = null;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $password;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $password = null;
 
-    /**
-     * @var string
-     * @Assert\Length(max=4096)
-     */
-    private $plainPassword;
+    #[Assert\Length(max: 4096)]
+    private ?string $plainPassword = null;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     */
-    private $firstName;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    private ?string $firstName = null;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     */
-    private $lastName;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    private ?string $lastName = null;
 
-    /**
-     * @var string[]
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
+    /** @var string[] */
+    #[ORM\Column(type: "json")]
+    private array $roles = [];
 
-    /**
-     * @var int
-     * @ORM\Column(type="integer")
-     */
-    private $nbLogin = 0;
+    #[ORM\Column]
+    private int $nbLogin = 0;
 
-    /**
-     * @var int
-     * @ORM\Column(type="integer")
-     */
-    private $nbTryLogin = 0;
+    #[ORM\Column]
+    private int $nbTryLogin = 0;
 
-    /**
-     * @var bool
-     * @ORM\Column(type="boolean")
-     */
-    private $active = false;
+    #[ORM\Column]
+    private bool $active = false;
 
-    /**
-     * @var DateTime|null
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $tokenDate = null;
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?DateTimeInterface $tokenDate = null;
 
-    /**
-     * Get the PK id
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * Get the email
-     * @return null|string
-     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * Set the email
-     * @param string $email
-     * @return UserInterface
-     */
     public function setEmail(string $email): UserInterface
     {
         $this->email = $email;
@@ -141,28 +91,16 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    /**
-     * Get the username
-     * @return null|string
-     */
     public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    /**
-     * @return string|null
-     */
     public function getUserIdentifier(): ?string
     {
         return $this->getUsername();
     }
 
-    /**
-     * Set the username
-     * @param string $username
-     * @return UserInterface
-     */
     public function setUsername(string $username): UserInterface
     {
         $this->username = $username;
@@ -170,20 +108,11 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    /**
-     * Get the password
-     * @return null|string
-     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * Set the password
-     * @param string $password
-     * @return UserInterface
-     */
     public function setPassword(string $password): UserInterface
     {
         $this->password = $password;
@@ -191,20 +120,11 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    /**
-     * Get the PlainPassword
-     * @return string|null
-     */
     public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
     }
 
-    /**
-     * Set the PlainPassword
-     * @param string $password
-     * @return UserInterface
-     */
     public function setPlainPassword(string $password): UserInterface
     {
         $this->plainPassword = $password;
@@ -212,20 +132,11 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    /**
-     * Get the FirstName
-     * @return null|string
-     */
     public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
-    /**
-     * Set the FirstName
-     * @param string $firstName
-     * @return UserInterface
-     */
     public function setFirstName(string $firstName): UserInterface
     {
         $this->firstName = $firstName;
@@ -233,20 +144,11 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    /**
-     * Get the LastName
-     * @return null|string
-     */
     public function getLastName(): ?string
     {
         return $this->lastName;
     }
 
-    /**
-     * Set the LastName
-     * @param string $lastName
-     * @return UserInterface
-     */
     public function setLastName(string $lastName): UserInterface
     {
         $this->lastName = $lastName;
@@ -255,7 +157,6 @@ abstract class AbstractUser implements UserInterface
     }
 
     /**
-     * Get the roles
      * @return string[]
      */
     public function getRoles(): array
@@ -272,7 +173,6 @@ abstract class AbstractUser implements UserInterface
     }
 
     /**
-     * Set the roles
      * @param string[] $roles
      * @return UserInterface
      */
@@ -282,21 +182,11 @@ abstract class AbstractUser implements UserInterface
 
         return $this;
     }
-
-    /**
-     * Get the Nb of Login
-     * @return int|null
-     */
     public function getNbLogin(): ?int
     {
         return $this->nbLogin;
     }
 
-    /**
-     * Set the Nb of Login
-     * @param int $nbLogin
-     * @return UserInterface
-     */
     public function setNbLogin(int $nbLogin): UserInterface
     {
         $this->nbLogin = $nbLogin;
@@ -304,20 +194,11 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    /**
-     * Get the nb of try login with a wrong password
-     * @return int|null
-     */
     public function getNbTryLogin(): ?int
     {
         return $this->nbTryLogin;
     }
 
-    /**
-     * Get the nb of try login with a wrong password
-     * @param int $nbTryLogin
-     * @return UserInterface
-     */
     public function setNbTryLogin(int $nbTryLogin): UserInterface
     {
         $this->nbTryLogin = $nbTryLogin;
@@ -325,17 +206,11 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function serialize(): string
     {
         return serialize($this->__serialize());
     }
 
-    /**
-     * @return array
-     */
     public function __serialize(): array
     {
         return [
@@ -354,21 +229,13 @@ abstract class AbstractUser implements UserInterface
         ];
     }
 
-    /**
-     * @param string $data
-     * @return void
-     */
-    public function unserialize($data): void  //@codingStandardsIgnoreLine
+    public function unserialize(string $data): void
     {
         $this->__unserialize(
             unserialize($data, ['allowed_classes' => false])
         );
     }
 
-    /**
-     * @param array $data
-     * @return void
-     */
     public function __unserialize(array $data): void
     {
         $this->id           = $data['id'];
@@ -385,21 +252,11 @@ abstract class AbstractUser implements UserInterface
         $this->updatedAt    = $data['updatedAt'];
     }
 
-    /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * @return string|null
-     */
     public function getSalt(): ?string
     {
         return  null;
     }
 
-    /**
-     * Removes sensitive data from the user.
-     *
-     * @return UserInterface
-     */
     public function eraseCredentials(): UserInterface
     {
         $this->plainPassword = null;
@@ -407,18 +264,11 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getActive(): ?bool
     {
         return $this->active;
     }
 
-    /**
-     * @param bool $active
-     * @return UserInterface
-     */
     public function setActive(bool $active): UserInterface
     {
         $this->active = $active;
@@ -426,19 +276,12 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    /**
-     * @return DateTime|null ?\DateTime
-     */
-    public function getTokenDate(): ?DateTime
+    public function getTokenDate(): ?DateTimeInterface
     {
         return $this->tokenDate;
     }
 
-    /**
-     * @param DateTime|null $tokenDate
-     * @return UserInterface
-     */
-    public function setTokenDate(?DateTime $tokenDate): UserInterface
+    public function setTokenDate(?DateTimeInterface $tokenDate): UserInterface
     {
         $this->tokenDate = $tokenDate;
 
