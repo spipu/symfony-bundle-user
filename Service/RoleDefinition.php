@@ -18,9 +18,6 @@ use Spipu\CoreBundle\Service\RoleDefinitionInterface;
 
 class RoleDefinition implements RoleDefinitionInterface
 {
-    /**
-     * @return void
-     */
     public function buildDefinition(): void
     {
         Item::load('ROLE_ADMIN_MANAGE_USER_SHOW')

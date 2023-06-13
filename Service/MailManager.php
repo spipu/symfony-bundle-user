@@ -17,43 +17,15 @@ use Spipu\CoreBundle\Service\MailManager as BaseMailManager;
 use Spipu\UserBundle\Entity\UserInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Throwable;
 
 class MailManager
 {
-    /**
-     * @var BaseMailManager
-     */
-    private $mailManager;
+    private BaseMailManager $mailManager;
+    private UrlGeneratorInterface $urlGenerator;
+    private TranslatorInterface $translator;
+    private UserTokenManager $userTokenManager;
+    private MailConfigurationInterface $mailConfiguration;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var UserTokenManager
-     */
-    private $userTokenManager;
-
-    /**
-     * @var MailConfigurationInterface
-     */
-    private $mailConfiguration;
-
-    /**
-     * MailManager constructor.
-     * @param BaseMailManager $mailManager
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param TranslatorInterface $translator
-     * @param UserTokenManager $userTokenManager
-     * @param MailConfigurationInterface $mailConfiguration
-     */
     public function __construct(
         BaseMailManager $mailManager,
         UrlGeneratorInterface $urlGenerator,
@@ -68,11 +40,6 @@ class MailManager
         $this->mailConfiguration = $mailConfiguration;
     }
 
-    /**
-     * @param UserInterface $user
-     * @return void
-     * @throws Throwable
-     */
     public function sendActivationEmail(UserInterface $user): void
     {
         $confirmLink = $this->urlGenerator->generate(
@@ -96,11 +63,6 @@ class MailManager
         );
     }
 
-    /**
-     * @param UserInterface $user
-     * @return void
-     * @throws Throwable
-     */
     public function sendRecoveryEmail(UserInterface $user): void
     {
         $confirmLink = $this->urlGenerator->generate(

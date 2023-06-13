@@ -72,10 +72,7 @@ class SpipuUserMock extends TestCase
 
 class GenericUser extends AbstractUser implements UserInterface
 {
-    /**
-     * @var int|null
-     */
-    private $id;
+    private ?int $id;
 
     /**
      * GenericUser constructor.
@@ -86,9 +83,6 @@ class GenericUser extends AbstractUser implements UserInterface
         $this->id = $id;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         if ($this->id !== null) {

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Ui;
 
 use Exception;
-use Spipu\UiBundle\Exception\FormException;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
@@ -24,22 +23,10 @@ use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-/**
- * Account Creation
- * @SuppressWarnings(PMD.CouplingBetweenObjects)
- */
 class CreationForm extends ProfileForm
 {
-    /**
-     * @var UserPasswordHasherInterface
-     */
-    private $hasher;
+    private UserPasswordHasherInterface $hasher;
 
-    /**
-     * UserForm constructor.
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserPasswordHasherInterface $hasher
-     */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
         UserPasswordHasherInterface $hasher
@@ -49,10 +36,6 @@ class CreationForm extends ProfileForm
         $this->hasher = $hasher;
     }
 
-    /**
-     * @return void
-     * @throws FormException
-     */
     protected function prepareForm(): void
     {
         parent::prepareForm();
@@ -83,8 +66,8 @@ class CreationForm extends ProfileForm
      * @param FormInterface $form
      * @param EntityInterface|null $resource
      * @return void
-     * @SuppressWarnings(PMD.UnusedFormalParameter)
      * @throws Exception
+     * @SuppressWarnings(PMD.UnusedFormalParameter)
      */
     public function setSpecificFields(FormInterface $form, EntityInterface $resource = null): void
     {

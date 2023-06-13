@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Ui;
 
 use Exception;
-use Spipu\UiBundle\Exception\FormException;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
@@ -27,16 +26,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class NewPasswordForm extends AbstractForm
 {
-    /**
-     * @var UserPasswordHasherInterface
-     */
-    private $hasher;
+    private UserPasswordHasherInterface $hasher;
 
-    /**
-     * UserForm constructor.
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param UserPasswordHasherInterface $hasher
-     */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
         UserPasswordHasherInterface $hasher
@@ -46,10 +37,6 @@ class NewPasswordForm extends AbstractForm
         $this->hasher = $hasher;
     }
 
-    /**
-     * @return void
-     * @throws FormException
-     */
     protected function prepareForm(): void
     {
         $this->definition = new Form('user_new_password', $this->getEntityClassName());

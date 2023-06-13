@@ -37,9 +37,6 @@ final class SpipuUserExtension extends Extension implements RolesHierarchyExtens
         $loader->load('services.yaml');
     }
 
-    /**
-     * @return RoleDefinitionInterface
-     */
     public function getRolesHierarchy(): RoleDefinitionInterface
     {
         return new RoleDefinition();

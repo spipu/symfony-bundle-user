@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Ui;
 
-use Spipu\UiBundle\Exception\GridException;
 use Spipu\UiBundle\Service\Ui\Definition\GridDefinitionInterface;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UiBundle\Entity\Grid;
@@ -21,33 +20,12 @@ use Spipu\UiBundle\Form\Options\YesNo as OptionsYesNo;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-/**
- * Class UserGrid
- * @SuppressWarnings(PMD.CouplingBetweenObjects)
- */
 class UserGrid implements GridDefinitionInterface
 {
-    /**
-     * @var ModuleConfigurationInterface
-     */
-    private $moduleConfiguration;
+    private ModuleConfigurationInterface $moduleConfiguration;
+    private TokenStorageInterface $tokenStorage;
+    private OptionsYesNo $optionsYesNo;
 
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    /**
-     * @var OptionsYesNo
-     */
-    private $optionsYesNo;
-
-    /**
-     * UserGrid constructor.
-     * @param ModuleConfigurationInterface $moduleConfiguration
-     * @param TokenStorageInterface $tokenStorage
-     * @param OptionsYesNo $optionsYesNo
-     */
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
         TokenStorageInterface $tokenStorage,
@@ -58,15 +36,8 @@ class UserGrid implements GridDefinitionInterface
         $this->optionsYesNo = $optionsYesNo;
     }
 
-    /**
-     * @var Grid\Grid
-     */
-    private $definition;
+    private ?Grid\Grid $definition = null;
 
-    /**
-     * @return Grid\Grid
-     * @throws GridException
-     */
     public function getDefinition(): Grid\Grid
     {
         if (!$this->definition) {
@@ -76,10 +47,6 @@ class UserGrid implements GridDefinitionInterface
         return $this->definition;
     }
 
-    /**
-     * @return void
-     * @throws GridException
-     */
     private function prepareGrid(): void
     {
         $currentUser = $this->getCurrentUser();
@@ -170,9 +137,6 @@ class UserGrid implements GridDefinitionInterface
         ;
     }
 
-    /**
-     * @return UserInterface
-     */
     private function getCurrentUser(): UserInterface
     {
         /** @var UserInterface $user */

@@ -18,21 +18,9 @@ use Spipu\CoreBundle\Service\RoleDefinitionList;
 
 class RoleService
 {
-    /**
-     * @var RoleDefinitionList
-     */
-    private $roleDefinitionList;
+    private RoleDefinitionList $roleDefinitionList;
+    private string $purpose;
 
-    /**
-     * @var string
-     */
-    private $purpose;
-
-    /**
-     * RoleService constructor.
-     * @param RoleDefinitionList $roleDefinitionList
-     * @param string $purpose
-     */
     public function __construct(
         RoleDefinitionList $roleDefinitionList,
         string $purpose = 'admin'
@@ -55,9 +43,6 @@ class RoleService
         );
     }
 
-    /**
-     * @return array
-     */
     public function getProfiles(): array
     {
         $this->roleDefinitionList->buildDefinitions();
@@ -68,9 +53,6 @@ class RoleService
         return $items;
     }
 
-    /**
-     * @return array
-     */
     public function getRoles(): array
     {
         $this->roleDefinitionList->buildDefinitions();
@@ -110,11 +92,6 @@ class RoleService
         return $list;
     }
 
-    /**
-     * @param array $roleCodes
-     * @param Item $role
-     * @return bool
-     */
     public function hasRole(array $roleCodes, Item $role): bool
     {
         return in_array($role->getCode(), $roleCodes);

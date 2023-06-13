@@ -15,8 +15,5 @@ namespace Spipu\UserBundle\Service;
 
 interface MailConfigurationInterface
 {
-    /**
-     * @return string
-     */
     public function getEmailFrom(): string;
 }
