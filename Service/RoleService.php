@@ -94,7 +94,7 @@ class RoleService
 
     public function hasRole(array $roleCodes, Item $role): bool
     {
-        return in_array($role->getCode(), $roleCodes);
+        return in_array($role->getCode(), $roleCodes, true);
     }
 
     /**
