@@ -112,6 +112,12 @@ abstract class AbstractUser implements UserInterface
     private $tokenDate = null;
 
     /**
+     * @var DateTime|null
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $passwordDate = null;
+
+    /**
      * Get the PK id
      * @return int|null
      */
@@ -441,6 +447,25 @@ abstract class AbstractUser implements UserInterface
     public function setTokenDate(?DateTime $tokenDate): UserInterface
     {
         $this->tokenDate = $tokenDate;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime|null ?\DateTime
+     */
+    public function getPasswordDate(): ?DateTime
+    {
+        return $this->passwordDate;
+    }
+
+    /**
+     * @param DateTime|null $passwordDate
+     * @return UserInterface
+     */
+    public function setPasswordDate(?DateTime $passwordDate): UserInterface
+    {
+        $this->passwordDate = $passwordDate;
 
         return $this;
     }

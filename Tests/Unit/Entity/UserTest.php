@@ -25,6 +25,7 @@ class UserTest extends TestCase
         $this->assertSame(null, $entity->getSalt());
         $this->assertSame(false, $entity->getActive());
         $this->assertSame([], $entity->getRoles());
+        $this->assertSame(null, $entity->getPasswordDate());
 
         $entity->setActive(true);
         $this->assertSame(true, $entity->getActive());
@@ -53,6 +54,10 @@ class UserTest extends TestCase
         $this->assertSame(20, $entity->getNbTryLogin());
         $this->assertSame(true, $entity->getActive());
         $this->assertSame($date, $entity->getTokenDate());
+        $this->assertSame(null, $entity->getPasswordDate());
+
+        $entity->setPasswordDate($date);
+        $this->assertSame($date, $entity->getPasswordDate());
 
         $entity->eraseCredentials();
         $this->assertSame(null, $entity->getPlainPassword());

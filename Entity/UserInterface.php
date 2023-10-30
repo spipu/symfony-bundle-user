@@ -161,7 +161,7 @@ interface UserInterface extends
     public function setActive(bool $active): self;
 
     /**
-     * @return DateTime|null ?\DateTime
+     * @return DateTime|null
      */
     public function getTokenDate(): ?DateTime;
 
@@ -170,4 +170,15 @@ interface UserInterface extends
      * @return self
      */
     public function setTokenDate(?DateTime $tokenDate): self;
+
+    /**
+     * @return DateTime|null
+     */
+    public function getPasswordDate(): ?DateTime;
+
+    /**
+     * @param DateTime|null $passwordDate
+     * @return self
+     */
+    public function setPasswordDate(?DateTime $passwordDate): self;
 }

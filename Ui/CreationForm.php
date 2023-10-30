@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Ui;
 
+use DateTime;
 use Exception;
 use Spipu\UiBundle\Exception\FormException;
 use Spipu\UserBundle\Entity\UserInterface;
@@ -94,5 +95,6 @@ class CreationForm extends ProfileForm
         }
 
         $resource->setPassword($this->hasher->hashPassword($resource, $resource->getPlainPassword()));
+        $resource->setPasswordDate(new DateTime());
     }
 }
