@@ -142,6 +142,16 @@ class UserForm extends AbstractForm
                     )
                     ->addField(
                         (new Field(
+                            'passwordDate',
+                            Type\DateTimeType::class,
+                            35,
+                            [
+                                'label'    => 'spipu.user.field.password_date',
+                            ]
+                        ))->useHiddenInForm()
+                    )
+                    ->addField(
+                        (new Field(
                             'tokenDate',
                             Type\DateTimeType::class,
                             40,

@@ -74,6 +74,9 @@ abstract class AbstractUser implements UserInterface
     #[ORM\Column(type: "datetime", nullable: true)]
     private ?DateTimeInterface $tokenDate = null;
 
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?DateTimeInterface $passwordDate = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -284,6 +287,18 @@ abstract class AbstractUser implements UserInterface
     public function setTokenDate(?DateTimeInterface $tokenDate): UserInterface
     {
         $this->tokenDate = $tokenDate;
+
+        return $this;
+    }
+
+    public function getPasswordDate(): ?DateTimeInterface
+    {
+        return $this->passwordDate;
+    }
+
+    public function setPasswordDate(?DateTimeInterface $passwordDate): UserInterface
+    {
+        $this->passwordDate = $passwordDate;
 
         return $this;
     }

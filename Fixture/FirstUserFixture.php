@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Fixture;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Spipu\CoreBundle\Fixture\FixtureInterface;
 use Spipu\UserBundle\Entity\UserInterface;
@@ -60,6 +61,7 @@ class FirstUserFixture implements FixtureInterface
             ->setUsername($data['username'])
             ->setEmail($data['email'])
             ->setPassword($this->hasher->hashPassword($object, $data['password']))
+            ->setPasswordDate(new DateTime())
             ->setFirstName($data['firstname'])
             ->setLastName($data['lastname'])
             ->setRoles($data['roles'])

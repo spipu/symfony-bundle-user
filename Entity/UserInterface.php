@@ -84,4 +84,8 @@ interface UserInterface extends
     public function getTokenDate(): ?DateTimeInterface;
 
     public function setTokenDate(?DateTimeInterface $tokenDate): self;
+
+    public function getPasswordDate(): ?DateTimeInterface;
+
+    public function setPasswordDate(?DateTimeInterface $passwordDate): self;
 }
