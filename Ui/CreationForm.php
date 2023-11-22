@@ -54,8 +54,8 @@ class CreationForm extends ProfileForm
                         10,
                         [
                             'type'           => Type\PasswordType::class,
-                            'first_options'  => array('label' => 'spipu.user.field.password'),
-                            'second_options' => array('label' => 'spipu.user.field.confirm'),
+                            'first_options'  => ['label' => 'spipu.user.field.password'],
+                            'second_options' => ['label' => 'spipu.user.field.confirm'],
                             'required'       => true,
                         ]
                     ))->useHiddenInView())
