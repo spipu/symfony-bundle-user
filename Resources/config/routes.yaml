@@ -1,5 +1,5 @@
 controllers:
     resource: '../../Controller/'
-    type:     annotation
+    type:     attribute
     prefix:   /
     trailing_slash_on_root: false

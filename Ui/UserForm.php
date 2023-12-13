@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Ui;
 
-use Spipu\UiBundle\Exception\FormException;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\Form\Field;
 use Spipu\UiBundle\Entity\Form\FieldSet;
@@ -41,7 +40,6 @@ class UserForm extends AbstractForm
 
     /**
      * @return void
-     * @throws FormException
      * @SuppressWarnings(PMD.ExcessiveMethodLength)
      */
     protected function prepareForm(): void

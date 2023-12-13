@@ -24,7 +24,7 @@ class SpipuUserMock extends TestCase
      * @param int|null $id
      * @return UserInterface
      */
-    public static function getUserEntity(int $id = null)
+    public static function getUserEntity(int $id = null): UserInterface
     {
         return new GenericUser($id);
     }

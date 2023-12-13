@@ -325,7 +325,7 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $gridProperties = $this->getGridProperties($crawler, 'user');
         $this->assertSame(2002, $gridProperties['count']['nb']);
-        $this->assertSame(['default' => ['id' => 1, 'selected' => true]], $gridProperties['display']);
+        $this->assertSame(['default' => ['id' => 3, 'selected' => true]], $gridProperties['display']);
         $expectedColumns = [
             'id',
             'username',

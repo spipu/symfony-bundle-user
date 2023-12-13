@@ -15,7 +15,6 @@ namespace Spipu\UserBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UiBundle\Service\Ui\GridFactory;
 use Spipu\UiBundle\Service\Ui\ShowFactory;
@@ -29,7 +28,8 @@ use Spipu\UserBundle\Ui\UserGrid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Class AdminUserController

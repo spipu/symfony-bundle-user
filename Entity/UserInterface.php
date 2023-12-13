@@ -33,19 +33,9 @@ interface UserInterface extends
 
     public function setEmail(string $email): self;
 
-    /**
-     * Temporary definition, will be removed in SF6 version, when the UserInterface will be clean
-     * @return string|null
-     */
-    public function getPassword(): ?string;
+    public function getUsername(): string;
 
-    /**
-     * Temporary definition, will be fixed (strict) in SF6 version, when the UserInterface will be clean
-     * @return string
-     */
-    public function getUsername();
-
-    public function getUserIdentifier(): ?string;
+    public function getUserIdentifier(): string;
 
     public function setUsername(string $username): self;
 

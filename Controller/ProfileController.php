@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UiBundle\Service\Ui\ShowFactory;
 use Spipu\UserBundle\Entity\UserInterface;
@@ -23,7 +22,8 @@ use Spipu\UserBundle\Ui\ProfileForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/my-profile')]
 class ProfileController extends AbstractController

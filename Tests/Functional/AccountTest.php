@@ -315,7 +315,7 @@ class AccountTest extends WebTestCase
             ]
         );
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertCrawlerHasFormError($crawler, 'This value is not valid');
+        $this->assertCrawlerHasFormError($crawler, 'The values do not match');
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Update")')->count());
 
         // Submit good password

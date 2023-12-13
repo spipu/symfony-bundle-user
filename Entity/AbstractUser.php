@@ -42,7 +42,7 @@ abstract class AbstractUser implements UserInterface
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 4)]
-    private ?string $username = null;
+    private string $username = '';
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $password = null;
@@ -94,12 +94,12 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    public function getUsername(): ?string
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    public function getUserIdentifier(): ?string
+    public function getUserIdentifier(): string
     {
         return $this->getUsername();
     }
