@@ -1,8 +1,8 @@
 services:
     # Generic Declaration
     Spipu\UserBundle\:
-        resource: '../../*'
-        exclude: '../../{DependencyInjection,Entity,Tests,SpipuUserBundle.php}'
+        resource: '../src/*'
+        exclude: '../src/{Entity,SpipuUserBundle.php}'
         autowire: true
         autoconfigure: true
 
