@@ -12,9 +12,9 @@ This symfony bundle add the following features:
 
 This symfony bundle works with:
 
-* PHP >7.4
+* PHP >= 8.1
 * Composer
-* Symfony >5.4
+* Symfony >= 6.4
 * Spipu Ui Bundle
 
 ## Documentation
@@ -22,10 +22,6 @@ This symfony bundle works with:
 You will find the install documentation [here](./doc/install.md).
 
 You will find all the documentation [here](./doc/README.md).
-
-## Change log
-
-See the [./CHANGELOG.md](./CHANGELOG.md) file.
 
 ## Help & Support
 
