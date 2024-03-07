@@ -91,7 +91,7 @@ class AccountTest extends WebTestCase
         );
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        // Get the sent email
+        // Get the send email
         $messageBody = $this->assertHasEmail('no-reply@mysite.fr', 'user@test.fr', 'Account Creation', 'user@test.fr');
 
         // Get the activation url
@@ -187,7 +187,7 @@ class AccountTest extends WebTestCase
         $client->clickLink("Log Out");
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        // Redirect to to homepage with not logged
+        // Redirect to homepage with not logged
         $crawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertGreaterThan(0, $crawler->filter('a:contains("Log In")')->count());
@@ -328,7 +328,7 @@ class AccountTest extends WebTestCase
         );
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        // You password has been changed
+        // Your password has been changed
         $crawler = $client->followRedirect();
         $this->assertCrawlerHasAlert($crawler, 'Your password account has been changed');
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Log In")')->count());

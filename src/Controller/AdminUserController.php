@@ -36,6 +36,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @SuppressWarnings(PMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PMD.CouplingBetweenObjects)
  * @SuppressWarnings(PMD.TooManyPublicMethods)
+ * @method UserInterface getUser()
  */
 #[Route(path: '/user')]
 class AdminUserController extends AbstractController

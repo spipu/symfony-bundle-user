@@ -1,6 +1,7 @@
 <?php
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UiBundle\Entity\Form;
@@ -80,7 +81,7 @@ class PasswordFormTest extends TestCase
         $user->setPlainPassword('new_password');
 
         $this->assertSame('encoded_old_password', $user->getPassword());
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $form->setSpecificFields($symfonyForm, $user);
     }
 
@@ -99,7 +100,7 @@ class PasswordFormTest extends TestCase
         $user->setPlainPassword('');
 
         $this->assertSame('encoded_old_password', $user->getPassword());
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $form->setSpecificFields($symfonyForm, $user);
     }
 }

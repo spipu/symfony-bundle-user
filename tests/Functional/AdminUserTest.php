@@ -401,7 +401,7 @@ class AdminUserTest extends WebTestCase
         $crawler = $this->submitFormWithSpecificValues(
             $client,
             $crawler->filter('form[data-grid-role=config-select-form]')->form(),
-            ['cf[action]' => 'select', 'cf[id]' => (string) $this->defaultGrid + 99]
+            ['cf[action]' => 'select', 'cf[id]' => (string) ($this->defaultGrid + 99)]
         );
         $this->assertCrawlerHasAlert($crawler, 'Id is unknown');
         $gridProperties = $this->getGridProperties($crawler, 'user');

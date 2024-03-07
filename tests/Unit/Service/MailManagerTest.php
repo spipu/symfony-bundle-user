@@ -1,6 +1,7 @@
 <?php
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
+use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SpipuCoreMock;
 use Spipu\UserBundle\Tests\SpipuUserMock;
@@ -62,7 +63,7 @@ class MailManagerTest extends TestCase
 
         $this->assertSame(null, $user->getTokenDate());
         $service->sendActivationEmail($user);
-        $this->assertInstanceOf(\DateTimeInterface::class, $user->getTokenDate());
+        $this->assertInstanceOf(DateTimeInterface::class, $user->getTokenDate());
 
         $this->assertTrue($userTokenManager->isValid($user, 'mock_token_42'));
         $userTokenManager->reset($user);
@@ -121,6 +122,6 @@ class MailManagerTest extends TestCase
 
         $this->assertSame(null, $user->getTokenDate());
         $service->sendRecoveryEmail($user);
-        $this->assertInstanceOf(\DateTimeInterface::class, $user->getTokenDate());
+        $this->assertInstanceOf(DateTimeInterface::class, $user->getTokenDate());
     }
 }

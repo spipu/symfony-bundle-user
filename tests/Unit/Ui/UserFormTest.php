@@ -2,7 +2,6 @@
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
 use PHPUnit\Framework\TestCase;
-use Spipu\CoreBundle\Service\RoleDefinitionList;
 use Spipu\UiBundle\Entity\Form;
 use Spipu\UiBundle\Form\Options\YesNo;
 use Spipu\UserBundle\Tests\GenericUser;
