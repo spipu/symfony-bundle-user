@@ -9,7 +9,7 @@ class AdminUserTest extends WebTestCase
 {
     use UiWebTestCaseTrait;
 
-    protected int $defaultGrid = 3;
+    protected int $defaultGrid = 4;
 
     public function testBadAcl()
     {
