@@ -1,19 +1,15 @@
-{% macro treeLabel(roleService, userRoles, role) %}{% apply spaceless %}
+{% macro treeLabel(roleService, userRoles, role) %}
     <input type="checkbox" class="form-check-input" id="acl-tree-{{ role.code }}" name="acl[]" {% if roleService.hasRole(userRoles, role) %}checked{% endif %} value="{{ role.code }}">
     <label class="form-check-label" for="acl-tree-{{ role.code }}">{{- role.label|trans -}}</label>
-{% endapply %}{% endmacro %}
+{% endmacro %}
 
-{% macro tree(roleService, userRoles, role) %}{% apply spaceless %}
+{% macro tree(roleService, userRoles, role) %}
     <li>
         {{- _self.treeLabel(roleService, userRoles, role) -}}
         {% set children = roleService.getRoleChildren(role) %}
-        {% if children %}<ul>
-                {% for child in children %}
-                    {{- _self.tree(roleService, userRoles, child) -}}
-                {%  endfor %}
-        </ul>{% endif %}
+        {% if children %}<ul>{% for child in children %}{{- _self.tree(roleService, userRoles, child) -}}{%  endfor %}</ul>{% endif %}
     </li>
-{% endapply %}{% endmacro %}
+{% endmacro %}
 
 <form method="POST" action="{{ submitUrl }}">
     <div class="row">
