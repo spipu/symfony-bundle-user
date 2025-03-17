@@ -198,7 +198,7 @@ class UserForm extends AbstractForm
      * @return void
      * @SuppressWarnings(PMD.UnusedFormalParameter)
      */
-    public function setSpecificFields(FormInterface $form, EntityInterface $resource = null): void
+    public function setSpecificFields(FormInterface $form, ?EntityInterface $resource = null): void
     {
     }
 }
