@@ -70,7 +70,7 @@ class CreationForm extends ProfileForm
      * @throws Exception
      * @SuppressWarnings(PMD.UnusedFormalParameter)
      */
-    public function setSpecificFields(FormInterface $form, EntityInterface $resource = null): void
+    public function setSpecificFields(FormInterface $form, ?EntityInterface $resource = null): void
     {
         /** @var UserInterface $resource */
         if (empty($resource->getPlainPassword())) {

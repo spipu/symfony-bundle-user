@@ -46,5 +46,5 @@ abstract class AbstractForm implements EntityDefinitionInterface
 
     abstract protected function prepareForm(): void;
 
-    abstract public function setSpecificFields(FormInterface $form, EntityInterface $resource = null): void;
+    abstract public function setSpecificFields(FormInterface $form, ?EntityInterface $resource = null): void;
 }
