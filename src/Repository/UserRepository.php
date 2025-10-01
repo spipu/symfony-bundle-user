@@ -35,7 +35,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         parent::__construct($registry, trim($moduleConfiguration->getEntityClassName(), '\\'));
     }
 
-    public function loadUserByIdentifier(string $identifier): ?UserInterface //@codingStandardsIgnoreLine
+    public function loadUserByIdentifier(string $identifier): ?UserInterface // @codingStandardsIgnoreLine
     {
         try {
             return $this->createQueryBuilder('u')
@@ -49,7 +49,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
         }
     }
 
-    public function loadUserByUsername(string $username): ?UserInterface //@codingStandardsIgnoreLine
+    public function loadUserByUsername(string $username): ?UserInterface // @codingStandardsIgnoreLine
     {
         return $this->loadUserByIdentifier($username);
     }
