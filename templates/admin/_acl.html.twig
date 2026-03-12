@@ -1,13 +1,13 @@
-{% macro treeLabel(roleService, userRoles, role) %}
-    <input type="checkbox" class="form-check-input" id="acl-tree-{{ role.code }}" name="acl[]" {% if roleService.hasRole(userRoles, role) %}checked{% endif %} value="{{ role.code }}">
-    <label class="form-check-label" for="acl-tree-{{ role.code }}">{{- role.label|trans -}}</label>
+{% macro treeLabel(roleService, userRoles, role, type) %}
+    <input type="{{ type }}" class="form-check-input" id="acl-tree-{{ role.code }}" name="acl[]" {% if roleService.hasRole(userRoles, role) %}checked{% endif %} value="{{ role.code }}">
+    <label class="form-check-label pointer-event" for="acl-tree-{{ role.code }}">{{ role.label|trans }}</label>
 {% endmacro %}
 
 {% macro tree(roleService, userRoles, role) %}
     <li>
-        {{- _self.treeLabel(roleService, userRoles, role) -}}
+        {{ _self.treeLabel(roleService, userRoles, role, 'checkbox') }}
         {% set children = roleService.getRoleChildren(role) %}
-        {% if children %}<ul>{% for child in children %}{{- _self.tree(roleService, userRoles, child) -}}{%  endfor %}</ul>{% endif %}
+        {% if children %}<ul>{% for child in children %}{{ _self.tree(roleService, userRoles, child) }}{%  endfor %}</ul>{% endif %}
     </li>
 {% endmacro %}
 
@@ -19,7 +19,7 @@
                 <div class="card-body">
                     <ul class="acl-profiles-list">
                         {% for profile in roleService.profiles %}
-                            <li>{{ _self.treeLabel(roleService, userRoles, profile) }}</li>
+                            <li>{{ _self.treeLabel(roleService, userRoles, profile, 'radio') }}</li>
                         {% endfor %}
                     </ul>
                 </div>
