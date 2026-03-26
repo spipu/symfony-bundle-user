@@ -1,5 +1,5 @@
-{% macro treeLabel(roleService, userRoles, role, type) %}
-    <input type="{{ type }}" class="form-check-input" id="acl-tree-{{ role.code }}" name="acl[]" {% if roleService.hasRole(userRoles, role) %}checked{% endif %} value="{{ role.code }}">
+{% macro treeLabel(roleService, userRoles, role, type, addChildrenAttr) %}
+    <input type="{{ type }}" class="form-check-input" id="acl-tree-{{ role.code }}" name="acl[]" {% if roleService.hasRole(userRoles, role) %}checked{% endif %} value="{{ role.code }}" {% if addChildrenAttr %}data-children="{{ roleService.getRoleChildren(role)|keys|join(',') }}"{% endif %}>
     <label class="form-check-label pointer-event" for="acl-tree-{{ role.code }}">{{ role.label|trans }}</label>
 {% endmacro %}
 
@@ -17,9 +17,9 @@
             <div class="card mb-3">
                 <div class="card-header font-weight-bold">{{ 'spipu.core.role-type.profile'|trans }}</div>
                 <div class="card-body">
-                    <ul class="acl-profiles-list">
+                    <ul class="acl-profiles-list checkbox-tree">
                         {% for profile in roleService.profiles %}
-                            <li>{{ _self.treeLabel(roleService, userRoles, profile, 'radio') }}</li>
+                            <li>{{ _self.treeLabel(roleService, userRoles, profile, 'radio', true) }}</li>
                         {% endfor %}
                     </ul>
                 </div>
