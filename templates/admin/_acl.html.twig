@@ -1,5 +1,5 @@
 {% macro treeLabel(roleService, userRoles, role, type, addChildrenAttr) %}
-    <input type="{{ type }}" class="form-check-input" id="acl-tree-{{ role.code }}" name="acl[]" {% if roleService.hasRole(userRoles, role) %}checked{% endif %} value="{{ role.code }}" {% if addChildrenAttr %}data-children="{{ roleService.getRoleChildren(role)|keys|join(',') }}"{% endif %}>
+    <input type="{{ type }}" class="form-check-input" id="acl-tree-{{ role.code }}" name="acl[]" {% if roleService.hasRole(userRoles, role) %}checked{% endif %} value="{{ role.code }}" {% if addChildrenAttr %}data-children="{{ roleService.getProfileRoleList(role)|join(',') }}"{% endif %}>
     <label class="form-check-label pointer-event" for="acl-tree-{{ role.code }}">{{ role.label|trans }}</label>
 {% endmacro %}
 

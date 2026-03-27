@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Service;
 
+use InvalidArgumentException;
 use Spipu\CoreBundle\Entity\Role\Item;
 use Spipu\CoreBundle\Service\RoleDefinitionList;
 
@@ -90,6 +91,31 @@ class RoleService
         $this->sortRoles($list);
 
         return $list;
+    }
+
+    /**
+     * @param Item $role
+     * @return string[]
+     */
+    public function getProfileRoleList(Item $role): array
+    {
+        if ($role->getType() !== Item::TYPE_PROFILE) {
+            throw new InvalidArgumentException('Role is not a profile');
+        }
+        $list = [];
+        foreach ($role->getChildren() as $child) {
+            if ($child->getType() === Item::TYPE_PROFILE) {
+                $list = [...$list, ...$this->getProfileRoleList($child)];
+                continue;
+            }
+            if (
+                $child->getType() === Item::TYPE_ROLE &&
+                ($child->getPurpose() === null || $child->getPurpose() === $this->purpose)
+            ) {
+                $list[] = $child->getCode();
+            }
+        }
+        return array_values(array_unique($list));
     }
 
     public function hasRole(array $roleCodes, Item $role): bool
