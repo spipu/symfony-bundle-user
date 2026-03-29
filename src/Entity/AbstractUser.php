@@ -210,11 +210,6 @@ abstract class AbstractUser implements UserInterface
         return $this;
     }
 
-    public function serialize(): string
-    {
-        return serialize($this->__serialize());
-    }
-
     public function __serialize(): array
     {
         return [
@@ -231,13 +226,6 @@ abstract class AbstractUser implements UserInterface
             'createdAt'  => $this->createdAt,
             'updatedAt'  => $this->updatedAt,
         ];
-    }
-
-    public function unserialize(string $data): void
-    {
-        $this->__unserialize(
-            unserialize($data, ['allowed_classes' => false])
-        );
     }
 
     public function __unserialize(array $data): void

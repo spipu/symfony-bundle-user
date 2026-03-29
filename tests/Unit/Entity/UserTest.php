@@ -65,12 +65,12 @@ class UserTest extends TestCase
         $entity->eraseCredentials();
         $this->assertSame(null, $entity->getPlainPassword());
 
-        $serialized = $entity->serialize();
+        $serialized = $entity->__serialize();
 
         $new = new GenericUser(null);
-        $new->unserialize($serialized);
+        $new->__unserialize($serialized);
 
-        $this->assertSame($serialized, $new->serialize());
+        $this->assertSame($serialized, $new->__serialize());
         $this->assertSame($entity->getId(), $new->getId());
         $this->assertSame($entity->getEmail(), $new->getEmail());
         $this->assertSame($entity->getUsername(), $new->getUsername());

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Entity;
 
 use DateTimeInterface;
-use Serializable;
 use Spipu\UiBundle\Entity\EntityInterface;
 use Spipu\UiBundle\Entity\TimestampableInterface;
 use Symfony\Component\Security\Core\User\UserInterface as BaseUserInterface;
@@ -24,7 +23,6 @@ interface UserInterface extends
     EntityInterface,
     BaseUserInterface,
     TimestampableInterface,
-    Serializable,
     PasswordAuthenticatedUserInterface
 {
     public function getId(): ?int;
