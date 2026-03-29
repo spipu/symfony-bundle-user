@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
 use PHPUnit\Framework\TestCase;
@@ -9,7 +12,7 @@ use Symfony\Component\Form\FormInterface;
 
 class RecoveryFormTest extends TestCase
 {
-    public function testForm()
+    public function testForm(): void
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 

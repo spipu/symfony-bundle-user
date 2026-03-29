@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Functional;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
@@ -8,7 +11,7 @@ class AccountTest extends WebTestCase
 {
     public const REGEX_URL = '/<a [^>]*>([^<]+)<\/a>/';
 
-    public function test01NotExist()
+    public function test01NotExist(): void
     {
         $client = static::createClient();
 
@@ -39,7 +42,7 @@ class AccountTest extends WebTestCase
         $this->assertCrawlerHasAlert($crawler, 'Invalid credentials');
     }
 
-    public function test02Creation()
+    public function test02Creation(): void
     {
         $client = static::createClient();
 
@@ -119,7 +122,7 @@ class AccountTest extends WebTestCase
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Log In")')->count());
     }
 
-    public function test03BadPassword()
+    public function test03BadPassword(): void
     {
         $client = static::createClient();
 
@@ -150,7 +153,7 @@ class AccountTest extends WebTestCase
         $this->assertCrawlerHasAlert($crawler, 'Invalid credentials');
     }
 
-    public function test04GoodPassword()
+    public function test04GoodPassword(): void
     {
         $client = static::createClient();
 
@@ -195,7 +198,7 @@ class AccountTest extends WebTestCase
         $this->assertEquals(0, $crawler->filter('a:contains("My Profile")')->count());
     }
 
-    public function test05BadActivation()
+    public function test05BadActivation(): void
     {
         $client = static::createClient();
 
@@ -216,7 +219,7 @@ class AccountTest extends WebTestCase
         $this->assertCrawlerHasAlert($crawler, 'The email or the token is invalid');
     }
 
-    public function test06RecoveryBadEmail()
+    public function test06RecoveryBadEmail(): void
     {
         $client = static::createClient();
 
@@ -254,7 +257,7 @@ class AccountTest extends WebTestCase
         $this->assertGreaterThan(0, $crawler->filter('html:contains("An email has been sent")')->count());
     }
 
-    public function test07RecoveryGoodEmail()
+    public function test07RecoveryGoodEmail(): void
     {
         $client = static::createClient();
 
@@ -393,7 +396,7 @@ class AccountTest extends WebTestCase
         $controller->logout();
     }
 
-    public function test08BadRecovery()
+    public function test08BadRecovery(): void
     {
         $client = static::createClient();
 
@@ -414,7 +417,7 @@ class AccountTest extends WebTestCase
         $this->assertCrawlerHasAlert($crawler, 'The email or the token is invalid');
     }
 
-    public function test09CreationAlreadyTaken()
+    public function test09CreationAlreadyTaken(): void
     {
         $client = static::createClient();
 
@@ -455,7 +458,7 @@ class AccountTest extends WebTestCase
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Create")')->count());
     }
 
-    public function test10EditProfile()
+    public function test10EditProfile(): void
     {
         $client = static::createClient();
 

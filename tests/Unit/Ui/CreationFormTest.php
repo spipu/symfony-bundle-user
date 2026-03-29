@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +14,7 @@ use Symfony\Component\Form\FormInterface;
 
 class CreationFormTest extends TestCase
 {
-    public function testForm()
+    public function testForm(): void
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
@@ -61,7 +64,7 @@ class CreationFormTest extends TestCase
         );
     }
 
-    public function testSubmitOk()
+    public function testSubmitOk(): void
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
@@ -77,7 +80,7 @@ class CreationFormTest extends TestCase
         $this->assertSame('encoded_mock_password', $user->getPassword());
     }
 
-    public function testSubmitKo()
+    public function testSubmitKo(): void
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 

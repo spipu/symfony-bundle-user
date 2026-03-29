@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Entity;
 
 use DateTime;
@@ -9,7 +12,7 @@ use Spipu\UserBundle\Tests\SpipuUserMock;
 
 class UserTest extends TestCase
 {
-    public function testEntity()
+    public function testEntity(): void
     {
         $date = new DateTime();
 

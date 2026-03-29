@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Fixture;
 
 use PHPUnit\Framework\TestCase;
@@ -12,7 +15,7 @@ use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 
 class FirstUserFixtureTest extends TestCase
 {
-    public function testBasic()
+    public function testBasic(): void
     {
         $repository = $this->createMock(UserRepository::class);
 
@@ -29,7 +32,7 @@ class FirstUserFixtureTest extends TestCase
         $this->assertSame(10, $fixture->getOrder());
     }
 
-    public function testLoadFirst()
+    public function testLoadFirst(): void
     {
         $entityManager = SymfonyMock::getEntityManager($this);
         $entityManager->expects($this->once())->method('flush');
@@ -62,7 +65,7 @@ class FirstUserFixtureTest extends TestCase
         );
     }
 
-    public function testLoadAfter()
+    public function testLoadAfter(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
 
@@ -87,7 +90,7 @@ class FirstUserFixtureTest extends TestCase
         );
     }
 
-    public function testRemoveFirst()
+    public function testRemoveFirst(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
 
@@ -112,7 +115,7 @@ class FirstUserFixtureTest extends TestCase
         );
     }
 
-    public function testRemoveAfter()
+    public function testRemoveAfter(): void
     {
         $entityManager = SymfonyMock::getEntityManager($this);
         $entityManager->expects($this->never())->method('flush');

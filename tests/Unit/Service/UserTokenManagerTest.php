@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
@@ -8,7 +11,7 @@ use Spipu\UserBundle\Service\UserTokenManager;
 
 class UserTokenManagerTest extends TestCase
 {
-    public function testService()
+    public function testService(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
         $user

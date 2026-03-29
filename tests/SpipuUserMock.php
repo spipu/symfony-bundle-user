@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests;
 
 use DateTime;
@@ -24,7 +26,7 @@ class SpipuUserMock extends TestCase
      * @param int|null $id
      * @return UserInterface
      */
-    public static function getUserEntity(int $id = null): UserInterface
+    public static function getUserEntity(?int $id = null): UserInterface
     {
         return new GenericUser($id);
     }
@@ -33,7 +35,7 @@ class SpipuUserMock extends TestCase
      * @param TestCase $testsCase
      * @return MockObject|UserTokenManager
      */
-    public static function getUserTokenManager(TestCase $testsCase)
+    public static function getUserTokenManager(TestCase $testsCase): UserTokenManager
     {
         $userTokenManager = $testsCase->createMock(UserTokenManager::class);
 

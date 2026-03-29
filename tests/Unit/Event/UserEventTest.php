@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Event;
 
 use PHPUnit\Framework\TestCase;
@@ -7,7 +10,7 @@ use Spipu\UserBundle\Tests\GenericUser;
 
 class UserEventTest extends TestCase
 {
-    public function testEvent()
+    public function testEvent(): void
     {
         $user = new GenericUser();
 

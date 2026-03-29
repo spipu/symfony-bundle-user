@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +14,7 @@ use Symfony\Component\Form\FormInterface;
 
 class UserFormTest extends TestCase
 {
-    public function testForm()
+    public function testForm(): void
     {
         $yesNo = new YesNo();
 

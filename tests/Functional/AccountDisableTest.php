@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Functional;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
@@ -13,7 +16,7 @@ class AccountDisableTest extends WebTestCase
         unset($_SERVER['APP_ACCOUNT_RECOVERY']);
     }
 
-    public function testCreateEnableRecoveryEnable()
+    public function testCreateEnableRecoveryEnable(): void
     {
         $_SERVER['APP_ACCOUNT_CREATION'] = true;
         $_SERVER['APP_ACCOUNT_RECOVERY'] = true;
@@ -46,7 +49,7 @@ class AccountDisableTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect());
     }
 
-    public function testCreateEnableRecoveryDisable()
+    public function testCreateEnableRecoveryDisable(): void
     {
         $_SERVER['APP_ACCOUNT_CREATION'] = true;
         $_SERVER['APP_ACCOUNT_RECOVERY'] = false;
@@ -79,7 +82,7 @@ class AccountDisableTest extends WebTestCase
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 
-    public function testCreateDisableRecoveryEnable()
+    public function testCreateDisableRecoveryEnable(): void
     {
         $_SERVER['APP_ACCOUNT_CREATION'] = false;
         $_SERVER['APP_ACCOUNT_RECOVERY'] = true;

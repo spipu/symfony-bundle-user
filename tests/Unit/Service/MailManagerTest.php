@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
 use DateTimeInterface;
@@ -11,7 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MailManagerTest extends TestCase
 {
-    public function testActivationEmail()
+    public function testActivationEmail(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
         $user
@@ -70,7 +73,7 @@ class MailManagerTest extends TestCase
         $this->assertFalse($userTokenManager->isValid($user, 'mock_token_42'));
     }
 
-    public function testRecoveryEmail()
+    public function testRecoveryEmail(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
         $user

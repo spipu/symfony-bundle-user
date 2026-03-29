@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
@@ -18,7 +21,7 @@ class MailConfigurationTest extends TestCase
         return $mailConfiguration;
     }
 
-    public function testService()
+    public function testService(): void
     {
         $mailConfiguration = self::getService($this);
 

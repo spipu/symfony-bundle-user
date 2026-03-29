@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
@@ -28,7 +31,7 @@ class ModuleConfigurationTest extends TestCase
         return $moduleConfiguration;
     }
 
-    public function testService()
+    public function testService(): void
     {
         $moduleConfiguration = self::getService($this, true, false);
 

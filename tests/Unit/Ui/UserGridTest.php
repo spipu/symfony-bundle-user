@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
 use PHPUnit\Framework\TestCase;
@@ -15,7 +18,7 @@ class UserGridTest extends TestCase
     /**
      * @return UserGrid
      */
-    public function testGrid()
+    public function testGrid(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
 

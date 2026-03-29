@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
 use Exception;
@@ -12,7 +15,7 @@ use Symfony\Component\Form\FormInterface;
 
 class PasswordFormTest extends TestCase
 {
-    public function testForm()
+    public function testForm(): void
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
@@ -47,7 +50,7 @@ class PasswordFormTest extends TestCase
         );
     }
 
-    public function testSubmitOk()
+    public function testSubmitOk(): void
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
@@ -66,7 +69,7 @@ class PasswordFormTest extends TestCase
         $this->assertSame('encoded_new_password', $user->getPassword());
     }
 
-    public function testSubmitKoBadOldPassword()
+    public function testSubmitKoBadOldPassword(): void
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
@@ -85,7 +88,7 @@ class PasswordFormTest extends TestCase
         $form->setSpecificFields($symfonyForm, $user);
     }
 
-    public function testSubmitKoMissingNewPassword()
+    public function testSubmitKoMissingNewPassword(): void
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 

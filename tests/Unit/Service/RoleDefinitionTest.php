@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
@@ -9,7 +12,7 @@ use Spipu\UserBundle\Service\RoleDefinition;
 class RoleDefinitionTest extends TestCase
 {
 
-    public function testService()
+    public function testService(): void
     {
         $items = RoleDefinitionUiTest::loadRoles($this, new RoleDefinition());
 

@@ -1,5 +1,7 @@
 <?php /** @noinspection CssInvalidPseudoSelector */
 
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Functional;
 
 use Spipu\CoreBundle\Tests\WebTestCase;
@@ -11,7 +13,7 @@ class AdminUserTest extends WebTestCase
 
     protected int $defaultGrid = 4;
 
-    public function testBadAcl()
+    public function testBadAcl(): void
     {
         $client = static::createClient();
 
@@ -45,7 +47,7 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(0, $crawler->filter('a:contains("Users")')->count());
     }
 
-    public function testAdminCrud()
+    public function testAdminCrud(): void
     {
         $client = static::createClient();
 
@@ -316,7 +318,7 @@ class AdminUserTest extends WebTestCase
         $this->assertSame(2002, $gridProperties['count']['nb']);
     }
 
-    public function testAdminGridConfig()
+    public function testAdminGridConfig(): void
     {
         $client = static::createClient();
 
@@ -337,7 +339,6 @@ class AdminUserTest extends WebTestCase
             'updated_at',
         ];
         $this->assertSame($expectedColumns, array_keys($gridProperties['columns']));
-
 
         // Create new display - Name is missing
         $client->clickLink('Create a new display');
@@ -803,7 +804,7 @@ class AdminUserTest extends WebTestCase
         $this->assertSame(['default' => ['id' => $this->defaultGrid, 'selected' => true]], $gridProperties['display']);
     }
 
-    public function testBadAccess()
+    public function testBadAccess(): void
     {
         $client = static::createClient();
 

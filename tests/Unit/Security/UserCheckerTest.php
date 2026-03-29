@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Spipu\UserBundle\Tests\Unit\Security;
 
 use PHPUnit\Framework\TestCase;
@@ -9,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserCheckerTest extends TestCase
 {
-    public function testPreGoodUserEnabled()
+    public function testPreGoodUserEnabled(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
         $user->setPassword('encoded_password');
@@ -20,7 +23,7 @@ class UserCheckerTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testPreGoodUserDisabled()
+    public function testPreGoodUserDisabled(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
         $user->setPassword('encoded_password');
@@ -37,7 +40,7 @@ class UserCheckerTest extends TestCase
         }
     }
 
-    public function testPreBadUser()
+    public function testPreBadUser(): void
     {
         $user = $this->createMock(UserInterface::class);
 
@@ -47,7 +50,7 @@ class UserCheckerTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testPostGoodUserEnabled()
+    public function testPostGoodUserEnabled(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
         $user->setPassword('encoded_password');
@@ -58,7 +61,7 @@ class UserCheckerTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testPostGoodUserDisabled()
+    public function testPostGoodUserDisabled(): void
     {
         $user = SpipuUserMock::getUserEntity(42);
         $user->setPassword('encoded_password');
@@ -70,7 +73,7 @@ class UserCheckerTest extends TestCase
         $service->checkPostAuth($user);
     }
 
-    public function testPostBadUser()
+    public function testPostBadUser(): void
     {
         $user = $this->createMock(UserInterface::class);
 
