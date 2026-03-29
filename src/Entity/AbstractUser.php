@@ -87,7 +87,7 @@ abstract class AbstractUser implements UserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): UserInterface
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
@@ -104,7 +104,7 @@ abstract class AbstractUser implements UserInterface
         return $this->getUsername();
     }
 
-    public function setUsername(string $username): UserInterface
+    public function setUsername(string $username): self
     {
         $this->username = $username;
 
@@ -116,7 +116,7 @@ abstract class AbstractUser implements UserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): UserInterface
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -128,7 +128,7 @@ abstract class AbstractUser implements UserInterface
         return $this->plainPassword;
     }
 
-    public function setPlainPassword(string $password): UserInterface
+    public function setPlainPassword(string $password): self
     {
         $this->plainPassword = $password;
 
@@ -140,7 +140,7 @@ abstract class AbstractUser implements UserInterface
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): UserInterface
+    public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -152,7 +152,7 @@ abstract class AbstractUser implements UserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): UserInterface
+    public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
 
@@ -177,20 +177,21 @@ abstract class AbstractUser implements UserInterface
 
     /**
      * @param string[] $roles
-     * @return UserInterface
+     * @return self
      */
-    public function setRoles(array $roles): UserInterface
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
 
         return $this;
     }
+
     public function getNbLogin(): ?int
     {
         return $this->nbLogin;
     }
 
-    public function setNbLogin(int $nbLogin): UserInterface
+    public function setNbLogin(int $nbLogin): self
     {
         $this->nbLogin = $nbLogin;
 
@@ -202,7 +203,7 @@ abstract class AbstractUser implements UserInterface
         return $this->nbTryLogin;
     }
 
-    public function setNbTryLogin(int $nbTryLogin): UserInterface
+    public function setNbTryLogin(int $nbTryLogin): self
     {
         $this->nbTryLogin = $nbTryLogin;
 
@@ -257,14 +258,12 @@ abstract class AbstractUser implements UserInterface
 
     public function getSalt(): ?string
     {
-        return  null;
+        return null;
     }
 
-    public function eraseCredentials(): UserInterface
+    public function eraseCredentials(): void
     {
         $this->plainPassword = null;
-
-        return $this;
     }
 
     public function getActive(): ?bool
@@ -272,7 +271,7 @@ abstract class AbstractUser implements UserInterface
         return $this->active;
     }
 
-    public function setActive(bool $active): UserInterface
+    public function setActive(bool $active): self
     {
         $this->active = $active;
 
@@ -284,7 +283,7 @@ abstract class AbstractUser implements UserInterface
         return $this->tokenDate;
     }
 
-    public function setTokenDate(?DateTimeInterface $tokenDate): UserInterface
+    public function setTokenDate(?DateTimeInterface $tokenDate): self
     {
         $this->tokenDate = $tokenDate;
 
@@ -296,7 +295,7 @@ abstract class AbstractUser implements UserInterface
         return $this->passwordDate;
     }
 
-    public function setPasswordDate(?DateTimeInterface $passwordDate): UserInterface
+    public function setPasswordDate(?DateTimeInterface $passwordDate): self
     {
         $this->passwordDate = $passwordDate;
 
