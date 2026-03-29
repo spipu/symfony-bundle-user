@@ -375,7 +375,7 @@ class AdminUserController extends AbstractController
         return false;
     }
 
-    private function redirectTo(string $backTo, UserInterface $resource = null): Response
+    private function redirectTo(string $backTo, ?UserInterface $resource = null): Response
     {
         switch ($backTo) {
             case 'show':
