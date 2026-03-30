@@ -10,11 +10,7 @@ use Spipu\UserBundle\Service\MailConfigurationInterface;
 
 class MailConfigurationTest extends TestCase
 {
-    /**
-     * @param TestCase $testCase
-     * @return MailConfigurationInterface
-     */
-    public static function getService(TestCase $testCase)
+    public static function getService(TestCase $testCase): MailConfigurationInterface
     {
         $mailConfiguration = new MailConfiguration();
 

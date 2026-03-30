@@ -12,13 +12,7 @@ use Spipu\UserBundle\Tests\GenericUser;
 
 class ModuleConfigurationTest extends TestCase
 {
-    /**
-     * @param TestCase $testCase
-     * @param bool $creation
-     * @param bool $password
-     * @return ModuleConfiguration
-     */
-    public static function getService(TestCase $testCase, bool $creation, bool $password)
+    public static function getService(TestCase $testCase, bool $creation, bool $password): ModuleConfiguration
     {
         /** @var UserRepository $repository */
         $moduleConfiguration = new ModuleConfiguration(
