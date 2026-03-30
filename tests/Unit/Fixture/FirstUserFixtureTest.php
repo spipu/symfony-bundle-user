@@ -38,7 +38,7 @@ class FirstUserFixtureTest extends TestCase
         $entityManager->expects($this->once())->method('flush');
         $entityManager->expects($this->once())->method('persist')
             ->willReturnCallback(
-                function ($object) {
+                function (object $object) {
                     /** @var UserInterface $object */
                     $this->assertInstanceOf(UserInterface::class, $object);
                     $this->assertSame('admin', $object->getUserIdentifier());
