@@ -7,10 +7,9 @@ namespace Spipu\UserBundle\Tests\Unit\Command;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\Command\EnableUserCommand;
-use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Repository\UserRepository;
-use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Tests\SpipuUserMock;
+use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Symfony\Component\Console\Command\Command;
 
 class EnableUserCommandTest extends TestCase
@@ -33,7 +32,7 @@ class EnableUserCommandTest extends TestCase
         $entityManager = SymfonyMock::getEntityManager($this);
         $entityManager->expects($this->once())->method('flush');
 
-        $command = new EnableUserCommand($userRepository, new UserManager(), $entityManager);
+        $command = new EnableUserCommand($userRepository, UserManagerTest::getService($this), $entityManager);
         $this->assertSame('spipu:user:enable', $command->getName());
 
         $inputMock = SymfonyMock::getConsoleInput($this, ['username' => 'john']);
@@ -62,7 +61,7 @@ class EnableUserCommandTest extends TestCase
         $entityManager = SymfonyMock::getEntityManager($this);
         $entityManager->expects($this->never())->method('flush');
 
-        $command = new EnableUserCommand($userRepository, new UserManager(), $entityManager);
+        $command = new EnableUserCommand($userRepository, UserManagerTest::getService($this), $entityManager);
 
         $inputMock = SymfonyMock::getConsoleInput($this, ['username' => 'unknown']);
         $outputMock = SymfonyMock::getConsoleOutput($this);

@@ -14,17 +14,32 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Service;
 
 use Spipu\UserBundle\Entity\UserInterface;
+use Spipu\UserBundle\Event\UserEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UserManager
 {
+    private EventDispatcherInterface $eventDispatcher;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     public function enableUser(UserInterface $user): void
     {
         $user->setActive(true);
         $user->setNbTryLogin(0);
+
+        $event = new UserEvent($user, 'enable');
+        $this->eventDispatcher->dispatch($event, $event->getEventCode());
     }
 
     public function disableUser(UserInterface $user): void
     {
         $user->setActive(false);
+
+        $event = new UserEvent($user, 'disable');
+        $this->eventDispatcher->dispatch($event, $event->getEventCode());
     }
 }

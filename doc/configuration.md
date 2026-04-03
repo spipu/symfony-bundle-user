@@ -83,6 +83,8 @@ The bundle dispatches `Spipu\UserBundle\Event\UserEvent` for the following user 
 | `spipu.user.action.recovery_asked` | `recovery_asked` | Password recovery form submitted |
 | `spipu.user.action.recovery_allow` | `recovery_allow` | Recovery link clicked and token validated (before new password form) |
 | `spipu.user.action.recovery_update` | `recovery_update` | New password saved via recovery link |
+| `spipu.user.action.enable` | `enable` | User account is enabled (admin UI, CLI, account confirmation, password recovery) |
+| `spipu.user.action.disable` | `disable` | User account is disabled (admin UI, CLI, or automatic lock after failed attempts) |
 | `spipu.user.action.edit` | `edit` | User edits their own profile (name/email) |
 | `spipu.user.action.password` | `password` | User changes their own password from profile |
 

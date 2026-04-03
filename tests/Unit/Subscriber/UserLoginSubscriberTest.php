@@ -8,8 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Subscriber\UserLoginSubscriber;
-use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Tests\SpipuUserMock;
+use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Spipu\UserBundle\Tests\Unit\Service\UserConfigurationTest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -47,7 +47,7 @@ class UserLoginSubscriberTest extends TestCase
         $user->setNbTryLogin(3);
 
         $userConfiguration = UserConfigurationTest::getService($this);
-        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, new UserManager());
+        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, UserManagerTest::getService($this));
 
         $passport = new SelfValidatingPassport(new UserBadge('test', function () use ($user) {
             return $user;
@@ -74,7 +74,7 @@ class UserLoginSubscriberTest extends TestCase
             'user.security.lock_enabled' => 1,
             'user.security.lock_max_attempts' => 10,
         ]);
-        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, new UserManager());
+        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, UserManagerTest::getService($this));
 
         $event = $this->createLoginFailureEvent($user);
         $subscriber->onLoginFailed($event);
@@ -94,7 +94,7 @@ class UserLoginSubscriberTest extends TestCase
             'user.security.lock_enabled' => 1,
             'user.security.lock_max_attempts' => 10,
         ]);
-        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, new UserManager());
+        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, UserManagerTest::getService($this));
 
         $event = $this->createLoginFailureEvent($user);
         $subscriber->onLoginFailed($event);
@@ -114,7 +114,7 @@ class UserLoginSubscriberTest extends TestCase
             'user.security.lock_enabled' => 1,
             'user.security.lock_max_attempts' => 10,
         ]);
-        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, new UserManager());
+        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, UserManagerTest::getService($this));
 
         $event = $this->createLoginFailureEvent($user);
         $subscriber->onLoginFailed($event);
@@ -133,7 +133,7 @@ class UserLoginSubscriberTest extends TestCase
         $userConfiguration = UserConfigurationTest::getService($this, [
             'user.security.lock_enabled' => 0,
         ]);
-        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, new UserManager());
+        $subscriber = new UserLoginSubscriber($this->getEntityManager(), $userConfiguration, UserManagerTest::getService($this));
 
         $event = $this->createLoginFailureEvent($user);
         $subscriber->onLoginFailed($event);
@@ -148,7 +148,7 @@ class UserLoginSubscriberTest extends TestCase
         $entityManager->expects($this->never())->method('flush');
 
         $userConfiguration = UserConfigurationTest::getService($this);
-        $subscriber = new UserLoginSubscriber($entityManager, $userConfiguration, new UserManager());
+        $subscriber = new UserLoginSubscriber($entityManager, $userConfiguration, UserManagerTest::getService($this));
 
         $authenticator = $this->createMock(AuthenticatorInterface::class);
         $event = new LoginFailureEvent(

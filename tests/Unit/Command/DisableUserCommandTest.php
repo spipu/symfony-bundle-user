@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\Command\DisableUserCommand;
 use Spipu\UserBundle\Repository\UserRepository;
-use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Tests\SpipuUserMock;
+use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Symfony\Component\Console\Command\Command;
 
 class DisableUserCommandTest extends TestCase
@@ -31,7 +31,7 @@ class DisableUserCommandTest extends TestCase
         $entityManager = SymfonyMock::getEntityManager($this);
         $entityManager->expects($this->once())->method('flush');
 
-        $command = new DisableUserCommand($userRepository, new UserManager(), $entityManager);
+        $command = new DisableUserCommand($userRepository, UserManagerTest::getService($this), $entityManager);
         $this->assertSame('spipu:user:disable', $command->getName());
 
         $inputMock = SymfonyMock::getConsoleInput($this, ['username' => 'john']);
@@ -59,7 +59,7 @@ class DisableUserCommandTest extends TestCase
         $entityManager = SymfonyMock::getEntityManager($this);
         $entityManager->expects($this->never())->method('flush');
 
-        $command = new DisableUserCommand($userRepository, new UserManager(), $entityManager);
+        $command = new DisableUserCommand($userRepository, UserManagerTest::getService($this), $entityManager);
 
         $inputMock = SymfonyMock::getConsoleInput($this, ['username' => 'unknown']);
         $outputMock = SymfonyMock::getConsoleOutput($this);
