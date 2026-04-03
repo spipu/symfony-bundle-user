@@ -84,8 +84,8 @@ spipu:
             reset:         "A password recovery email has been sent"
             mass_enabled:  "%count items have been enabled."
             mass_disabled: "%count items have been disabled."
-            confirm:       "Your account has been activated, you can now use it."
-            recover:       "Your password account has been changed, you can now use it."
+            confirm:        "Your account has been activated, you can now use it."
+            recover:        "Your password account has been changed, you can now use it."
 
         role:
             admin:          "Manage Users"
@@ -114,3 +114,8 @@ spipu:
             recover:
                 title:      "Account Recovery"
                 action:     "In order to set a new password, you must click on the following link, or copy it on your browser."
+
+            email_change_notification:
+                title:      "Email Address Changed"
+                message:    "Your email address has been changed from %old_email to %new_email. If you did not make this change, please contact the administrator."
+

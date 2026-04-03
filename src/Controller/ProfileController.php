@@ -17,6 +17,7 @@ use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UiBundle\Service\Ui\ShowFactory;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Event\UserEvent;
+use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Ui\PasswordForm;
 use Spipu\UserBundle\Ui\ProfileForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,10 +30,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ProfileController extends AbstractController
 {
     private EventDispatcherInterface $eventDispatcher;
+    private UserManager $userManager;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        UserManager $userManager
+    ) {
         $this->eventDispatcher = $eventDispatcher;
+        $this->userManager = $userManager;
     }
 
     #[Route(path: '/', name: 'spipu_user_profile_show', methods: 'GET')]
@@ -57,6 +62,7 @@ class ProfileController extends AbstractController
 
         /** @var UserInterface $resource */
         $resource = $this->getUser();
+        $oldEmail = $resource->getEmail();
 
         $manager = $formFactory->create($profileForm);
         $manager->setResource($resource);
@@ -64,6 +70,10 @@ class ProfileController extends AbstractController
         if ($manager->validate()) {
             $event = new UserEvent($resource, 'edit');
             $this->eventDispatcher->dispatch($event, $event->getEventCode());
+
+            if ($resource->getEmail() !== $oldEmail) {
+                $this->userManager->changeEmail($resource, $oldEmail);
+            }
 
             return $this->redirectToRoute('spipu_user_profile_show', ['id' => $resource->getId()]);
         }

@@ -1,0 +1,9 @@
+{% extends 'base_email.html.twig' %}
+
+{% block title %}{{  parent() }} - {{ 'spipu.user.email.email_change_notification.title'|trans() }}{% endblock %}
+
+{% block body %}
+    <p>{{ 'spipu.user.email.email_change_notification.message'|trans({'%old_email': oldEmail, '%new_email': newEmail}) }}</p>
+    <hr />
+    <i>{{ 'spipu.user.email.global.no-reply'|trans() }}</i>
+{% endblock %}

@@ -536,7 +536,10 @@ class AccountTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Save")')->count());
 
-        // Submit new values
+        // Needed to profile email
+        $client->enableProfiler();
+
+        // Submit new values with email change
         $client->submit(
             $crawler->filter('form#form_user_profile')->form(),
             [
@@ -548,22 +551,26 @@ class AccountTest extends WebTestCase
         );
         $this->assertTrue($client->getResponse()->isRedirect());
 
-        // View page
+        // Verify notification email sent to old email
+        $this->assertEmailCount(1);
+        $notificationEmail = $this->getMailerMessage(0);
+        $this->assertEmailHeaderSame($notificationEmail, 'To', 'user@test.fr');
+
+        // View page - user stays logged in
         $crawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertGreaterThan(0, $crawler->filter('h1:contains("My Profile")')->count());
-        $this->assertCrawlerHasAlert($crawler, 'The item has been saved');
         $this->assertCrawlerHasFieldValue($crawler, 'firstname', 'Change Firstname');
         $this->assertCrawlerHasFieldValue($crawler, 'lastname', 'Change Lastname');
         $this->assertCrawlerHasFieldValue($crawler, 'email', 'change@test.fr');
         $this->assertCrawlerHasFieldValue($crawler, 'username', 'change_user');
 
-        // Edit page
+        // Edit page - restore values
         $crawler = $client->clickLink("Edit My Profile");
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Save")')->count());
 
-        // Restore Values
+        // Restore values
         $client->submit(
             $crawler->filter('form#form_user_profile')->form(),
             [

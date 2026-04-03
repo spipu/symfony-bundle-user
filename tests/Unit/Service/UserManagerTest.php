@@ -9,6 +9,7 @@ use Spipu\UserBundle\Event\PasswordValidationEvent;
 use Spipu\UserBundle\Exception\PasswordPolicyException;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\Event\UserEvent;
+use Spipu\UserBundle\Service\MailManager;
 use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Tests\SpipuUserMock;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -19,8 +20,9 @@ class UserManagerTest extends TestCase
     {
         $eventDispatcher = SymfonyMock::getEventDispatcher($testCase);
         $userConfiguration = UserConfigurationTest::getService($testCase, $configValues);
+        $mailManager = $testCase->createMock(MailManager::class);
 
-        return new UserManager($eventDispatcher, $userConfiguration);
+        return new UserManager($eventDispatcher, $userConfiguration, $mailManager);
     }
 
     public function testEnableUser(): void
@@ -64,7 +66,8 @@ class UserManagerTest extends TestCase
             );
 
         $userConfiguration = UserConfigurationTest::getService($this);
-        $service = new UserManager($eventDispatcher, $userConfiguration);
+        $mailManager = $this->createMock(MailManager::class);
+        $service = new UserManager($eventDispatcher, $userConfiguration, $mailManager);
         $service->enableUser($user);
     }
 
@@ -105,7 +108,8 @@ class UserManagerTest extends TestCase
             );
 
         $userConfiguration = UserConfigurationTest::getService($this);
-        $service = new UserManager($eventDispatcher, $userConfiguration);
+        $mailManager = $this->createMock(MailManager::class);
+        $service = new UserManager($eventDispatcher, $userConfiguration, $mailManager);
         $service->disableUser($user);
     }
 
@@ -146,8 +150,51 @@ class UserManagerTest extends TestCase
                 $this->equalTo(PasswordValidationEvent::EVENT_CODE)
             );
 
-        $service = new UserManager($eventDispatcher, $userConfiguration);
+        $mailManager = $this->createMock(MailManager::class);
+        $service = new UserManager($eventDispatcher, $userConfiguration, $mailManager);
         $service->validatePassword('1234567890');
     }
 
+    public function testChangeEmail(): void
+    {
+        $user = SpipuUserMock::getUserEntity(1);
+        $user->setEmail('new@test.fr');
+        $user->setActive(true);
+
+        $mailManager = $this->createMock(MailManager::class);
+        $mailManager
+            ->expects($this->once())
+            ->method('sendEmailChangeNotification')
+            ->with('old@test.fr', 'new@test.fr');
+
+        $eventDispatcher = SymfonyMock::getEventDispatcher($this);
+        $userConfiguration = UserConfigurationTest::getService($this);
+
+        $service = new UserManager($eventDispatcher, $userConfiguration, $mailManager);
+        $service->changeEmail($user, 'old@test.fr');
+
+        $this->assertTrue($user->getActive());
+    }
+
+    public function testChangeEmailEvent(): void
+    {
+        $user = SpipuUserMock::getUserEntity(1);
+        $user->setEmail('new@test.fr');
+        $user->setActive(true);
+
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                $this->isInstanceOf(UserEvent::class),
+                $this->equalTo('spipu.user.action.email_change')
+            );
+
+        $mailManager = $this->createMock(MailManager::class);
+        $userConfiguration = UserConfigurationTest::getService($this);
+
+        $service = new UserManager($eventDispatcher, $userConfiguration, $mailManager);
+        $service->changeEmail($user, 'old@test.fr');
+    }
 }

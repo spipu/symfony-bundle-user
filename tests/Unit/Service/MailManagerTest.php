@@ -127,4 +127,38 @@ class MailManagerTest extends TestCase
         $service->sendRecoveryEmail($user);
         $this->assertInstanceOf(DateTimeInterface::class, $user->getTokenDate());
     }
+
+    public function testEmailChangeNotification(): void
+    {
+        $router = SymfonyMock::getRouter($this);
+
+        $mailManager = SpipuCoreMock::getMailManager($this);
+        $mailManager
+            ->expects($this->once())
+            ->method('sendTwigMail')
+            ->with(
+                'spipu.user.email.email_change_notification.title',
+                'no-reply@mysite.fr',
+                'old@test.fr',
+                '@SpipuUser/email/change-notification.html.twig',
+                [
+                    'oldEmail' => 'old@test.fr',
+                    'newEmail' => 'new@test.fr',
+                ]
+            );
+
+        $userTokenManager = SpipuUserMock::getUserTokenManager($this);
+        $mailConfiguration = MailConfigurationTest::getService($this);
+
+        $service = new MailManager(
+            $mailManager,
+            $router,
+            SymfonyMock::getTranslator($this),
+            $userTokenManager,
+            $mailConfiguration
+        );
+
+        $service->sendEmailChangeNotification('old@test.fr', 'new@test.fr');
+    }
+
 }

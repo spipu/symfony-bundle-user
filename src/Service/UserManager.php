@@ -23,13 +23,16 @@ class UserManager
 {
     private EventDispatcherInterface $eventDispatcher;
     private UserConfiguration $userConfiguration;
+    private MailManager $mailManager;
 
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        UserConfiguration $userConfiguration
+        UserConfiguration $userConfiguration,
+        MailManager $mailManager
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->userConfiguration = $userConfiguration;
+        $this->mailManager = $mailManager;
     }
 
     /**
@@ -61,6 +64,14 @@ class UserManager
         $user->setActive(false);
 
         $event = new UserEvent($user, 'disable');
+        $this->eventDispatcher->dispatch($event, $event->getEventCode());
+    }
+
+    public function changeEmail(UserInterface $user, string $oldEmail): void
+    {
+        $this->mailManager->sendEmailChangeNotification($oldEmail, $user->getEmail());
+
+        $event = new UserEvent($user, 'email_change');
         $this->eventDispatcher->dispatch($event, $event->getEventCode());
     }
 }

@@ -63,6 +63,20 @@ class MailManager
         );
     }
 
+    public function sendEmailChangeNotification(string $oldEmail, string $newEmail): void
+    {
+        $this->mailManager->sendTwigMail(
+            $this->translator->trans('spipu.user.email.email_change_notification.title'),
+            $this->mailConfiguration->getEmailFrom(),
+            $oldEmail,
+            '@SpipuUser/email/change-notification.html.twig',
+            [
+                'oldEmail' => $oldEmail,
+                'newEmail' => $newEmail,
+            ]
+        );
+    }
+
     public function sendRecoveryEmail(UserInterface $user): void
     {
         $confirmLink = $this->urlGenerator->generate(
