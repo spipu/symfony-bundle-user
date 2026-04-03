@@ -10,6 +10,7 @@ The following settings are stored in the database via ConfigurationBundle and ca
 |-----|------|---------|-------------|
 | `user.security.lock_enabled` | boolean | `true` | Enable automatic account locking after too many failed login attempts |
 | `user.security.lock_max_attempts` | integer | `10` | Number of consecutive failed login attempts before the account is locked |
+| `user.security.token_expiration` | integer | `12` | Lifetime of activation and recovery tokens, in hours |
 
 When `lock_enabled` is `true` and a user reaches `lock_max_attempts` consecutive failed login attempts, the account is automatically deactivated (`active = false`). An administrator can reactivate the account via the admin UI (enable action), which also resets the failed attempt counter to `0`.
 
@@ -19,6 +20,7 @@ These settings are exposed via the `UserConfiguration` service:
 |--------|-------------|-------------|
 | `hasSecurityLockEnabled(): bool` | bool | Whether the lock feature is active |
 | `getSecurityLockMaxAttempts(): int` | int | Maximum failed attempts before lock (minimum: 1) |
+| `getSecurityTokenExpiration(): int` | int | Token lifetime in hours (minimum: 1) |
 
 ## Module Configuration
 
@@ -70,7 +72,7 @@ Account activation and password recovery both use `UserTokenManager`, which gene
 - `isValid(UserInterface $user, string $token): bool` — validates the token
 - `reset(UserInterface $user): void` — clears `tokenDate` on the user
 
-The token is derived from: user id, email, username, `createdAt`, `tokenDate`, and `kernel.secret`. There is no time-based expiry — the token is valid until it is consumed (reset) or the user's `tokenDate` is cleared.
+The token is derived from: user id, email, username, `createdAt`, `tokenDate`, and `kernel.secret`. Tokens expire after `user.security.token_expiration` hours (default: 12). After expiration, the user must request a new token.
 
 ## Events
 

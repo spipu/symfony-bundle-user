@@ -21,13 +21,16 @@ class UserTokenManager
 {
     private EntityManagerInterface $entityManager;
     private string $keySecret;
+    private UserConfiguration $userConfiguration;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        string $keySecret
+        string $keySecret,
+        UserConfiguration $userConfiguration
     ) {
         $this->entityManager = $entityManager;
         $this->keySecret = $keySecret;
+        $this->userConfiguration = $userConfiguration;
     }
 
     public function generate(UserInterface $user): string
@@ -47,6 +50,10 @@ class UserTokenManager
             return false;
         }
 
+        if ($this->isExpired($user)) {
+            return false;
+        }
+
         return $this->getCurrentToken($user) === $token;
     }
 
@@ -56,6 +63,15 @@ class UserTokenManager
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+    }
+
+    private function isExpired(UserInterface $user): bool
+    {
+        $expirationHours = $this->userConfiguration->getSecurityTokenExpiration();
+        $now = new DateTime('NOW');
+        $diff = $now->getTimestamp() - $user->getTokenDate()->getTimestamp();
+
+        return $diff > ($expirationHours * 3600);
     }
 
     private function getCurrentToken(UserInterface $user): string

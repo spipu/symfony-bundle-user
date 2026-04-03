@@ -15,3 +15,9 @@ spipu_configuration:
         required: true
         default:  "10"
         unit:     "attempt(s)"
+
+    user.security.token_expiration:
+        type:     integer
+        required: true
+        default:  "12"
+        unit:     "hour(s)"

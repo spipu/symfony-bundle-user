@@ -13,8 +13,9 @@ class UserConfigurationTest extends TestCase
     private static function getDefaultValues(): array
     {
         return [
-            'user.security.lock_enabled'      => 1,
-            'user.security.lock_max_attempts'  => 10,
+            'user.security.lock_enabled'       => 1,
+            'user.security.lock_max_attempts'   => 10,
+            'user.security.token_expiration'    => 12,
         ];
     }
 
@@ -33,6 +34,7 @@ class UserConfigurationTest extends TestCase
 
         $this->assertSame(true, $service->hasSecurityLockEnabled());
         $this->assertSame(10, $service->getSecurityLockMaxAttempts());
+        $this->assertSame(12, $service->getSecurityTokenExpiration());
     }
 
     public function testLockEnabled(): void
@@ -54,5 +56,17 @@ class UserConfigurationTest extends TestCase
 
         $service = self::getService($this, ['user.security.lock_max_attempts' => -10]);
         $this->assertSame(1, $service->getSecurityLockMaxAttempts());
+    }
+
+    public function testTokenExpiration(): void
+    {
+        $service = self::getService($this, ['user.security.token_expiration' => 24]);
+        $this->assertSame(24, $service->getSecurityTokenExpiration());
+
+        $service = self::getService($this, ['user.security.token_expiration' => 0]);
+        $this->assertSame(1, $service->getSecurityTokenExpiration());
+
+        $service = self::getService($this, ['user.security.token_expiration' => -5]);
+        $this->assertSame(1, $service->getSecurityTokenExpiration());
     }
 }

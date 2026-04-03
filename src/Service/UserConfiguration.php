@@ -39,4 +39,15 @@ class UserConfiguration
 
         return $value;
     }
+
+    public function getSecurityTokenExpiration(): int
+    {
+        $value = (int) $this->configurationManager->get('user.security.token_expiration');
+
+        if ($value < 1) {
+            $value = 1;
+        }
+
+        return $value;
+    }
 }
