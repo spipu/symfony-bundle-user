@@ -21,6 +21,7 @@ use Spipu\UiBundle\Entity\Form\Field;
 use Spipu\UiBundle\Entity\Form\FieldSet;
 use Spipu\UiBundle\Entity\Form\Form;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
+use Spipu\UserBundle\Service\UserManager;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -28,14 +29,17 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class PasswordForm extends AbstractForm
 {
     private UserPasswordHasherInterface $hasher;
+    private UserManager $userManager;
 
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
-        UserPasswordHasherInterface $hasher
+        UserPasswordHasherInterface $hasher,
+        UserManager $userManager
     ) {
         parent::__construct($moduleConfiguration);
 
         $this->hasher = $hasher;
+        $this->userManager = $userManager;
     }
 
     protected function prepareForm(): void
@@ -95,6 +99,8 @@ class PasswordForm extends AbstractForm
         if (empty($resource->getPlainPassword())) {
             throw new Exception('The password is required');
         }
+
+        $this->userManager->validatePassword($resource->getPlainPassword());
 
         $resource->setPassword($this->hasher->hashPassword($resource, $resource->getPlainPassword()));
         $resource->setPasswordDate(new DateTime());

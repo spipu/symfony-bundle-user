@@ -9,6 +9,7 @@ use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UiBundle\Entity\Form;
 use Spipu\UserBundle\Tests\GenericUser;
 use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
+use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Spipu\UserBundle\Ui\CreationForm;
 use Symfony\Component\Form\FormInterface;
 
@@ -18,7 +19,7 @@ class CreationFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new CreationForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
+        $form = new CreationForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this), UserManagerTest::getService($this));
 
         $definition = $form->getDefinition();
 
@@ -68,7 +69,7 @@ class CreationFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new CreationForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
+        $form = new CreationForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this), UserManagerTest::getService($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
 
@@ -84,7 +85,7 @@ class CreationFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new CreationForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
+        $form = new CreationForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this), UserManagerTest::getService($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
 

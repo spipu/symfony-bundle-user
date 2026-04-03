@@ -11,8 +11,14 @@ The following settings are stored in the database via ConfigurationBundle and ca
 | `user.security.lock_enabled` | boolean | `true` | Enable automatic account locking after too many failed login attempts |
 | `user.security.lock_max_attempts` | integer | `10` | Number of consecutive failed login attempts before the account is locked |
 | `user.security.token_expiration` | integer | `12` | Lifetime of activation and recovery tokens, in hours |
+| `user.security.password_min_length` | integer | `10` | Minimum password length (enforced minimum: 8) |
 
 When `lock_enabled` is `true` and a user reaches `lock_max_attempts` consecutive failed login attempts, the account is automatically deactivated (`active = false`). An administrator can reactivate the account via the admin UI (enable action), which also resets the failed attempt counter to `0`.
+
+Password validation is enforced by `UserManager::validatePassword()`, which throws a `PasswordPolicyException` if the password is shorter than `password_min_length`. This is called automatically on account creation, password recovery, and password change.
+
+After the length check, a `PasswordValidationEvent` is dispatched on `spipu.user.password.validate`. Listeners can add custom validation rules (e.g., require uppercase, digits, special characters) by throwing a `PasswordPolicyException`. The event provides:
+- `getPassword(): string` — the plain password
 
 These settings are exposed via the `UserConfiguration` service:
 
@@ -20,6 +26,7 @@ These settings are exposed via the `UserConfiguration` service:
 |--------|-------------|-------------|
 | `hasSecurityLockEnabled(): bool` | bool | Whether the lock feature is active |
 | `getSecurityLockMaxAttempts(): int` | int | Maximum failed attempts before lock (minimum: 1) |
+| `getSecurityPasswordMinLength(): int` | int | Minimum password length (enforced minimum: 8) |
 | `getSecurityTokenExpiration(): int` | int | Token lifetime in hours (minimum: 1) |
 
 ## Module Configuration

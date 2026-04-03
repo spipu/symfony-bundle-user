@@ -13,9 +13,10 @@ class UserConfigurationTest extends TestCase
     private static function getDefaultValues(): array
     {
         return [
-            'user.security.lock_enabled'       => 1,
-            'user.security.lock_max_attempts'   => 10,
-            'user.security.token_expiration'    => 12,
+            'user.security.lock_enabled'        => 1,
+            'user.security.lock_max_attempts'    => 10,
+            'user.security.token_expiration'     => 12,
+            'user.security.password_min_length'  => 10,
         ];
     }
 
@@ -35,6 +36,7 @@ class UserConfigurationTest extends TestCase
         $this->assertSame(true, $service->hasSecurityLockEnabled());
         $this->assertSame(10, $service->getSecurityLockMaxAttempts());
         $this->assertSame(12, $service->getSecurityTokenExpiration());
+        $this->assertSame(10, $service->getSecurityPasswordMinLength());
     }
 
     public function testLockEnabled(): void
@@ -56,6 +58,21 @@ class UserConfigurationTest extends TestCase
 
         $service = self::getService($this, ['user.security.lock_max_attempts' => -10]);
         $this->assertSame(1, $service->getSecurityLockMaxAttempts());
+    }
+
+    public function testPasswordMinLength(): void
+    {
+        $service = self::getService($this, ['user.security.password_min_length' => 12]);
+        $this->assertSame(12, $service->getSecurityPasswordMinLength());
+
+        $service = self::getService($this, ['user.security.password_min_length' => 0]);
+        $this->assertSame(8, $service->getSecurityPasswordMinLength());
+
+        $service = self::getService($this, ['user.security.password_min_length' => -5]);
+        $this->assertSame(8, $service->getSecurityPasswordMinLength());
+
+        $service = self::getService($this, ['user.security.password_min_length' => 5]);
+        $this->assertSame(8, $service->getSecurityPasswordMinLength());
     }
 
     public function testTokenExpiration(): void

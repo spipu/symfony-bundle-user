@@ -10,6 +10,7 @@ use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UiBundle\Entity\Form;
 use Spipu\UserBundle\Tests\GenericUser;
 use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
+use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Spipu\UserBundle\Ui\PasswordForm;
 use Symfony\Component\Form\FormInterface;
 
@@ -19,7 +20,7 @@ class PasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this), UserManagerTest::getService($this));
 
         $definition = $form->getDefinition();
 
@@ -54,7 +55,7 @@ class PasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this), UserManagerTest::getService($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
         $symfonyForm->expects($this->once())->method('offsetGet')->with('oldPassword')->willReturn($symfonyForm);
@@ -73,7 +74,7 @@ class PasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this), UserManagerTest::getService($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
         $symfonyForm->expects($this->once())->method('offsetGet')->with('oldPassword')->willReturn($symfonyForm);
@@ -92,7 +93,7 @@ class PasswordFormTest extends TestCase
     {
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
-        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this));
+        $form = new PasswordForm($moduleConfiguration, SymfonyMock::getUserPasswordHasher($this), UserManagerTest::getService($this));
 
         $symfonyForm = $this->createMock(FormInterface::class);
         $symfonyForm->expects($this->once())->method('offsetGet')->with('oldPassword')->willReturn($symfonyForm);

@@ -21,3 +21,9 @@ spipu_configuration:
         required: true
         default:  "12"
         unit:     "hour(s)"
+
+    user.security.password_min_length:
+        type:     integer
+        required: true
+        default:  "10"
+        unit:     "character(s)"

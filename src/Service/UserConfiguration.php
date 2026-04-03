@@ -40,6 +40,17 @@ class UserConfiguration
         return $value;
     }
 
+    public function getSecurityPasswordMinLength(): int
+    {
+        $value = (int) $this->configurationManager->get('user.security.password_min_length');
+
+        if ($value < 8) {
+            $value = 8;
+        }
+
+        return $value;
+    }
+
     public function getSecurityTokenExpiration(): int
     {
         $value = (int) $this->configurationManager->get('user.security.token_expiration');

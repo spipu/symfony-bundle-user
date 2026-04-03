@@ -31,7 +31,7 @@ class AccountTest extends WebTestCase
             $crawler->selectButton('Log In')->form(),
             [
                 '_username' => 'test_user',
-                '_password' => 'password'
+                '_password' => 'password_0'
             ]
         );
         $this->assertTrue($client->getResponse()->isRedirect());
@@ -77,6 +77,22 @@ class AccountTest extends WebTestCase
         $this->assertCrawlerHasAlert($crawler, 'The password is required');
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Create")')->count());
 
+        // Submit with too short password
+        $crawler = $client->submit(
+            $crawler->selectButton('Create')->form(),
+            [
+                'generic[firstname]' => 'Test Firstname',
+                'generic[lastname]'  => 'Test Lastname',
+                'generic[email]'     => 'user@test.fr',
+                'generic[username]'  => 'test_user',
+                'generic[plainPassword][first]'  => 'short',
+                'generic[plainPassword][second]' => 'short',
+            ]
+        );
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'The password is too short');
+        $this->assertGreaterThan(0, $crawler->filter('button:contains("Create")')->count());
+
         // Needed to profile email
         $client->enableProfiler();
 
@@ -88,8 +104,8 @@ class AccountTest extends WebTestCase
                 'generic[lastname]'  => 'Test Lastname',
                 'generic[email]'     => 'user@test.fr',
                 'generic[username]'  => 'test_user',
-                'generic[plainPassword][first]'  => 'password',
-                'generic[plainPassword][second]' => 'password',
+                'generic[plainPassword][first]'  => 'password_0',
+                'generic[plainPassword][second]' => 'password_0',
             ]
         );
         $this->assertTrue($client->getResponse()->isRedirect());
@@ -174,7 +190,7 @@ class AccountTest extends WebTestCase
             $crawler->selectButton('Log In')->form(),
             [
                 '_username' => 'test_user',
-                '_password' => 'password'
+                '_password' => 'password_0'
             ]
         );
         $this->assertTrue($client->getResponse()->isRedirect());
@@ -321,6 +337,18 @@ class AccountTest extends WebTestCase
         $this->assertCrawlerHasFormError($crawler, 'The values do not match');
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Update")')->count());
 
+        // Submit too short password
+        $crawler = $client->submit(
+            $crawler->selectButton('Update')->form(),
+            [
+                'generic[plainPassword][first]'  => 'short',
+                'generic[plainPassword][second]' => 'short'
+            ]
+        );
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'The password is too short');
+        $this->assertGreaterThan(0, $crawler->filter('button:contains("Update")')->count());
+
         // Submit good password
         $client->submit(
             $crawler->selectButton('Update')->form(),
@@ -348,7 +376,7 @@ class AccountTest extends WebTestCase
             $crawler->selectButton('Log In')->form(),
             [
                 '_username' => 'test_user',
-                '_password' => 'password'
+                '_password' => 'password_0'
             ]
         );
         $this->assertTrue($client->getResponse()->isRedirect());
@@ -446,8 +474,8 @@ class AccountTest extends WebTestCase
                 'generic[lastname]'  => 'Test Lastname',
                 'generic[email]'     => 'user@test.fr',
                 'generic[username]'  => 'test_user',
-                'generic[plainPassword][first]'  => 'password',
-                'generic[plainPassword][second]' => 'password',
+                'generic[plainPassword][first]'  => 'password_0',
+                'generic[plainPassword][second]' => 'password_0',
             ]
         );
 
@@ -566,9 +594,9 @@ class AccountTest extends WebTestCase
         $crawler = $client->submit(
             $crawler->filter('form#form_user_password')->form(),
             [
-                'generic[oldPassword]'           => 'bad_password',
-                'generic[plainPassword][first]'  => 'password',
-                'generic[plainPassword][second]' => 'password',
+                'generic[oldPassword]'           => 'bad_password_0',
+                'generic[plainPassword][first]'  => 'password_0',
+                'generic[plainPassword][second]' => 'password_0',
             ]
         );
 
@@ -576,13 +604,26 @@ class AccountTest extends WebTestCase
         $this->assertCrawlerHasAlert($crawler, 'Your old password is wrong');
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Update")')->count());
 
+        // Too short new password
+        $crawler = $client->submit(
+            $crawler->filter('form#form_user_password')->form(),
+            [
+                'generic[oldPassword]'           => 'new_password',
+                'generic[plainPassword][first]'  => 'short',
+                'generic[plainPassword][second]' => 'short',
+            ]
+        );
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'The password is too short');
+        $this->assertGreaterThan(0, $crawler->filter('button:contains("Update")')->count());
+
         // Good old Password
         $client->submit(
             $crawler->filter('form#form_user_password')->form(),
             [
                 'generic[oldPassword]'           => 'new_password',
-                'generic[plainPassword][first]'  => 'password',
-                'generic[plainPassword][second]' => 'password',
+                'generic[plainPassword][first]'  => 'password_0',
+                'generic[plainPassword][second]' => 'password_0',
             ]
         );
         $this->assertTrue($client->getResponse()->isRedirect());
@@ -612,7 +653,7 @@ class AccountTest extends WebTestCase
             $crawler->selectButton('Log In')->form(),
             [
                 '_username' => 'test_user',
-                '_password' => 'password'
+                '_password' => 'password_0'
             ]
         );
         $this->assertTrue($client->getResponse()->isRedirect());

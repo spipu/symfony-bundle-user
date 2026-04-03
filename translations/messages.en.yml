@@ -70,12 +70,13 @@ spipu:
                 submit:      "Log In"
 
         error:
-            token:            "Invalid Token!"
-            yourself_delete:  "You can not delete yourself!"
-            yourself_enable:  "You can not enable yourself!"
-            yourself_disable: "You can not disable yourself!"
-            bad_old_password: "Your old password is wrong!"
-            confirm:          "The email or the token is invalid!"
+            token:              "Invalid Token!"
+            yourself_delete:    "You can not delete yourself!"
+            yourself_enable:    "You can not enable yourself!"
+            yourself_disable:   "You can not disable yourself!"
+            bad_old_password:   "Your old password is wrong!"
+            confirm:            "The email or the token is invalid!"
+            password_too_short: "The password is too short!"
 
         success:
             enabled:       "The item has been enabled."

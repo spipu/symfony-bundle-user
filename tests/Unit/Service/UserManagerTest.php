@@ -5,18 +5,22 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
+use Spipu\UserBundle\Event\PasswordValidationEvent;
+use Spipu\UserBundle\Exception\PasswordPolicyException;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\Event\UserEvent;
 use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Tests\SpipuUserMock;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UserManagerTest extends TestCase
 {
-    public static function getService(TestCase $testCase): UserManager
+    public static function getService(TestCase $testCase, array $configValues = []): UserManager
     {
         $eventDispatcher = SymfonyMock::getEventDispatcher($testCase);
+        $userConfiguration = UserConfigurationTest::getService($testCase, $configValues);
 
-        return new UserManager($eventDispatcher);
+        return new UserManager($eventDispatcher, $userConfiguration);
     }
 
     public function testEnableUser(): void
@@ -50,7 +54,7 @@ class UserManagerTest extends TestCase
         $user = SpipuUserMock::getUserEntity(1);
         $user->setActive(false);
 
-        $eventDispatcher = $this->createMock(\Symfony\Component\EventDispatcher\EventDispatcherInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
@@ -59,7 +63,8 @@ class UserManagerTest extends TestCase
                 $this->equalTo('spipu.user.action.enable')
             );
 
-        $service = new UserManager($eventDispatcher);
+        $userConfiguration = UserConfigurationTest::getService($this);
+        $service = new UserManager($eventDispatcher, $userConfiguration);
         $service->enableUser($user);
     }
 
@@ -90,7 +95,7 @@ class UserManagerTest extends TestCase
         $user = SpipuUserMock::getUserEntity(1);
         $user->setActive(true);
 
-        $eventDispatcher = $this->createMock(\Symfony\Component\EventDispatcher\EventDispatcherInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
@@ -99,7 +104,50 @@ class UserManagerTest extends TestCase
                 $this->equalTo('spipu.user.action.disable')
             );
 
-        $service = new UserManager($eventDispatcher);
+        $userConfiguration = UserConfigurationTest::getService($this);
+        $service = new UserManager($eventDispatcher, $userConfiguration);
         $service->disableUser($user);
     }
+
+    public function testValidatePasswordOk(): void
+    {
+        $service = self::getService($this, ['user.security.password_min_length' => 10]);
+        $service->validatePassword('1234567890');
+        $this->assertTrue(true);
+    }
+
+    public function testValidatePasswordTooShort(): void
+    {
+        $service = self::getService($this, ['user.security.password_min_length' => 10]);
+
+        $this->expectException(PasswordPolicyException::class);
+        $service->validatePassword('123456789');
+    }
+
+    public function testValidatePasswordMinimumEnforced(): void
+    {
+        // Even if config is set to 1, minimum is 8
+        $service = self::getService($this, ['user.security.password_min_length' => 1]);
+
+        $this->expectException(PasswordPolicyException::class);
+        $service->validatePassword('1234567');
+    }
+
+    public function testValidatePasswordEvent(): void
+    {
+        $userConfiguration = UserConfigurationTest::getService($this, ['user.security.password_min_length' => 10]);
+
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                $this->isInstanceOf(PasswordValidationEvent::class),
+                $this->equalTo(PasswordValidationEvent::EVENT_CODE)
+            );
+
+        $service = new UserManager($eventDispatcher, $userConfiguration);
+        $service->validatePassword('1234567890');
+    }
+
 }

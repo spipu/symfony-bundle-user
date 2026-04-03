@@ -34,7 +34,7 @@ class AdminUserTest extends WebTestCase
             $crawler->selectButton('Log In')->form(),
             [
                 '_username' => 'test_user',
-                '_password' => 'password'
+                '_password' => 'password_0'
             ]
         );
         $this->assertTrue($client->getResponse()->isRedirect());
