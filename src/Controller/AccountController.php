@@ -19,6 +19,7 @@ use Spipu\UserBundle\Event\UserEvent;
 use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\MailManager;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
+use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Service\UserTokenManager;
 use Spipu\UserBundle\Ui\CreationForm;
 use Spipu\UserBundle\Ui\NewPasswordForm;
@@ -28,14 +29,21 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * @SuppressWarnings(PMD.CouplingBetweenObjects)
+ */
 #[Route(path: '/account')]
 class AccountController extends AbstractController
 {
     private EventDispatcherInterface $eventDispatcher;
+    private UserManager $userManager;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        UserManager $userManager
+    ) {
         $this->eventDispatcher = $eventDispatcher;
+        $this->userManager = $userManager;
     }
 
     #[Route(path: '/create', name: 'spipu_user_account_create', methods: 'GET|POST')]
@@ -103,7 +111,7 @@ class AccountController extends AbstractController
             return $this->redirectToRoute('spipu_user_security_login');
         }
 
-        $user->setActive(true);
+        $this->userManager->enableUser($user);
         $userTokenManager->reset($user);
 
         $event = new UserEvent($user, 'confirm');
@@ -192,7 +200,7 @@ class AccountController extends AbstractController
         $manager->setResource($user);
         $manager->setSubmitButton('spipu.ui.action.update');
         if ($manager->validate()) {
-            $user->setActive(true);
+            $this->userManager->enableUser($user);
             $userTokenManager->reset($user);
 
             $event = new UserEvent($user, 'recovery_update');

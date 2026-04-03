@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Subscriber;
 
 use Spipu\UserBundle\Entity\UserInterface;
+use Spipu\UserBundle\Service\UserConfiguration;
+use Spipu\UserBundle\Service\UserManager;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,10 +25,17 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 class UserLoginSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
+    private UserConfiguration $userConfiguration;
+    private UserManager $userManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UserConfiguration $userConfiguration,
+        UserManager $userManager
+    ) {
         $this->entityManager = $entityManager;
+        $this->userConfiguration = $userConfiguration;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -60,6 +69,13 @@ class UserLoginSubscriber implements EventSubscriberInterface
                 /** @var UserInterface $user */
                 $user = $badges[UserBadge::class]->getUser();
                 $user->setNbTryLogin($user->getNbTryLogin() + 1);
+
+                if ($this->userConfiguration->hasSecurityLockEnabled()) {
+                    $maxAttempts = $this->userConfiguration->getSecurityLockMaxAttempts();
+                    if ($user->getNbTryLogin() >= $maxAttempts) {
+                        $this->userManager->disableUser($user);
+                    }
+                }
 
                 $this->entityManager->flush();
             }

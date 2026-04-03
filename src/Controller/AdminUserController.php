@@ -23,6 +23,7 @@ use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\MailManager;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Spipu\UserBundle\Service\RoleService;
+use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Ui\UserForm;
 use Spipu\UserBundle\Ui\UserGrid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,11 +43,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AdminUserController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
+    private UserManager $userManager;
 
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        UserManager $userManager
     ) {
         $this->entityManager = $entityManager;
+        $this->userManager = $userManager;
     }
 
     #[Route(path: '/', name: 'spipu_user_admin_list', methods: 'GET')]
@@ -239,7 +243,7 @@ class AdminUserController extends AbstractController
         }
 
         try {
-            $resource->setActive(true);
+            $this->userManager->enableUser($resource);
             $this->entityManager->persist($resource);
             $this->entityManager->flush();
 
@@ -273,7 +277,7 @@ class AdminUserController extends AbstractController
         }
 
         try {
-            $resource->setActive(false);
+            $this->userManager->disableUser($resource);
             $this->entityManager->persist($resource);
             $this->entityManager->flush();
 
@@ -363,12 +367,12 @@ class AdminUserController extends AbstractController
         }
 
         if ($action === 'enable' && !$row->getActive()) {
-            $row->setActive(true);
+            $this->userManager->enableUser($row);
             return true;
         }
 
         if ($action === 'disable' && $row->getActive()) {
-            $row->setActive(false);
+            $this->userManager->disableUser($row);
             return true;
         }
 

@@ -1,0 +1,17 @@
+# This file is part of a Spipu Bundle
+#
+# (c) Laurent Minguet
+#
+# For the full copyright and license information, please view the LICENSE
+# file that was distributed with this source code.
+spipu_configuration:
+    user.security.lock_enabled:
+        type:     boolean
+        required: true
+        default:  "1"
+
+    user.security.lock_max_attempts:
+        type:     integer
+        required: true
+        default:  "10"
+        unit:     "attempt(s)"

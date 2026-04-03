@@ -8,6 +8,7 @@
 - Symfony 6.4+
 - `spipu/core-bundle`
 - `spipu/ui-bundle`
+- `spipu/configuration-bundle`
 
 ## Installation
 
@@ -26,6 +27,7 @@ return [
     // ...
     Spipu\CoreBundle\SpipuCoreBundle::class => ['all' => true],
     Spipu\UiBundle\SpipuUiBundle::class => ['all' => true],
+    Spipu\ConfigurationBundle\SpipuConfigurationBundle::class => ['all' => true],
     Spipu\UserBundle\SpipuUserBundle::class => ['all' => true],
 ];
 ```
@@ -114,7 +116,7 @@ security:
 ```
 
 Key points:
-- `user_checker: Spipu\UserBundle\Security\UserChecker` — required; blocks login for inactive users or users without a password
+- `user_checker: Spipu\UserBundle\Security\UserChecker` — required; blocks login for inactive users and users without a password
 - Route names are `spipu_user_security_login` and `spipu_user_security_logout` (not `spipu_user_login`/`spipu_user_logout`)
 
 ### 5. Import routes
@@ -128,7 +130,16 @@ spipu_user:
 
 All routes are registered via PHP attributes on the controllers. The routes resource uses `type: attribute` with prefix `/`.
 
-### 6. (Optional) Override the sender email
+### 6. Import ConfigurationBundle keys
+
+The UserBundle ships a `spipu_configuration.yaml` file with its security settings. Import it in `config/packages/spipu_configuration.yaml`:
+
+```yaml
+imports:
+    - { resource: "@SpipuUserBundle/config/spipu_configuration.yaml" }
+```
+
+### 7. (Optional) Override the sender email
 
 The bundle's `MailConfiguration` defaults to `no-reply@mysite.fr` as the sender. Override this by implementing `MailConfigurationInterface`:
 
@@ -154,14 +165,14 @@ Spipu\UserBundle\Service\MailConfigurationInterface:
     class: App\Service\MyMailConfiguration
 ```
 
-### 7. Run migrations
+### 8. Run migrations
 
 ```bash
 php bin/console doctrine:migrations:diff
 php bin/console doctrine:migrations:migrate
 ```
 
-### 8. (Optional) Load the first admin user fixture
+### 9. (Optional) Load the first admin user fixture
 
 The bundle ships a `FirstUserFixture` (fixture code: `first-user`) that creates an initial `admin` user with role `ROLE_SUPER_ADMIN`. Load it via CoreBundle's fixture command:
 

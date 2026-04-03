@@ -2,9 +2,27 @@
 
 [back](./README.md)
 
+## Security Settings (ConfigurationBundle)
+
+The following settings are stored in the database via ConfigurationBundle and can be changed at runtime from the admin UI:
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `user.security.lock_enabled` | boolean | `true` | Enable automatic account locking after too many failed login attempts |
+| `user.security.lock_max_attempts` | integer | `10` | Number of consecutive failed login attempts before the account is locked |
+
+When `lock_enabled` is `true` and a user reaches `lock_max_attempts` consecutive failed login attempts, the account is automatically deactivated (`active = false`). An administrator can reactivate the account via the admin UI (enable action), which also resets the failed attempt counter to `0`.
+
+These settings are exposed via the `UserConfiguration` service:
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `hasSecurityLockEnabled(): bool` | bool | Whether the lock feature is active |
+| `getSecurityLockMaxAttempts(): int` | int | Maximum failed attempts before lock (minimum: 1) |
+
 ## Module Configuration
 
-The UserBundle's behavior is controlled entirely through the `ModuleConfigurationInterface` service, which is wired in your application's `services.yaml`. There are no ConfigurationBundle database keys for this bundle.
+The UserBundle's behavior is also controlled through the `ModuleConfigurationInterface` service, which is wired in your application's `services.yaml`.
 
 The built-in `ModuleConfiguration` class exposes:
 
@@ -29,7 +47,7 @@ The UserBundle sends two emails, both using the `MailManager` service:
 | `sendActivationEmail(UserInterface $user)` | Self-registration | `@SpipuUser/email/confirm.html.twig` |
 | `sendRecoveryEmail(UserInterface $user)` | Password recovery request; admin-initiated reset | `@SpipuUser/email/recover.html.twig` |
 
-The sender address comes from `MailConfigurationInterface::getEmailFrom()`. The default implementation (`MailConfiguration`) returns `no-reply@mysite.fr`. Override it by implementing the interface — see [Installation](./install.md#6-optional-override-the-sender-email).
+The sender address comes from `MailConfigurationInterface::getEmailFrom()`. The default implementation (`MailConfiguration`) returns `no-reply@mysite.fr`. Override it by implementing the interface — see [Installation](./install.md#7-optional-override-the-sender-email).
 
 ### Overriding email templates
 
@@ -104,6 +122,49 @@ class MyUserSubscriber implements EventSubscriberInterface
 ```
 
 > **Note:** Login and logout are handled by Symfony's own security event system (`LoginSuccessEvent`, `LoginFailureEvent`), not by `UserEvent`. The bundle's internal `UserLoginSubscriber` listens to those events to update `nbLogin` and `nbTryLogin` on the entity.
+
+## Console Commands
+
+The bundle provides two console commands to manage user accounts from the command line. This is useful when the admin UI is not accessible (e.g., the only admin account is locked).
+
+### `spipu:user:enable`
+
+Enable a user account and reset the failed login counter.
+
+```bash
+php bin/console spipu:user:enable <username>
+```
+
+Output example:
+
+```
+Enable User
+  - Username: john
+  - Email:    john@example.com
+  - Active:   no
+  - Attempts: 15
+  => Done
+```
+
+### `spipu:user:disable`
+
+Disable a user account.
+
+```bash
+php bin/console spipu:user:disable <username>
+```
+
+Output example:
+
+```
+Disable User
+  - Username: john
+  - Email:    john@example.com
+  - Active:   yes
+  => Done
+```
+
+Both commands return a failure exit code if the username is not found.
 
 ## Routes Reference
 
