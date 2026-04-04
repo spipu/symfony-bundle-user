@@ -54,7 +54,7 @@ class UserTokenManager
             return false;
         }
 
-        return $this->getCurrentToken($user) === $token;
+        return hash_equals($this->getCurrentToken($user), $token);
     }
 
     public function reset(UserInterface $user): void
