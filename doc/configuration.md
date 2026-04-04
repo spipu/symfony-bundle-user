@@ -15,6 +15,24 @@ The following settings are stored in the database via ConfigurationBundle and ca
 
 When `lock_enabled` is `true` and a user reaches `lock_max_attempts` consecutive failed login attempts, the account is automatically deactivated (`active = false`). An administrator can reactivate the account via the admin UI (enable action), which also resets the failed attempt counter to `0`.
 
+**Security hardening:**
+- **Disabled accounts cannot recover their password.** The recovery flow filters on `active = true` at the database level. A disabled user submitting a recovery request sees the same generic "email sent" page (no account enumeration).
+- **Login errors are normalized.** All authentication failures (wrong password, disabled account, non-existent user) display the same generic message (`Invalid credentials.`), translated via Symfony's `security` translation domain.
+- **No redundant lock calls.** If an account is already disabled, subsequent failed login attempts are ignored (no counter increment, no event dispatch).
+- **Rate limiting recommended.** Configure Symfony's `login_throttling` on your firewall to limit login attempts per IP and username. This prevents brute-force attempts from reaching the lock threshold too quickly. Example:
+
+```yaml
+# config/packages/security.yaml
+security:
+    firewalls:
+        main:
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
+```
+
+This requires the `symfony/rate-limiter` package (`composer require symfony/rate-limiter`).
+
 Password validation is enforced by `UserManager::validatePassword()`, which throws a `PasswordPolicyException` if the password is shorter than `password_min_length`. This is called automatically on account creation, password recovery, and password change.
 
 After the length check, a `PasswordValidationEvent` is dispatched on `spipu.user.password.validate`. Listeners can add custom validation rules (e.g., require uppercase, digits, special characters) by throwing a `PasswordPolicyException`. The event provides:

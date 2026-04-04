@@ -16,7 +16,8 @@ The **UserBundle** provides a complete user management system for Symfony applic
 - **Password recovery** — optional forgot-password flow with token-based email link
 - **Admin UI** — user list, show, creation, editing, enable/disable, deletion, role assignment, and password reset at `/user/`
 - **Login tracking** — `nbLogin` incremented on success; `nbTryLogin` incremented on failure (via Symfony security events)
-- **Account locking** — automatic account lockout after a configurable number of failed login attempts (via ConfigurationBundle)
+- **Account locking** — automatic account lockout after a configurable number of failed login attempts (via ConfigurationBundle). Disabled accounts cannot use password recovery. Login error messages are generic to prevent account enumeration.
+- **Login rate limiting** — the application should configure Symfony's `login_throttling` on the firewall to limit login attempts per IP and username (requires `symfony/rate-limiter`)
 - **Password policy** — configurable minimum password length, enforced on registration, recovery, and password change
 - **Email change notification** — when a user changes their email, a notification is sent to the previous email address
 - **Role hierarchy** — contributes `ROLE_ADMIN_MANAGE_USER_SHOW`, `ROLE_ADMIN_MANAGE_USER_EDIT`, `ROLE_ADMIN_MANAGE_USER_DELETE`, `ROLE_ADMIN_MANAGE_USER`
