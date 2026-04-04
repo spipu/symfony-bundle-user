@@ -68,6 +68,9 @@ class UserLoginSubscriber implements EventSubscriberInterface
             if (is_array($passport->getBadges()) && isset($badges[UserBadge::class])) {
                 /** @var UserInterface $user */
                 $user = $badges[UserBadge::class]->getUser();
+                if (!$user->getActive()) {
+                    return;
+                }
                 $user->setNbTryLogin($user->getNbTryLogin() + 1);
 
                 if ($this->userConfiguration->hasSecurityLockEnabled()) {

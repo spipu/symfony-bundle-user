@@ -24,7 +24,7 @@ use Spipu\UserBundle\Service\UserTokenManager;
 use Spipu\UserBundle\Ui\CreationForm;
 use Spipu\UserBundle\Ui\NewPasswordForm;
 use Spipu\UserBundle\Ui\RecoveryForm;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Spipu\CoreBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -140,7 +140,7 @@ class AccountController extends AbstractController
 
             try {
                 $email = $manager->getForm()['email']->getData();
-                $user = $userRepository->findOneBy(['email' => $email]);
+                $user = $userRepository->findOneBy(['email' => $email, 'active' => true]);
                 if (!$user) {
                     return $redirect;
                 }
@@ -182,7 +182,7 @@ class AccountController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $user = $userRepository->findOneBy(['email' => $email]);
+        $user = $userRepository->findOneBy(['email' => $email, 'active' => true]);
         if (!$user) {
             $this->addFlash('danger', $this->trans('spipu.user.error.confirm'));
             return $this->redirectToRoute('spipu_user_security_login');
@@ -210,17 +210,5 @@ class AccountController extends AbstractController
         }
 
         return $this->render('@SpipuUser/recover-confirm.html.twig', ['manager' => $manager]);
-    }
-
-    private function trans(string $message, array $params = []): string
-    {
-        return $this->container->get('translator')->trans($message, $params);
-    }
-
-    public static function getSubscribedServices(): array
-    {
-        return parent::getSubscribedServices() + [
-            'translator',
-        ];
     }
 }

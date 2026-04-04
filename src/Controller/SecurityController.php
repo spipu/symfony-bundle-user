@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Controller;
 
+use Spipu\CoreBundle\Controller\AbstractController;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -28,7 +28,7 @@ class SecurityController extends AbstractController
     ): Response {
         $error = $authenticationUtils->getLastAuthenticationError();
         if ($error) {
-            $this->addFlash('danger', $error->getMessageKey());
+            $this->addFlashTrans('danger', 'Invalid credentials.', [], 'security');
         }
 
         return $this->render(

@@ -20,7 +20,7 @@ use Spipu\UserBundle\Event\UserEvent;
 use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Ui\PasswordForm;
 use Spipu\UserBundle\Ui\ProfileForm;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Spipu\CoreBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

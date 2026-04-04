@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Functional;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Spipu\CoreBundle\Tests\WebTestCase;
 use Spipu\UserBundle\Controller\SecurityController;
+use Spipu\UserBundle\Entity\UserInterface;
+use Spipu\UserBundle\Repository\UserRepository;
 
 class AccountTest extends WebTestCase
 {
@@ -671,5 +674,97 @@ class AccountTest extends WebTestCase
         $this->assertEquals(0, $crawler->filter('a:contains("Log In")')->count());
         $this->assertGreaterThan(0, $crawler->filter('a:contains("Log Out")')->count());
         $this->assertGreaterThan(0, $crawler->filter('a:contains("My Profile")')->count());
+    }
+
+    public function test11RecoveryDisabledAccount(): void
+    {
+        $client = static::createClient();
+
+        // Disable the user
+        $container = self::getContainer();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        /** @var UserInterface $user */
+        $user = $userRepository->findOneBy(['email' => 'user@test.fr']);
+        $user->setActive(false);
+        $entityManager->flush();
+
+        // Home page
+        $crawler = $client->request('GET', '/');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        // Login page
+        $crawler = $client->clickLink("Log In");
+        $this->assertGreaterThan(0, $crawler->filter('a:contains("Account Recovery")')->count());
+
+        // Account recovery page
+        $crawler = $client->clickLink('Account Recovery');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertGreaterThan(0, $crawler->filter('button:contains("Recover")')->count());
+
+        $client->enableProfiler();
+
+        // Submit Email
+        $client->submit(
+            $crawler->selectButton('Recover')->form(),
+            ['generic[email]' => 'user@test.fr']
+        );
+        $this->assertTrue($client->getResponse()->isRedirect());
+
+        // No email sent
+        $this->assertHasNoEmail();
+
+        // Generic result (same as bad email)
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertGreaterThan(0, $crawler->filter('html:contains("An email has been sent")')->count());
+
+        // Re-enable the user (re-fetch: entity is detached after HTTP requests)
+        $user = $userRepository->findOneBy(['email' => 'user@test.fr']);
+        $user->setActive(true);
+        $entityManager->flush();
+    }
+
+    public function test12LoginDisabledShowsGenericError(): void
+    {
+        $client = static::createClient();
+
+        // Disable the user
+        $container = self::getContainer();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        /** @var UserInterface $user */
+        $user = $userRepository->findOneBy(['email' => 'user@test.fr']);
+        $user->setActive(false);
+        $entityManager->flush();
+
+        // Login page
+        $crawler = $client->request('GET', '/login');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertGreaterThan(0, $crawler->filter('button:contains("Log In")')->count());
+
+        // Submit with correct credentials
+        $client->submit(
+            $crawler->selectButton('Log In')->form(),
+            [
+                '_username' => 'test_user',
+                '_password' => 'password_0'
+            ]
+        );
+        $this->assertTrue($client->getResponse()->isRedirect());
+
+        // Same generic error as bad password
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'Invalid credentials');
+
+        // Re-enable the user (re-fetch: entity is detached after HTTP requests)
+        $user = $userRepository->findOneBy(['email' => 'user@test.fr']);
+        $user->setActive(true);
+        $entityManager->flush();
     }
 }

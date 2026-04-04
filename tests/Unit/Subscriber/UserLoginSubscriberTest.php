@@ -142,6 +142,29 @@ class UserLoginSubscriberTest extends TestCase
         $this->assertTrue($user->getActive());
     }
 
+    public function testOnLoginFailedAlreadyDisabled(): void
+    {
+        $user = SpipuUserMock::getUserEntity(1);
+        $user->setActive(false);
+        $user->setPassword('encoded');
+        $user->setNbTryLogin(15);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->never())->method('flush');
+
+        $userConfiguration = UserConfigurationTest::getService($this, [
+            'user.security.lock_enabled' => 1,
+            'user.security.lock_max_attempts' => 10,
+        ]);
+        $subscriber = new UserLoginSubscriber($entityManager, $userConfiguration, UserManagerTest::getService($this));
+
+        $event = $this->createLoginFailureEvent($user);
+        $subscriber->onLoginFailed($event);
+
+        $this->assertSame(15, $user->getNbTryLogin());
+        $this->assertFalse($user->getActive());
+    }
+
     public function testOnLoginFailedNoPassport(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);

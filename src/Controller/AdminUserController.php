@@ -26,7 +26,7 @@ use Spipu\UserBundle\Service\RoleService;
 use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Ui\UserForm;
 use Spipu\UserBundle\Ui\UserGrid;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Spipu\CoreBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -392,22 +392,5 @@ class AdminUserController extends AbstractController
             default:
                 return $this->redirectToRoute('spipu_user_admin_list');
         }
-    }
-
-    private function addFlashTrans(string $type, string $message, array $params = []): void
-    {
-        $this->addFlash($type, $this->trans($message, $params));
-    }
-
-    private function trans(string $message, array $params = []): string
-    {
-        return $this->container->get('translator')->trans($message, $params);
-    }
-
-    public static function getSubscribedServices(): array
-    {
-        return parent::getSubscribedServices() + [
-            'translator',
-        ];
     }
 }
