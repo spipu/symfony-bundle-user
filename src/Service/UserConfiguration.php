@@ -26,7 +26,7 @@ class UserConfiguration
 
     public function hasSecurityLockEnabled(): bool
     {
-        return ((int) $this->configurationManager->get('user.security.lock_enabled') == 1);
+        return ((int) $this->configurationManager->get('user.security.lock_enabled') === 1);
     }
 
     public function getSecurityLockMaxAttempts(): int
