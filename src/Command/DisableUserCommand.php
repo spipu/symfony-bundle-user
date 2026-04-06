@@ -16,11 +16,13 @@ namespace Spipu\UserBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\UserManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'spipu:user:disable', description: 'Disable a user account.')]
 class DisableUserCommand extends Command
 {
     private UserRepository $userRepository;
@@ -43,8 +45,6 @@ class DisableUserCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('spipu:user:disable')
-            ->setDescription('Disable a user account.')
             ->setHelp('This command allows you to disable a user account')
             ->addArgument('username', InputArgument::REQUIRED, 'The username of the user to disable');
     }
