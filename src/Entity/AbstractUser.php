@@ -249,6 +249,7 @@ abstract class AbstractUser implements UserInterface
         return null;
     }
 
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
         $this->plainPassword = null;

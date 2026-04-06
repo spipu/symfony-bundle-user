@@ -15,6 +15,7 @@ namespace Spipu\UserBundle\Security;
 
 use Spipu\UserBundle\Entity\UserInterface as SpipuUserInterface;
 use Spipu\UserBundle\Exception\UnactivatedAccountException;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -31,7 +32,10 @@ class UserChecker implements UserCheckerInterface
         }
     }
 
-    public function checkPostAuth(UserInterface $user): void
+    /**
+     * @SuppressWarnings(PMD.UnusedFormalParameter)
+     */
+    public function checkPostAuth(UserInterface $user, ?TokenInterface $token = null): void
     {
         if (!$user instanceof SpipuUserInterface) {
             return;

@@ -336,7 +336,7 @@ class AdminUserController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $selected = json_decode((string) $request->get('selected', ''));
+        $selected = json_decode((string) $request->request->get('selected', ''));
 
         if (!is_array($selected) || count($selected) < 1) {
             $this->addFlashTrans('warning', 'spipu.ui.grid.item.at_least_one');
