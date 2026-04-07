@@ -5,11 +5,19 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Tests\Functional;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Spipu\CoreBundle\Tests\WebTestCase;
+use Spipu\UserBundle\Controller\AccountController;
+use Spipu\UserBundle\Controller\ProfileController;
 use Spipu\UserBundle\Controller\SecurityController;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Repository\UserRepository;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(AccountController::class)]
+#[CoversClass(ProfileController::class)]
+#[CoversClass(SecurityController::class)]
 class AccountTest extends WebTestCase
 {
     public const REGEX_URL = '/<a [^>]*>([^<]+)<\/a>/';

@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Spipu\UserBundle\Event\PasswordValidationEvent;
-use Spipu\UserBundle\Exception\PasswordPolicyException;
 use Spipu\CoreBundle\Tests\SymfonyMock;
+use Spipu\UserBundle\Event\PasswordValidationEvent;
 use Spipu\UserBundle\Event\UserEvent;
+use Spipu\UserBundle\Exception\PasswordPolicyException;
 use Spipu\UserBundle\Service\MailManager;
 use Spipu\UserBundle\Service\UserManager;
 use Spipu\UserBundle\Tests\SpipuUserMock;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(UserManager::class)]
 class UserManagerTest extends TestCase
 {
     public static function getService(TestCase $testCase, array $configValues = []): UserManager

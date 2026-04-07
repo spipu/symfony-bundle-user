@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\Service\UserTokenManager;
 use Spipu\UserBundle\Tests\SpipuUserMock;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(UserTokenManager::class)]
 class UserTokenManagerTest extends TestCase
 {
     public function testService(): void

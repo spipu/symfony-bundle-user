@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\ConfigurationBundle\Tests\SpipuConfigurationMock;
 use Spipu\UserBundle\Service\UserConfiguration;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(UserConfiguration::class)]
 class UserConfigurationTest extends TestCase
 {
     private static function getDefaultValues(): array

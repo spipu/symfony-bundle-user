@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\UserBundle\Service\MailConfiguration;
 use Spipu\UserBundle\Service\MailConfigurationInterface;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(MailConfiguration::class)]
 class MailConfigurationTest extends TestCase
 {
     public static function getService(TestCase $testCase): MailConfigurationInterface

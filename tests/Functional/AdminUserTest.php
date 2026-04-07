@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Functional;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Spipu\CoreBundle\Tests\WebTestCase;
 use Spipu\UiBundle\Tests\UiWebTestCaseTrait;
+use Spipu\UserBundle\Controller\AdminUserController;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(AdminUserController::class)]
 class AdminUserTest extends WebTestCase
 {
     use UiWebTestCaseTrait;

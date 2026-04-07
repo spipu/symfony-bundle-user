@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\UiBundle\Entity\Form;
 use Spipu\UiBundle\Form\Options\YesNo;
@@ -12,6 +14,8 @@ use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\UserForm;
 use Symfony\Component\Form\FormInterface;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(UserForm::class)]
 class UserFormTest extends TestCase
 {
     public function testForm(): void

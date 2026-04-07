@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Tests\Unit\Entity;
 
 use DateTime;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Spipu\UserBundle\Entity\AbstractUser;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Tests\GenericUser;
 use Spipu\UserBundle\Tests\SpipuUserMock;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(AbstractUser::class)]
 class UserTest extends TestCase
 {
     public function testEntity(): void

@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
 use DateTimeInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SpipuCoreMock;
-use Spipu\UserBundle\Tests\SpipuUserMock;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\Service\MailManager;
+use Spipu\UserBundle\Tests\SpipuUserMock;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(MailManager::class)]
 class MailManagerTest extends TestCase
 {
     public function testActivationEmail(): void

@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Service;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\ModuleConfiguration;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
 use Spipu\UserBundle\Tests\GenericUser;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(ModuleConfiguration::class)]
 class ModuleConfigurationTest extends TestCase
 {
     public static function getService(TestCase $testCase, bool $creation, bool $password): ModuleConfiguration

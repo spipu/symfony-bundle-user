@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Fixture;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Fixture\FixtureInterface;
-use Spipu\UserBundle\Repository\UserRepository;
-use Spipu\UserBundle\Tests\SpipuUserMock;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Fixture\FirstUserFixture;
+use Spipu\UserBundle\Repository\UserRepository;
+use Spipu\UserBundle\Tests\SpipuUserMock;
 use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(FirstUserFixture::class)]
 class FirstUserFixtureTest extends TestCase
 {
     public function testBasic(): void

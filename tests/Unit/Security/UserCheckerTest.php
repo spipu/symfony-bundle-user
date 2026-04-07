@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Security;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\UserBundle\Exception\UnactivatedAccountException;
 use Spipu\UserBundle\Security\UserChecker;
 use Spipu\UserBundle\Tests\SpipuUserMock;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(UserChecker::class)]
 class UserCheckerTest extends TestCase
 {
     public function testPreGoodUserEnabled(): void

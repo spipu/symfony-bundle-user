@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Ui;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UiBundle\Entity\Form;
@@ -13,6 +15,8 @@ use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Spipu\UserBundle\Ui\CreationForm;
 use Symfony\Component\Form\FormInterface;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(CreationForm::class)]
 class CreationFormTest extends TestCase
 {
     public function testForm(): void

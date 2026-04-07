@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Command;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UserBundle\Command\DisableUserCommand;
@@ -12,6 +14,8 @@ use Spipu\UserBundle\Tests\SpipuUserMock;
 use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Symfony\Component\Console\Command\Command;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(DisableUserCommand::class)]
 class DisableUserCommandTest extends TestCase
 {
     public function testDisableSuccess(): void

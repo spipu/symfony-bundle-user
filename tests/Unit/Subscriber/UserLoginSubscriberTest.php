@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Tests\Unit\Subscriber;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Subscriber\UserLoginSubscriber;
 use Spipu\UserBundle\Tests\SpipuUserMock;
-use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Spipu\UserBundle\Tests\Unit\Service\UserConfigurationTest;
+use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -20,6 +22,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(UserLoginSubscriber::class)]
 class UserLoginSubscriberTest extends TestCase
 {
     private function getEntityManager(): EntityManagerInterface
