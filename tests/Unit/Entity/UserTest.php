@@ -53,6 +53,7 @@ class UserTest extends TestCase
 
         $this->assertSame('mock_email', $entity->getEmail());
         $this->assertSame('mock_username', $entity->getUsername());
+        $this->assertSame('mock_username', $entity->getUserIdentifier());
         $this->assertSame('mock_password', $entity->getPassword());
         $this->assertSame('mock_plain_password', $entity->getPlainPassword());
         $this->assertSame('mock_first_name', $entity->getFirstName());
