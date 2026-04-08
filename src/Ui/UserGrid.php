@@ -105,7 +105,7 @@ class UserGrid implements GridDefinitionInterface
             ->addRowAction(
                 (new Grid\Action('edit', 'spipu.ui.action.edit', 20, 'spipu_user_admin_edit'))
                     ->setCssClass('success')
-                    ->setIcon('edit')
+                    ->setIcon('pen-to-square')
                     ->setNeededRole('ROLE_ADMIN_MANAGE_USER_EDIT')
             )
             ->addRowAction(
@@ -118,7 +118,7 @@ class UserGrid implements GridDefinitionInterface
             ->addRowAction(
                 (new Grid\Action('disable', 'spipu.user.action.disable', 40, 'spipu_user_admin_disable'))
                     ->setCssClass('warning')
-                    ->setIcon('times')
+                    ->setIcon('xmark')
                     ->setNeededRole('ROLE_ADMIN_MANAGE_USER_EDIT')
                     ->setConditions(['id' => ['neq' => $currentUser->getId()], 'active' => ['eq' => 1]])
             )
@@ -131,7 +131,7 @@ class UserGrid implements GridDefinitionInterface
             ->addMassAction(
                 (new Grid\Action('disable', 'spipu.user.action.disable', 60, 'spipu_user_admin_mass_disable'))
                     ->setCssClass('warning')
-                    ->setIcon('times')
+                    ->setIcon('xmark')
                     ->setNeededRole('ROLE_ADMIN_MANAGE_USER_EDIT')
             )
         ;
