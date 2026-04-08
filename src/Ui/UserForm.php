@@ -49,7 +49,7 @@ class UserForm extends AbstractForm
         $this->definition
             ->addFieldSet(
                 (new FieldSet('information', 'spipu.user.fieldset.information', 10))
-                    ->setCssClass('col-xs-12 col-md-6')
+                    ->setCssClass('col-12 col-md-6')
                     ->addField(new Field(
                         'firstname',
                         Type\TextType::class,
@@ -107,7 +107,7 @@ class UserForm extends AbstractForm
             ->addFieldSet(
                 (new FieldSet('others', 'spipu.user.fieldset.others', 20))
                     ->useHiddenInForm()
-                    ->setCssClass('col-xs-12 col-md-6')
+                    ->setCssClass('col-12 col-md-6')
                     ->addField(
                         (new Field(
                             'id',

@@ -50,7 +50,7 @@ class NewPasswordForm extends AbstractForm
             ->addFieldSet(
                 (new FieldSet('new_password', 'spipu.user.fieldset.new_password', 10))
                     ->useHiddenInView()
-                    ->setCssClass('col-xs-12 col-md-8 m-auto')
+                    ->setCssClass('col-12 col-md-8 m-auto')
                     ->addField((new Field(
                         'plainPassword',
                         Type\RepeatedType::class,

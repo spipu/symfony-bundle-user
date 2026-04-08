@@ -29,7 +29,7 @@ class ProfileForm extends AbstractForm
         $this->definition
             ->addFieldSet(
                 (new FieldSet('information', 'spipu.user.fieldset.information', 10))
-                    ->setCssClass('col-xs-12 col-md-6')
+                    ->setCssClass('col-12 col-md-6')
                     ->addField(new Field(
                         'firstname',
                         Type\TextType::class,
@@ -53,7 +53,7 @@ class ProfileForm extends AbstractForm
             )
             ->addFieldSet(
                 (new FieldSet('log_in', 'spipu.user.fieldset.log_in', 20))
-                    ->setCssClass('col-xs-12 col-md-6')
+                    ->setCssClass('col-12 col-md-6')
                     ->addField(new Field(
                         'email',
                         Type\EmailType::class,

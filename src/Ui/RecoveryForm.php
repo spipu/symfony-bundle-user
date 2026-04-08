@@ -29,7 +29,7 @@ class RecoveryForm extends AbstractForm
         $this->definition
             ->addFieldSet(
                 (new FieldSet('log_in', 'spipu.user.fieldset.log_in', 10))
-                    ->setCssClass('col-xs-12 col-md-8 m-auto')
+                    ->setCssClass('col-12 col-md-8 m-auto')
                     ->addField(new Field(
                         'email',
                         Type\EmailType::class,
