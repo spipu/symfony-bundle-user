@@ -36,7 +36,7 @@
                     {{ renderManager(showManager) }}
                     {% if is_granted('ROLE_ADMIN_MANAGE_USER_EDIT') %}
                         <div class="tab-sub-actions">
-                            {{ buttons.edit(path('spipu_user_admin_edit', {'id': showManager.resource.id})) }}
+                            {{ buttons.edit(path('spipu_user_admin_edit', {'id': showManager.resource.id}), null, null, 'btn-sm') }}
                         </div>
                     {% endif %}
                 </div>
