@@ -70,13 +70,15 @@ class AdminUserTest extends WebTestCase
         $crawler = $this->submitGridFilter($client, $crawler, ['fl[username]' => 'test2']);
         $gridProperties = $this->getGridProperties($crawler, 'user');
         $this->assertSame(0, $gridProperties['count']['nb']);
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Create")')->count());
+        $this->assertGreaterThan(0, $crawler->filter('span[data-grid-role="global-action"] a:contains("Create")')->count());
 
         // Reset filter
         $this->submitGridFilter($client, $crawler, ['fl[username]' => '']);
 
         // Create
-        $crawler = $client->clickLink('Create');
+        $crawler = $client->click(
+            $crawler->filter('span[data-grid-role="global-action"] a:contains("Create")')->link()
+        );
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Create")')->count());
 
