@@ -14,25 +14,20 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Ui;
 
 use Spipu\UiBundle\Service\Ui\Definition\GridDefinitionInterface;
-use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UiBundle\Entity\Grid;
 use Spipu\UiBundle\Form\Options\YesNo as OptionsYesNo;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserGrid implements GridDefinitionInterface
 {
     private ModuleConfigurationInterface $moduleConfiguration;
-    private TokenStorageInterface $tokenStorage;
     private OptionsYesNo $optionsYesNo;
 
     public function __construct(
         ModuleConfigurationInterface $moduleConfiguration,
-        TokenStorageInterface $tokenStorage,
         OptionsYesNo $optionsYesNo
     ) {
         $this->moduleConfiguration = $moduleConfiguration;
-        $this->tokenStorage = $tokenStorage;
         $this->optionsYesNo = $optionsYesNo;
     }
 
@@ -49,8 +44,6 @@ class UserGrid implements GridDefinitionInterface
 
     private function prepareGrid(): void
     {
-        $currentUser = $this->getCurrentUser();
-
         $this->definition = (new Grid\Grid('user', $this->moduleConfiguration->getEntityName()))
             ->setPager(
                 (new Grid\Pager([10, 20, 50, 100], 20))
@@ -102,38 +95,6 @@ class UserGrid implements GridDefinitionInterface
                     ->setIcon('eye')
                     ->setNeededRole('ROLE_ADMIN_MANAGE_USER_SHOW')
             )
-            ->addRowAction(
-                (new Grid\Action('edit', 'spipu.ui.action.edit', 20, 'spipu_user_admin_edit'))
-                    ->setCssClass('success')
-                    ->setIcon('pen-to-square')
-                    ->setNeededRole('ROLE_ADMIN_MANAGE_USER_EDIT')
-            )
-            ->addRowAction(
-                (new Grid\Action('enable', 'spipu.user.action.enable', 30, 'spipu_user_admin_enable'))
-                    ->setCssClass('info')
-                    ->setIcon('check')
-                    ->setNeededRole('ROLE_ADMIN_MANAGE_USER_EDIT')
-                    ->setConditions(['id' => ['neq' => $currentUser->getId()], 'active' => ['neq' => 1]])
-            )
-            ->addRowAction(
-                (new Grid\Action('disable', 'spipu.user.action.disable', 40, 'spipu_user_admin_disable'))
-                    ->setCssClass('warning')
-                    ->setIcon('xmark')
-                    ->setNeededRole('ROLE_ADMIN_MANAGE_USER_EDIT')
-                    ->setConditions(['id' => ['neq' => $currentUser->getId()], 'active' => ['eq' => 1]])
-            )
-            ->addMassAction(
-                (new Grid\Action('enable', 'spipu.user.action.enable', 50, 'spipu_user_admin_mass_enable'))
-                    ->setCssClass('info')
-                    ->setIcon('check')
-                    ->setNeededRole('ROLE_ADMIN_MANAGE_USER_EDIT')
-            )
-            ->addMassAction(
-                (new Grid\Action('disable', 'spipu.user.action.disable', 60, 'spipu_user_admin_mass_disable'))
-                    ->setCssClass('warning')
-                    ->setIcon('xmark')
-                    ->setNeededRole('ROLE_ADMIN_MANAGE_USER_EDIT')
-            )
             ->addGlobalAction(
                 (new Grid\Action('create', 'spipu.ui.action.create', 10, 'spipu_user_admin_create'))
                     ->setIcon('pen-to-square')
@@ -141,13 +102,5 @@ class UserGrid implements GridDefinitionInterface
                     ->setCssClass('success')
             )
         ;
-    }
-
-    private function getCurrentUser(): UserInterface
-    {
-        /** @var UserInterface $user */
-        $user = $this->tokenStorage->getToken()->getUser();
-
-        return $user;
     }
 }

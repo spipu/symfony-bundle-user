@@ -7,11 +7,9 @@ namespace Spipu\UserBundle\Tests\Unit\Ui;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Spipu\CoreBundle\Tests\SymfonyMock;
 use Spipu\UiBundle\Entity\Grid;
 use Spipu\UiBundle\Form\Options\YesNo;
 use Spipu\UiBundle\Service\Ui\Definition\GridDefinitionInterface;
-use Spipu\UserBundle\Tests\SpipuUserMock;
 use Spipu\UserBundle\Tests\Unit\Service\ModuleConfigurationTest;
 use Spipu\UserBundle\Ui\UserGrid;
 
@@ -24,19 +22,11 @@ class UserGridTest extends TestCase
      */
     public function testGrid(): void
     {
-        $user = SpipuUserMock::getUserEntity(42);
-
-        $tokenStorage = SymfonyMock::getTokenStorage($this);
-        $tokenStorage
-            ->getToken()
-            ->method('getUser')
-            ->willReturn($user);
-
         $moduleConfiguration = ModuleConfigurationTest::getService($this, true, true);
 
         $yesNo =  new YesNo();
 
-        $grid = new UserGrid($moduleConfiguration, $tokenStorage, $yesNo);
+        $grid = new UserGrid($moduleConfiguration, $yesNo);
         $this->assertInstanceOf(GridDefinitionInterface::class, $grid);
 
         $definition = $grid->getDefinition();
@@ -74,31 +64,16 @@ class UserGridTest extends TestCase
         $this->assertSame('spipu_user_admin_show', $action->getRouteName());
         $this->assertSame('ROLE_ADMIN_MANAGE_USER_SHOW', $action->getNeededRole());
 
-        $action = $definition->getRowAction('edit');
-        $this->assertInstanceOf(Grid\Action::class, $action);
-        $this->assertSame('spipu_user_admin_edit', $action->getRouteName());
-        $this->assertSame('ROLE_ADMIN_MANAGE_USER_EDIT', $action->getNeededRole());
+        // The mutating row/mass actions are provided by the consumer app, not shipped by the bundle
+        $this->assertCount(1, $definition->getRowActions());
+        $this->assertCount(0, $definition->getMassActions());
+        $this->assertNull($definition->getRowAction('edit'));
+        $this->assertNull($definition->getRowAction('enable'));
+        $this->assertNull($definition->getRowAction('disable'));
 
-        $action = $definition->getRowAction('enable');
+        $action = $definition->getGlobalAction('create');
         $this->assertInstanceOf(Grid\Action::class, $action);
-        $this->assertSame('spipu_user_admin_enable', $action->getRouteName());
-        $this->assertSame('ROLE_ADMIN_MANAGE_USER_EDIT', $action->getNeededRole());
-        $this->assertSame(['id' => ['neq' => 42], 'active' => ['neq' => 1]], $action->getConditions());
-
-        $action = $definition->getRowAction('disable');
-        $this->assertInstanceOf(Grid\Action::class, $action);
-        $this->assertSame('spipu_user_admin_disable', $action->getRouteName());
-        $this->assertSame('ROLE_ADMIN_MANAGE_USER_EDIT', $action->getNeededRole());
-        $this->assertSame(['id' => ['neq' => 42], 'active' => ['eq' => 1]], $action->getConditions());
-
-        $action = $definition->getMassAction('enable');
-        $this->assertInstanceOf(Grid\Action::class, $action);
-        $this->assertSame('spipu_user_admin_mass_enable', $action->getRouteName());
-        $this->assertSame('ROLE_ADMIN_MANAGE_USER_EDIT', $action->getNeededRole());
-
-        $action = $definition->getMassAction('disable');
-        $this->assertInstanceOf(Grid\Action::class, $action);
-        $this->assertSame('spipu_user_admin_mass_disable', $action->getRouteName());
+        $this->assertSame('spipu_user_admin_create', $action->getRouteName());
         $this->assertSame('ROLE_ADMIN_MANAGE_USER_EDIT', $action->getNeededRole());
     }
 }

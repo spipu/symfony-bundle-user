@@ -112,11 +112,11 @@ class AdminUserTest extends WebTestCase
         $this->assertCrawlerHasFieldValue($crawler, 'email', 'user2@test.fr');
         $this->assertCrawlerHasFieldValue($crawler, 'username', 'test2_user');
         $this->assertCrawlerHasFieldValue($crawler, 'active', 'Yes');
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Disable")')->count());
-        $this->assertEquals(0, $crawler->filter('a:contains("Enable")')->count());
+        $this->assertGreaterThan(0, $crawler->filter('button:contains("Disable")')->count());
+        $this->assertEquals(0, $crawler->filter('button:contains("Enable")')->count());
 
         // Disable the user
-        $client->clickLink('Disable');
+        $client->submit($crawler->filter('button:contains("Disable")')->form());
         $this->assertTrue($client->getResponse()->isRedirect());
 
         // Show user page - Disabled
@@ -126,11 +126,11 @@ class AdminUserTest extends WebTestCase
         $this->assertCrawlerHasAlert($crawler, 'The item has been disabled');
         $this->assertCrawlerHasFieldValue($crawler, 'username', 'test2_user');
         $this->assertCrawlerHasFieldValue($crawler, 'active', 'No');
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Enable")')->count());
-        $this->assertEquals(0, $crawler->filter('a:contains("Disable")')->count());
+        $this->assertGreaterThan(0, $crawler->filter('button:contains("Enable")')->count());
+        $this->assertEquals(0, $crawler->filter('button:contains("Disable")')->count());
 
         // Enable the user
-        $client->clickLink('Enable');
+        $client->submit($crawler->filter('button:contains("Enable")')->form());
         $this->assertTrue($client->getResponse()->isRedirect());
 
         // Show user page - Enabled
@@ -140,15 +140,15 @@ class AdminUserTest extends WebTestCase
         $this->assertCrawlerHasAlert($crawler, 'The item has been enabled');
         $this->assertCrawlerHasFieldValue($crawler, 'username', 'test2_user');
         $this->assertCrawlerHasFieldValue($crawler, 'active', 'Yes');
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Disable")')->count());
-        $this->assertEquals(0, $crawler->filter('a:contains("Enable")')->count());
-        $this->assertGreaterThan(0, $crawler->filter('a:contains("Password")')->count());
+        $this->assertGreaterThan(0, $crawler->filter('button:contains("Disable")')->count());
+        $this->assertEquals(0, $crawler->filter('button:contains("Enable")')->count());
+        $this->assertGreaterThan(0, $crawler->filter('button:contains("Password")')->count());
 
         // Needed to profile email
         $client->enableProfiler();
 
         // Reset the password
-        $client->clickLink('Password');
+        $client->submit($crawler->filter('button:contains("Password")')->form());
         $this->assertTrue($client->getResponse()->isRedirect());
 
         // Get the email
@@ -247,80 +247,6 @@ class AdminUserTest extends WebTestCase
 
         // Reset the filter
         $crawler = $this->submitGridFilter($client, $crawler, ['fl[id][from]' => '', 'fl[id][to]' => '', 'fl[is_active]' => '']);
-
-        // The ids to disable
-        $userIds = [2, 3];
-
-        // The users 2 and 3 must be disabled
-        foreach ($userIds as $userId) {
-            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
-        }
-
-        // The mass action "Enable" must exist
-        $linkAction = $crawler->filter('span[data-grid-role="action"]:contains("Enable")');
-        $this->assertEquals(1, $linkAction->count());
-        $linkUrl = $linkAction->first()->attr('data-grid-href');
-
-        // Post the mass action "Enable"
-        $client->request('POST', $linkUrl, ['selected' => json_encode($userIds)]);
-        $this->assertTrue($client->getResponse()->isRedirect());
-
-        // Show grid result
-        $crawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("' . count($userIds) . ' items have been enabled")')->count());
-
-        // The users must be enabled
-        foreach ($userIds as $userId) {
-            $this->assertEquals(1, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
-        }
-
-        // The mass action "Disable" must exist
-        $linkAction = $crawler->filter('span[data-grid-role="action"]:contains("Disable")');
-        $this->assertEquals(1, $linkAction->count());
-        $linkUrl = $linkAction->first()->attr('data-grid-href');
-
-        // Post the mass action "Disable"
-        $client->request('POST', $linkUrl, ['selected' => json_encode($userIds)]);
-        $this->assertTrue($client->getResponse()->isRedirect());
-
-        // Show grid result
-        $crawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("' . count($userIds) . ' items have been disabled")')->count());
-
-        // The users must be disabled
-        foreach ($userIds as $userId) {
-            $this->assertEquals(0, $crawler->filter('tr[data-grid-row-id=' . $userId . '] td[data-grid-field-name=is_active]:contains("Yes")')->count());
-        }
-
-        // Post the mass action "Disable" on the same users
-        $client->request('POST', $linkUrl, ['selected' => json_encode($userIds)]);
-        $this->assertTrue($client->getResponse()->isRedirect());
-
-        // Show grid result
-        $crawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("0 items have been disabled")')->count());
-
-        // Post the mass action "Disable" on our user
-        $client->request('POST', $linkUrl, ['selected' => json_encode([1])]);
-        $this->assertTrue($client->getResponse()->isRedirect());
-
-        // Show grid result
-        $crawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("You can not disable yourself!")')->count());
-        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("0 items have been disabled")')->count());
-
-        // Post the mass action "Disable" on empty list
-        $client->request('POST', $linkUrl, ['selected' => json_encode([])]);
-        $this->assertTrue($client->getResponse()->isRedirect());
-
-        // Show grid result
-        $crawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->filter('div[role="alert"]:contains("You must select at least one item")')->count());
 
         // Users List with quick search
         $crawler = $this->submitGridQuickSearch($client, $crawler, 'email', 'user_42@');
@@ -842,28 +768,34 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertCrawlerHasAlert($crawler, 'Invalid Token');
 
-        $client->request('GET', '/user/enable/999999999');
+        $client->request('POST', '/user/enable/999999999');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
-        $client->request('GET', '/user/enable/1');
+        $client->request('POST', '/user/enable/1');
         $this->assertTrue($client->getResponse()->isRedirect());
         $crawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertCrawlerHasAlert($crawler, 'You can not enable yourself');
 
-        $client->request('GET', '/user/disable/999999999');
+        $client->request('POST', '/user/enable/2');
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'Invalid Token');
+
+        $client->request('POST', '/user/disable/999999999');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
-        $client->request('GET', '/user/disable/1');
+        $client->request('POST', '/user/disable/1');
         $this->assertTrue($client->getResponse()->isRedirect());
         $crawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertCrawlerHasAlert($crawler, 'You can not disable yourself');
 
-        $client->request('GET', '/user/reset/999999999');
+        $client->request('POST', '/user/reset/999999999');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
-        $client->request('GET', '/user/reset/1');
+        $client->request('POST', '/user/reset/1');
         $this->assertTrue($client->getResponse()->isRedirect());
         $crawler = $client->followRedirect();
         $this->assertEquals(200, $client->getResponse()->getStatusCode());

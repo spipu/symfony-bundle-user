@@ -263,12 +263,12 @@ class AdminUserController extends AbstractController
         return $this->redirectTo('list');
     }
 
-    #[Route(path: '/enable/{id}/{backTo}', name: 'spipu_user_admin_enable', methods: 'GET')]
+    #[Route(path: '/enable/{id}', name: 'spipu_user_admin_enable', methods: 'POST')]
     #[IsGranted('ROLE_ADMIN_MANAGE_USER_EDIT')]
     public function enable(
+        Request $request,
         UserRepository $userRepository,
-        int $id,
-        string $backTo = 'list'
+        int $id
     ): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -281,7 +281,13 @@ class AdminUserController extends AbstractController
         if ($this->getUser()->getId() === $resource->getId()) {
             $this->addFlashTrans('danger', 'spipu.user.error.yourself_enable');
 
-            return $this->redirectTo('list');
+            return $this->redirectTo('show', $resource);
+        }
+
+        if (!$this->isCsrfTokenValid('enable_user_' . $resource->getId(), $request->request->get('_token'))) {
+            $this->addFlashTrans('danger', 'spipu.ui.error.token');
+
+            return $this->redirectTo('show', $resource);
         }
 
         try {
@@ -294,15 +300,15 @@ class AdminUserController extends AbstractController
             $this->addFlash('danger', $e->getMessage());
         }
 
-        return $this->redirectTo($backTo, $resource);
+        return $this->redirectTo('show', $resource);
     }
 
-    #[Route(path: '/disable/{id}/{backTo}', name: 'spipu_user_admin_disable', methods: 'GET')]
+    #[Route(path: '/disable/{id}', name: 'spipu_user_admin_disable', methods: 'POST')]
     #[IsGranted('ROLE_ADMIN_MANAGE_USER_EDIT')]
     public function disable(
+        Request $request,
         UserRepository $userRepository,
-        int $id,
-        string $backTo = 'list'
+        int $id
     ): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -315,7 +321,13 @@ class AdminUserController extends AbstractController
         if ($this->getUser()->getId() === $resource->getId()) {
             $this->addFlashTrans('danger', 'spipu.user.error.yourself_disable');
 
-            return $this->redirectTo('list');
+            return $this->redirectTo('show', $resource);
+        }
+
+        if (!$this->isCsrfTokenValid('disable_user_' . $resource->getId(), $request->request->get('_token'))) {
+            $this->addFlashTrans('danger', 'spipu.ui.error.token');
+
+            return $this->redirectTo('show', $resource);
         }
 
         try {
@@ -328,12 +340,13 @@ class AdminUserController extends AbstractController
             $this->addFlash('danger', $e->getMessage());
         }
 
-        return $this->redirectTo($backTo, $resource);
+        return $this->redirectTo('show', $resource);
     }
 
-    #[Route(path: '/reset/{id}', name: 'spipu_user_admin_reset', methods: 'GET')]
+    #[Route(path: '/reset/{id}', name: 'spipu_user_admin_reset', methods: 'POST')]
     #[IsGranted('ROLE_ADMIN_MANAGE_USER_EDIT')]
     public function reset(
+        Request $request,
         UserRepository $userRepository,
         MailManager $mailManager,
         int $id
@@ -352,6 +365,12 @@ class AdminUserController extends AbstractController
             return $this->redirectTo('show', $resource);
         }
 
+        if (!$this->isCsrfTokenValid('reset_user_' . $resource->getId(), $request->request->get('_token'))) {
+            $this->addFlashTrans('danger', 'spipu.ui.error.token');
+
+            return $this->redirectTo('show', $resource);
+        }
+
         try {
             $mailManager->sendRecoveryEmail($resource);
             $this->addFlashTrans('success', 'spipu.user.success.reset');
@@ -360,71 +379,6 @@ class AdminUserController extends AbstractController
         }
 
         return $this->redirectTo('show', $resource);
-    }
-
-    #[Route(path: '/mass-enable', name: 'spipu_user_admin_mass_enable', methods: 'POST')]
-    #[IsGranted('ROLE_ADMIN_MANAGE_USER_EDIT')]
-    public function massEnable(UserRepository $userRepository, Request $request): Response
-    {
-        return $this->massAction($userRepository, $request, 'enable', 'spipu.user.success.mass_enabled');
-    }
-
-    #[Route(path: '/mass-disable', name: 'spipu_user_admin_mass_disable', methods: 'POST')]
-    #[IsGranted('ROLE_ADMIN_MANAGE_USER_EDIT')]
-    public function massDisable(UserRepository $userRepository, Request $request): Response
-    {
-        return $this->massAction($userRepository, $request, 'disable', 'spipu.user.success.mass_disabled');
-    }
-
-    private function massAction(
-        UserRepository $userRepository,
-        Request $request,
-        string $action,
-        string $transLabel
-    ): Response {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        $selected = json_decode((string) $request->request->get('selected', ''));
-
-        if (!is_array($selected) || count($selected) < 1) {
-            $this->addFlashTrans('warning', 'spipu.ui.grid.item.at_least_one');
-            return $this->redirectTo('list');
-        }
-
-        $count = 0;
-        /** @var UserInterface[] $rows */
-        $rows = $userRepository->findBy(['id' => $selected]);
-        foreach ($rows as $row) {
-            if ($this->massActionRow($row, $action)) {
-                $this->entityManager->persist($row);
-                $count++;
-            }
-        }
-        $this->entityManager->flush();
-
-        $this->addFlashTrans('success', $transLabel, ['%count' => $count]);
-
-        return $this->redirectTo('list');
-    }
-
-    private function massActionRow(UserInterface $row, string $action): bool
-    {
-        if ($this->getUser()->getId() === $row->getId()) {
-            $this->addFlashTrans('danger', 'spipu.user.error.yourself_' . $action);
-            return false;
-        }
-
-        if ($action === 'enable' && !$row->getActive()) {
-            $this->userManager->enableUser($row);
-            return true;
-        }
-
-        if ($action === 'disable' && $row->getActive()) {
-            $this->userManager->disableUser($row);
-            return true;
-        }
-
-        return false;
     }
 
     private function redirectTo(string $backTo, ?UserInterface $resource = null): Response
