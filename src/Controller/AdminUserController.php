@@ -19,6 +19,7 @@ use Spipu\UiBundle\Service\Ui\FormFactory;
 use Spipu\UiBundle\Service\Ui\GridFactory;
 use Spipu\UiBundle\Service\Ui\ShowFactory;
 use Spipu\UserBundle\Entity\UserInterface;
+use Spipu\UserBundle\Exception\ForbiddenRoleException;
 use Spipu\UserBundle\Repository\UserRepository;
 use Spipu\UserBundle\Service\MailManager;
 use Spipu\UserBundle\Service\ModuleConfigurationInterface;
@@ -149,7 +150,7 @@ class AdminUserController extends AbstractController
     }
 
     #[Route(path: '/update-acl/{id}', name: 'spipu_user_admin_acl', methods: 'POST')]
-    #[IsGranted('ROLE_ADMIN_MANAGE_USER_SHOW')]
+    #[IsGranted('ROLE_ADMIN_MANAGE_USER_EDIT')]
     public function updateAcl(
         UserRepository $userRepository,
         Request $request,
@@ -157,6 +158,8 @@ class AdminUserController extends AbstractController
         RoleService $roleService,
         int $id
     ): Response {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         /** @var UserInterface $resource */
         $resource = $userRepository->findOneBy(['id' => $id]);
         if (!$resource) {
@@ -166,20 +169,59 @@ class AdminUserController extends AbstractController
         $redirectResponse = $this->redirectToRoute('spipu_user_admin_show', ['id' => $resource->getId()]);
 
         $roleCodes = $request->request->all('acl');
-        if (empty($roleCodes) || !is_array($roleCodes) || !$roleService->validateRoles($roleCodes)) {
-            $this->addFlashTrans('danger', 'What you doing ???');
+        $error = $this->getAclUpdateError($resource, $roleService, $request, $roleCodes);
+        if ($error !== null) {
+            $this->addFlashTrans('danger', $error);
             return $redirectResponse;
         }
 
         try {
-            $resource->setRoles($roleCodes);
+            $resource->setRoles($roleService->computeRolesToSave($roleCodes));
             $entityManager->flush();
             $this->addFlashTrans('success', 'spipu.ui.success.updated');
+        } catch (ForbiddenRoleException) {
+            $this->addFlashTrans('danger', 'spipu.user.error.acl_not_granted');
         } catch (Exception $e) {
             $this->addFlash('danger', $e->getMessage());
         }
 
         return $redirectResponse;
+    }
+
+    /**
+     * @param UserInterface $resource
+     * @param RoleService $roleService
+     * @param Request $request
+     * @param string[] $roleCodes
+     * @return string|null The error translation key, or null when the ACL update is allowed.
+     */
+    private function getAclUpdateError(
+        UserInterface $resource,
+        RoleService $roleService,
+        Request $request,
+        array $roleCodes
+    ): ?string {
+        if ($this->getUser()->getId() === $resource->getId()) {
+            return 'spipu.user.error.yourself_acl';
+        }
+
+        if (!$resource->getActive()) {
+            return 'spipu.user.error.acl_inactive';
+        }
+
+        if (!$roleService->canEditRoles($resource->getRoles())) {
+            return 'spipu.user.error.acl_superior';
+        }
+
+        if (!$this->isCsrfTokenValid('update_acl_' . $resource->getId(), $request->request->get('_token'))) {
+            return 'spipu.ui.error.token';
+        }
+
+        if (empty($roleCodes) || !$roleService->validateRoles($roleCodes)) {
+            return 'spipu.user.error.acl_invalid';
+        }
+
+        return null;
     }
 
     #[Route(path: '/delete/{id}', name: 'spipu_user_admin_delete', methods: 'DELETE')]
@@ -302,6 +344,12 @@ class AdminUserController extends AbstractController
         $resource = $userRepository->findOneBy(['id' => $id]);
         if (!$resource) {
             throw $this->createNotFoundException();
+        }
+
+        if ($this->getUser()->getId() === $resource->getId()) {
+            $this->addFlashTrans('danger', 'spipu.user.error.yourself_reset');
+
+            return $this->redirectTo('show', $resource);
         }
 
         try {

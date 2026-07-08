@@ -10,20 +10,26 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\CoreBundle\Entity\Role\Item;
 use Spipu\CoreBundle\Service\RoleDefinitionList;
+use Spipu\UserBundle\Exception\ForbiddenRoleException;
 use Spipu\UserBundle\Service\RoleDefinition;
 use Spipu\UserBundle\Service\RoleService;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 #[AllowMockObjectsWithoutExpectations]
 #[CoversClass(RoleService::class)]
 class RoleServiceTest extends TestCase
 {
-    private function getRoleService(): RoleService
+    private function getRoleService(?AuthorizationCheckerInterface $authorizationChecker = null): RoleService
     {
         Item::resetAll();
 
         $roleDefinitionList = new RoleDefinitionList([new RoleDefinition()]);
+        if ($authorizationChecker === null) {
+            $authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+            $authorizationChecker->method('isGranted')->willReturn(true);
+        }
 
-        return new RoleService($roleDefinitionList, 'admin');
+        return new RoleService($roleDefinitionList, $authorizationChecker, 'admin');
     }
 
     public function testSortRoles(): void
@@ -170,6 +176,70 @@ class RoleServiceTest extends TestCase
         $this->assertTrue($service->validateRoles($validCodes));
         $this->assertTrue($service->validateRoles([]));
         $this->assertFalse($service->validateRoles(['ROLE_DOES_NOT_EXIST_AT_ALL']));
+
+        Item::resetAll();
+    }
+
+    public function testComputeRolesToSaveGrantsOwnedRoles(): void
+    {
+        $checker = $this->createMock(AuthorizationCheckerInterface::class);
+        $checker->method('isGranted')->willReturn(true);
+        $service = $this->getRoleService($checker);
+
+        $result = $service->computeRolesToSave(['ROLE_ADMIN_MANAGE_USER']);
+
+        $this->assertSame(['ROLE_ADMIN_MANAGE_USER'], $result);
+
+        Item::resetAll();
+    }
+
+    public function testComputeRolesToSaveThrowsWhenGrantingUnownedRole(): void
+    {
+        $checker = $this->createMock(AuthorizationCheckerInterface::class);
+        $checker->method('isGranted')->willReturnCallback(
+            fn(mixed $attribute): bool => ($attribute !== 'ROLE_SUPER_ADMIN')
+        );
+        $service = $this->getRoleService($checker);
+
+        $this->expectException(ForbiddenRoleException::class);
+        $service->computeRolesToSave(['ROLE_SUPER_ADMIN']);
+
+        Item::resetAll();
+    }
+
+    public function testCanEditRolesTrueWhenAllRolesOwned(): void
+    {
+        $checker = $this->createMock(AuthorizationCheckerInterface::class);
+        $checker->method('isGranted')->willReturn(true);
+        $service = $this->getRoleService($checker);
+
+        $this->assertTrue($service->canEditRoles(['ROLE_ADMIN_MANAGE_USER', 'ROLE_ADMIN']));
+
+        Item::resetAll();
+    }
+
+    public function testCanEditRolesFalseWhenTargetHasSuperiorRole(): void
+    {
+        $checker = $this->createMock(AuthorizationCheckerInterface::class);
+        $checker->method('isGranted')->willReturnCallback(
+            fn(mixed $attribute): bool => ($attribute !== 'ROLE_SUPER_ADMIN')
+        );
+        $service = $this->getRoleService($checker);
+
+        $this->assertFalse($service->canEditRoles(['ROLE_SUPER_ADMIN']));
+        $this->assertTrue($service->canEditRoles(['ROLE_ADMIN_MANAGE_USER']));
+
+        Item::resetAll();
+    }
+
+    public function testGetRolesAndProfilesAreEmptyWhenNothingGranted(): void
+    {
+        $checker = $this->createMock(AuthorizationCheckerInterface::class);
+        $checker->method('isGranted')->willReturn(false);
+        $service = $this->getRoleService($checker);
+
+        $this->assertEmpty($service->getRoles());
+        $this->assertEmpty($service->getProfiles());
 
         Item::resetAll();
     }

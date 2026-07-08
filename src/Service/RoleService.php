@@ -16,17 +16,22 @@ namespace Spipu\UserBundle\Service;
 use InvalidArgumentException;
 use Spipu\CoreBundle\Entity\Role\Item;
 use Spipu\CoreBundle\Service\RoleDefinitionList;
+use Spipu\UserBundle\Exception\ForbiddenRoleException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class RoleService
 {
     private RoleDefinitionList $roleDefinitionList;
+    private AuthorizationCheckerInterface $authorizationChecker;
     private string $purpose;
 
     public function __construct(
         RoleDefinitionList $roleDefinitionList,
+        AuthorizationCheckerInterface $authorizationChecker,
         string $purpose = 'admin'
     ) {
         $this->roleDefinitionList = $roleDefinitionList;
+        $this->authorizationChecker = $authorizationChecker;
         $this->purpose = $purpose;
     }
 
@@ -47,7 +52,7 @@ class RoleService
     public function getProfiles(): array
     {
         $this->roleDefinitionList->buildDefinitions();
-        $items = $this->roleDefinitionList->getItems($this->purpose, Item::TYPE_PROFILE);
+        $items = $this->filterGranted($this->roleDefinitionList->getItems($this->purpose, Item::TYPE_PROFILE));
 
         $this->sortRoles($items);
 
@@ -57,7 +62,7 @@ class RoleService
     public function getRoles(): array
     {
         $this->roleDefinitionList->buildDefinitions();
-        $items = $this->roleDefinitionList->getItems($this->purpose, Item::TYPE_ROLE);
+        $items = $this->filterGranted($this->roleDefinitionList->getItems($this->purpose, Item::TYPE_ROLE));
 
         foreach ($items as $item) {
             foreach ($item->getChildren() as $child) {
@@ -82,7 +87,8 @@ class RoleService
         foreach ($role->getChildren() as $child) {
             if (
                 $child->getType() === Item::TYPE_ROLE &&
-                ($child->getPurpose() === null || $child->getPurpose() === $this->purpose)
+                ($child->getPurpose() === null || $child->getPurpose() === $this->purpose) &&
+                $this->authorizationChecker->isGranted($child->getCode())
             ) {
                 $list[$child->getCode()] = $child;
             }
@@ -124,6 +130,38 @@ class RoleService
     }
 
     /**
+     * Keep only the items the acting user owns himself (a user only sees the roles he can grant).
+     *
+     * @param Item[] $items
+     * @return Item[]
+     */
+    private function filterGranted(array $items): array
+    {
+        return array_filter(
+            $items,
+            fn(Item $item): bool => $this->authorizationChecker->isGranted($item->getCode())
+        );
+    }
+
+    /**
+     * The acting user can edit a target's ACL only if he owns every role the target currently has,
+     * i.e. the target does not have more rights than the acting user.
+     *
+     * @param string[] $currentRoles
+     * @return bool
+     */
+    public function canEditRoles(array $currentRoles): bool
+    {
+        foreach ($currentRoles as $code) {
+            if (!$this->authorizationChecker->isGranted($code)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * @param string[] $roleCodes
      * @return bool
      */
@@ -133,5 +171,23 @@ class RoleService
         $validCodes = array_keys($this->roleDefinitionList->getItems($this->purpose));
 
         return count(array_diff($roleCodes, $validCodes)) === 0;
+    }
+
+    /**
+     * Restrict the submitted roles to what the acting user is allowed to grant (only roles he owns himself).
+     *
+     * @param string[] $submittedCodes
+     * @return string[]
+     * @throws ForbiddenRoleException
+     */
+    public function computeRolesToSave(array $submittedCodes): array
+    {
+        foreach ($submittedCodes as $code) {
+            if (!$this->authorizationChecker->isGranted($code)) {
+                throw new ForbiddenRoleException($code);
+            }
+        }
+
+        return array_values(array_unique($submittedCodes));
     }
 }

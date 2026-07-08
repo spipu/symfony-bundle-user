@@ -106,6 +106,7 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertGreaterThan(0, $crawler->filter('h1:contains("Show User")')->count());
         $this->assertCrawlerHasAlert($crawler, 'The item has been saved');
+        $userId = (int) $client->getRequest()->attributes->get('id');
         $this->assertCrawlerHasFieldValue($crawler, 'firstname', 'Test2 Firstname');
         $this->assertCrawlerHasFieldValue($crawler, 'lastname', 'Test2 Lastname');
         $this->assertCrawlerHasFieldValue($crawler, 'email', 'user2@test.fr');
@@ -186,7 +187,7 @@ class AdminUserTest extends WebTestCase
                 'generic[lastname]'  => 'Test3 Lastname',
                 'generic[email]'     => 'user3@test.fr',
                 'generic[username]'  => 'test3_user',
-                'generic[active]'    => 0
+                'generic[active]'    => 1
             ]
         );
         $this->assertTrue($client->getResponse()->isRedirect());
@@ -200,8 +201,14 @@ class AdminUserTest extends WebTestCase
         $this->assertCrawlerHasFieldValue($crawler, 'lastname', 'Test3 Lastname');
         $this->assertCrawlerHasFieldValue($crawler, 'email', 'user3@test.fr');
         $this->assertCrawlerHasFieldValue($crawler, 'username', 'test3_user');
-        $this->assertCrawlerHasFieldValue($crawler, 'active', 'No');
+        $this->assertCrawlerHasFieldValue($crawler, 'active', 'Yes');
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Delete")')->count());
+
+        // Update ACL without a CSRF token is rejected
+        $client->request('POST', '/user/update-acl/' . $userId);
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+        $this->assertCrawlerHasAlert($crawler, 'Invalid Token');
 
         // Submit ACL
         $client->submit(
@@ -855,6 +862,27 @@ class AdminUserTest extends WebTestCase
 
         $client->request('GET', '/user/reset/999999999');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
+
+        $client->request('GET', '/user/reset/1');
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'You can not reset yourself');
+
+        $client->request('POST', '/user/update-acl/999999999');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+
+        $client->request('POST', '/user/update-acl/1');
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'You can not edit your own roles');
+
+        $client->request('POST', '/user/update-acl/2');
+        $this->assertTrue($client->getResponse()->isRedirect());
+        $crawler = $client->followRedirect();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertCrawlerHasAlert($crawler, 'You can not edit the roles of a disabled account');
 
         $client->request('GET', '/user/edit/999999999');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());

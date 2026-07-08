@@ -27,7 +27,9 @@
 {% block body %}
     <ul class="nav nav-tabs" role="tablist" id="myTab">
         <li class="nav-item"><a class="nav-link fw-bold active" aria-selected="false" data-bs-toggle="tab" role="tab" id="info-tab" href="#info" aria-controls="info" >{{ 'spipu.user.fieldset.information'|trans }}</a></li>
-        <li class="nav-item"><a class="nav-link fw-bold"        aria-selected="false" data-bs-toggle="tab" role="tab" id="acl-tab"  href="#acl"  aria-controls="services">{{ 'spipu.user.fieldset.acl'|trans }}</a></li>
+        {% if showManager.resource.active and roleService.canEditRoles(showManager.resource.roles) %}
+            <li class="nav-item"><a class="nav-link fw-bold"        aria-selected="false" data-bs-toggle="tab" role="tab" id="acl-tab"  href="#acl"  aria-controls="services">{{ 'spipu.user.fieldset.acl'|trans }}</a></li>
+        {% endif %}
     </ul>
     <div class="tab-content" id="user-tabs">
         <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab" >
@@ -42,16 +44,19 @@
                 </div>
             </div>
         </div>
+        {% if showManager.resource.active and roleService.canEditRoles(showManager.resource.roles) %}
         <div class="tab-pane fade show" id="acl" role="tabpanel" aria-labelledby="acl-tab">
             <div class="card border-top-0 rounded-0">
                 <div class="card-body">
                     {% include '@SpipuUser/admin/_acl.html.twig' with {
                         roleService: roleService,
                         userRoles: showManager.resource.roles,
+                        userId: showManager.resource.id,
                         submitUrl :  path('spipu_user_admin_acl', {id: showManager.resource.id})
                     } %}
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 {% endblock %}

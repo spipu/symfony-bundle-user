@@ -12,6 +12,7 @@
 {% endmacro %}
 
 <form method="POST" action="{{ submitUrl }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('update_acl_' ~ userId) }}">
     <div class="row">
         <div class="col-12 col-md-6">
             <div class="card mb-3">
