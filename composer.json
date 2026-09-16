@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": "^8.3",
-        "doctrine/orm": "^3.0",
+        "doctrine/orm": "^3.7",
         "symfony/framework-bundle": "^7.4",
         "spipu/ui-bundle": "^5.0",
         "spipu/configuration-bundle": "^5.0"
