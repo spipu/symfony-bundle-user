@@ -27,12 +27,12 @@ The **UserBundle** provides a complete user management system for Symfony applic
 
 ## Requirements
 
-- PHP 8.1+
+- PHP 8.3+
 - Symfony 6.4+
 - `spipu/core-bundle`
 - `spipu/ui-bundle`
 - `spipu/configuration-bundle`
-- Doctrine ORM
+- Doctrine ORM 3.7+
 - Symfony Mailer
 
 ## Quick Start

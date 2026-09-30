@@ -4,7 +4,7 @@
 
 ## Requirements
 
-- PHP 8.1+
+- PHP 8.3+
 - Symfony 6.4+
 - `spipu/core-bundle`
 - `spipu/ui-bundle`
