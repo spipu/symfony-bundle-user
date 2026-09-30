@@ -32,7 +32,7 @@ The **UserBundle** provides a complete user management system for Symfony applic
 - `spipu/core-bundle`
 - `spipu/ui-bundle`
 - `spipu/configuration-bundle`
-- Doctrine ORM
+- Doctrine ORM 3.7+
 - Symfony Mailer
 
 ## Quick Start
