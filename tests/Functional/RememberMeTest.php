@@ -112,6 +112,20 @@ class RememberMeTest extends WebTestCase
         $this->login($client, true);
         $this->keepOnlyRememberMeCookie($client);
 
+        $originalPassword = $this->setAdminPassword('new_encoded_password');
+
+        try {
+            $client->request('GET', '/my-profile/');
+            $this->assertTrue($client->getResponse()->isRedirect());
+            $this->assertStringContainsString('/login', (string) $client->getResponse()->headers->get('Location'));
+        } finally {
+            // The database is shared by all the functional tests.
+            $this->setAdminPassword($originalPassword);
+        }
+    }
+
+    private function setAdminPassword(string $password): string
+    {
         $container = self::getContainer();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get('doctrine.orm.entity_manager');
@@ -119,12 +133,12 @@ class RememberMeTest extends WebTestCase
         $userRepository = $container->get(UserRepository::class);
         /** @var UserInterface $user */
         $user = $userRepository->findOneBy(['username' => 'admin']);
-        $user->setPassword('new_encoded_password');
+
+        $previousPassword = (string) $user->getPassword();
+        $user->setPassword($password);
         $entityManager->flush();
 
-        $client->request('GET', '/my-profile/');
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $this->assertStringContainsString('/login', (string) $client->getResponse()->headers->get('Location'));
+        return $previousPassword;
     }
 
     private function keepOnlyRememberMeCookie(KernelBrowser $client): void
