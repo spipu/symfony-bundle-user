@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Spipu\UserBundle\Tests\Functional;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Spipu\CoreBundle\Tests\WebTestCase;
+use Spipu\UserBundle\Controller\SecurityController;
 use Spipu\UserBundle\Entity\UserInterface;
 use Spipu\UserBundle\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\Cookie as BrowserCookie;
 use Symfony\Component\HttpFoundation\Cookie;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(SecurityController::class)]
 class RememberMeTest extends WebTestCase
 {
     private const COOKIE_NAME = 'symfony_dev_main_remember';
@@ -112,6 +117,20 @@ class RememberMeTest extends WebTestCase
         $this->login($client, true);
         $this->keepOnlyRememberMeCookie($client);
 
+        $originalPassword = $this->setAdminPassword('new_encoded_password');
+
+        try {
+            $client->request('GET', '/my-profile/');
+            $this->assertTrue($client->getResponse()->isRedirect());
+            $this->assertStringContainsString('/login', (string) $client->getResponse()->headers->get('Location'));
+        } finally {
+            // The database is shared by all the functional tests.
+            $this->setAdminPassword($originalPassword);
+        }
+    }
+
+    private function setAdminPassword(string $password): string
+    {
         $container = self::getContainer();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get('doctrine.orm.entity_manager');
@@ -119,12 +138,12 @@ class RememberMeTest extends WebTestCase
         $userRepository = $container->get(UserRepository::class);
         /** @var UserInterface $user */
         $user = $userRepository->findOneBy(['username' => 'admin']);
-        $user->setPassword('new_encoded_password');
+
+        $previousPassword = (string) $user->getPassword();
+        $user->setPassword($password);
         $entityManager->flush();
 
-        $client->request('GET', '/my-profile/');
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $this->assertStringContainsString('/login', (string) $client->getResponse()->headers->get('Location'));
+        return $previousPassword;
     }
 
     private function keepOnlyRememberMeCookie(KernelBrowser $client): void

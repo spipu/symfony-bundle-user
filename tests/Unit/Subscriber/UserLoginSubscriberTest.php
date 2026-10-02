@@ -237,7 +237,6 @@ class UserLoginSubscriberTest extends TestCase
 
         $authenticator = new RememberMeAuthenticator(
             $this->createMock(RememberMeHandlerInterface::class),
-            'secret',
             new TokenStorage(),
             'remember_me'
         );

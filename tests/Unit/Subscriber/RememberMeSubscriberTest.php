@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Spipu\UserBundle\Tests\Unit\Subscriber;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Spipu\UserBundle\Service\ModuleConfiguration;
 use Spipu\UserBundle\Subscriber\RememberMeSubscriber;
@@ -19,6 +21,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
+#[AllowMockObjectsWithoutExpectations]
+#[CoversClass(RememberMeSubscriber::class)]
 class RememberMeSubscriberTest extends TestCase
 {
     private function getSubscriber(bool $allowRememberMe): RememberMeSubscriber

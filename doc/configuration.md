@@ -242,12 +242,10 @@ All routes are registered via PHP attributes. The bundle's `routes.yaml` uses `t
 | `spipu_user_admin_show` | `/user/show/{id}` | GET | `ROLE_ADMIN_MANAGE_USER_SHOW` |
 | `spipu_user_admin_create` | `/user/create/` | GET, POST | `ROLE_ADMIN_MANAGE_USER_EDIT` |
 | `spipu_user_admin_edit` | `/user/edit/{id}` | GET, POST | `ROLE_ADMIN_MANAGE_USER_EDIT` |
-| `spipu_user_admin_acl` | `/user/update-acl/{id}` | POST | `ROLE_ADMIN_MANAGE_USER_SHOW` + fully authenticated |
-| `spipu_user_admin_enable` | `/user/enable/{id}/{backTo}` | GET | `ROLE_ADMIN_MANAGE_USER_EDIT` |
-| `spipu_user_admin_disable` | `/user/disable/{id}/{backTo}` | GET | `ROLE_ADMIN_MANAGE_USER_EDIT` |
-| `spipu_user_admin_reset` | `/user/reset/{id}` | GET | `ROLE_ADMIN_MANAGE_USER_EDIT` |
+| `spipu_user_admin_acl` | `/user/update-acl/{id}` | POST | `ROLE_ADMIN_MANAGE_USER_EDIT` + fully authenticated |
+| `spipu_user_admin_enable` | `/user/enable/{id}` | POST | `ROLE_ADMIN_MANAGE_USER_EDIT` |
+| `spipu_user_admin_disable` | `/user/disable/{id}` | POST | `ROLE_ADMIN_MANAGE_USER_EDIT` |
+| `spipu_user_admin_reset` | `/user/reset/{id}` | POST | `ROLE_ADMIN_MANAGE_USER_EDIT` |
 | `spipu_user_admin_delete` | `/user/delete/{id}` | DELETE | `ROLE_ADMIN_MANAGE_USER_DELETE` |
-| `spipu_user_admin_mass_enable` | `/user/mass-enable` | POST | `ROLE_ADMIN_MANAGE_USER_EDIT` |
-| `spipu_user_admin_mass_disable` | `/user/mass-disable` | POST | `ROLE_ADMIN_MANAGE_USER_EDIT` |
 
 [back](./README.md)
