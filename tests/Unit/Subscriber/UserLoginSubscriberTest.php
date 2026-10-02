@@ -14,13 +14,17 @@ use Spipu\UserBundle\Tests\SpipuUserMock;
 use Spipu\UserBundle\Tests\Unit\Service\UserConfigurationTest;
 use Spipu\UserBundle\Tests\Unit\Service\UserManagerTest;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Component\Security\Http\Authenticator\RememberMeAuthenticator;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
+use Symfony\Component\Security\Http\RememberMe\RememberMeHandlerInterface;
 
 #[AllowMockObjectsWithoutExpectations]
 #[CoversClass(UserLoginSubscriber::class)]
@@ -65,6 +69,52 @@ class UserLoginSubscriberTest extends TestCase
         $this->assertSame(0, $user->getNbTryLogin());
         $this->assertSame(6, $user->getNbLogin());
         $this->assertNull($user->getTokenDate());
+    }
+
+    public function testOnLoginSuccessOtherUser(): void
+    {
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->never())->method('flush');
+
+        $userConfiguration = UserConfigurationTest::getService($this);
+        $subscriber = new UserLoginSubscriber($entityManager, $userConfiguration, UserManagerTest::getService($this));
+
+        $user = new InMemoryUser('other', 'password');
+        $passport = new SelfValidatingPassport(new UserBadge('other', function () use ($user) {
+            return $user;
+        }));
+        $token = new UsernamePasswordToken($user, 'other', ['ROLE_USER']);
+        $authenticator = $this->createMock(AuthenticatorInterface::class);
+        $event = new LoginSuccessEvent($authenticator, $passport, $token, new Request(), null, 'other');
+
+        $subscriber->onLoginSuccess($event);
+        $this->assertTrue(true);
+    }
+
+    public function testOnLoginFailedOtherUser(): void
+    {
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->never())->method('flush');
+
+        $userConfiguration = UserConfigurationTest::getService($this);
+        $subscriber = new UserLoginSubscriber($entityManager, $userConfiguration, UserManagerTest::getService($this));
+
+        $user = new InMemoryUser('other', 'password');
+        $passport = new SelfValidatingPassport(new UserBadge('other', function () use ($user) {
+            return $user;
+        }));
+        $authenticator = $this->createMock(AuthenticatorInterface::class);
+        $event = new LoginFailureEvent(
+            new AuthenticationException(),
+            $authenticator,
+            new Request(),
+            null,
+            'other',
+            $passport
+        );
+
+        $subscriber->onLoginFailed($event);
+        $this->assertTrue(true);
     }
 
     public function testOnLoginFailedUnderLimit(): void
@@ -169,6 +219,35 @@ class UserLoginSubscriberTest extends TestCase
         $this->assertFalse($user->getActive());
     }
 
+    public function testOnLoginFailedRememberMe(): void
+    {
+        $user = SpipuUserMock::getUserEntity(1);
+        $user->setActive(true);
+        $user->setPassword('encoded');
+        $user->setNbTryLogin(9);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->never())->method('flush');
+
+        $userConfiguration = UserConfigurationTest::getService($this, [
+            'user.security.lock_enabled' => 1,
+            'user.security.lock_max_attempts' => 10,
+        ]);
+        $subscriber = new UserLoginSubscriber($entityManager, $userConfiguration, UserManagerTest::getService($this));
+
+        $authenticator = new RememberMeAuthenticator(
+            $this->createMock(RememberMeHandlerInterface::class),
+            'secret',
+            new TokenStorage(),
+            'remember_me'
+        );
+        $event = $this->createLoginFailureEvent($user, $authenticator);
+        $subscriber->onLoginFailed($event);
+
+        $this->assertSame(9, $user->getNbTryLogin());
+        $this->assertTrue($user->getActive());
+    }
+
     public function testOnLoginFailedNoPassport(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
@@ -191,13 +270,15 @@ class UserLoginSubscriberTest extends TestCase
         $this->assertTrue(true);
     }
 
-    private function createLoginFailureEvent(UserInterface $user): LoginFailureEvent
-    {
+    private function createLoginFailureEvent(
+        UserInterface $user,
+        ?AuthenticatorInterface $authenticator = null
+    ): LoginFailureEvent {
         $passport = new SelfValidatingPassport(new UserBadge('test', function () use ($user) {
             return $user;
         }));
 
-        $authenticator = $this->createMock(AuthenticatorInterface::class);
+        $authenticator = $authenticator ?? $this->createMock(AuthenticatorInterface::class);
 
         return new LoginFailureEvent(
             new AuthenticationException(),

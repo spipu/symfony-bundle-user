@@ -59,9 +59,17 @@ The built-in `ModuleConfiguration` class exposes:
 | `getEntityClassName(): string` | FQCN of the concrete user entity |
 | `hasAllowAccountCreation(): bool` | Whether the self-registration flow is enabled |
 | `hasAllowPasswordRecovery(): bool` | Whether the password recovery flow is enabled |
+| `hasAllowRememberMe(): bool` | Whether the "Remember me" checkbox is displayed on the login form |
 | `getNewEntity(): UserInterface` | Instantiates a new entity of the configured class |
 
 When `allowAccountCreation` is `false`, the `/account/create` route returns a 404. When `allowPasswordRecovery` is `false`, the `/account/recovery` route returns a 404.
+
+The "Remember me" feature itself is provided by the `remember_me` option of your firewall. When `allowRememberMe` is `false`:
+- the "Remember me" checkbox is hidden on the login form,
+- the `RememberMeSubscriber` prevents the creation of new remember me cookies for the users of this bundle, even if `_remember_me` is forged in the login request,
+- but the existing cookies are still accepted while the firewall keeps the `remember_me` option.
+
+To fully disable the feature, set `allowRememberMe` to `false` **and** remove the `remember_me` options from your firewall (see [Installation](./install.md#4-configure-symfony-security)).
 
 See [Installation](./install.md#3-wire-the-moduleconfiguration-service) for how to wire this service.
 
@@ -151,7 +159,7 @@ class MyUserSubscriber implements EventSubscriberInterface
 }
 ```
 
-> **Note:** Login and logout are handled by Symfony's own security event system (`LoginSuccessEvent`, `LoginFailureEvent`), not by `UserEvent`. The bundle's internal `UserLoginSubscriber` listens to those events to update `nbLogin` and `nbTryLogin` on the entity.
+> **Note:** Login and logout are handled by Symfony's own security event system (`LoginSuccessEvent`, `LoginFailureEvent`), not by `UserEvent`. The bundle's internal `UserLoginSubscriber` listens to those events to update `nbLogin` and `nbTryLogin` on the entity. Symfony dispatches these events on every firewall: users that do not implement `Spipu\UserBundle\Entity\UserInterface` (other firewalls) are ignored, and failed remember me authentications (invalid cookie) are not counted as failed login attempts.
 
 ## Console Commands
 
@@ -234,7 +242,7 @@ All routes are registered via PHP attributes. The bundle's `routes.yaml` uses `t
 | `spipu_user_admin_show` | `/user/show/{id}` | GET | `ROLE_ADMIN_MANAGE_USER_SHOW` |
 | `spipu_user_admin_create` | `/user/create/` | GET, POST | `ROLE_ADMIN_MANAGE_USER_EDIT` |
 | `spipu_user_admin_edit` | `/user/edit/{id}` | GET, POST | `ROLE_ADMIN_MANAGE_USER_EDIT` |
-| `spipu_user_admin_acl` | `/user/update-acl/{id}` | POST | `ROLE_ADMIN_MANAGE_USER_SHOW` |
+| `spipu_user_admin_acl` | `/user/update-acl/{id}` | POST | `ROLE_ADMIN_MANAGE_USER_SHOW` + fully authenticated |
 | `spipu_user_admin_enable` | `/user/enable/{id}/{backTo}` | GET | `ROLE_ADMIN_MANAGE_USER_EDIT` |
 | `spipu_user_admin_disable` | `/user/disable/{id}/{backTo}` | GET | `ROLE_ADMIN_MANAGE_USER_EDIT` |
 | `spipu_user_admin_reset` | `/user/reset/{id}` | GET | `ROLE_ADMIN_MANAGE_USER_EDIT` |

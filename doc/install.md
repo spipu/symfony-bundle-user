@@ -53,7 +53,7 @@ class User extends AbstractUser
 
 ### 3. Wire the ModuleConfiguration service
 
-The bundle requires a `ModuleConfigurationInterface` implementation wired in your `config/services.yaml`. The built-in `ModuleConfiguration` class accepts four constructor arguments:
+The bundle requires a `ModuleConfigurationInterface` implementation wired in your `config/services.yaml`. The built-in `ModuleConfiguration` class accepts the following constructor arguments:
 
 | Argument | Type | Description |
 |----------|------|-------------|
@@ -61,6 +61,7 @@ The bundle requires a `ModuleConfigurationInterface` implementation wired in you
 | `$entityClassName` | string | FQCN of the user entity (e.g. `'App\Entity\User'`) |
 | `$allowAccountCreation` | bool | Whether self-registration is enabled |
 | `$allowPasswordRecovery` | bool | Whether password recovery is enabled |
+| `$allowRememberMe` | bool | Whether the "Remember me" checkbox is displayed on the login form |
 
 Example wiring:
 
@@ -74,6 +75,7 @@ Spipu\UserBundle\Service\ModuleConfigurationInterface:
         - '\App\Entity\User'   # entityClassName
         - '%env(bool:APP_ACCOUNT_CREATION)%'   # allowAccountCreation
         - '%env(bool:APP_ACCOUNT_RECOVERY)%'   # allowPasswordRecovery
+        - '%env(bool:APP_REMEMBER_ME)%'        # allowRememberMe
 ```
 
 To use a custom configuration class, implement `Spipu\UserBundle\Service\ModuleConfigurationInterface` and bind it instead.
@@ -106,6 +108,11 @@ security:
                 remember_me: true
             remember_me:
                 secret: '%kernel.secret%'
+                name: myapp_main_remember # <app>_<firewall>_remember
+                lifetime: 2592000 # 30 days - to adapt to your application
+                httponly: true
+                secure: auto
+                signature_properties: ['password', 'email']
             logout:
                 path: spipu_user_security_logout
                 target: app_home
@@ -117,7 +124,19 @@ security:
 
 Key points:
 - `user_checker: Spipu\UserBundle\Security\UserChecker` — required; blocks login for inactive users and users without a password
+- `remember_me` — must be consistent with `ModuleConfiguration::$allowRememberMe`. Remove these options from the firewall if the feature is disabled:
+  - `name` — must be **unique per firewall**. When several firewalls share the same cookie name on the same path, each firewall tries to authenticate with the cookie of the other one, fails, and clears it.
+  - `lifetime` — 30 days is only an example: each application must choose its own value according to its security needs (e.g. 1 day for a sensitive application).
+  - `signature_properties` — all existing remember me cookies of a user become invalid when their password or email changes. Note that changing this list (or `secret`) invalidates **all** existing cookies: every user has to log in again once.
+  - Disabling the feature, or invalidating the cookies, does not close the sessions already opened: they remain valid until they expire.
 - Route names are `spipu_user_security_login` and `spipu_user_security_logout` (not `spipu_user_login`/`spipu_user_logout`)
+
+**Incident procedure** (e.g. remember me cookies stolen), to stop all the remember me authentications:
+1. Set `APP_REMEMBER_ME` to `false`: the checkbox is hidden and no new cookie is created.
+2. Remove the `remember_me` options from the firewall and redeploy: the existing cookies are ignored.
+3. Purge the sessions already opened (e.g. flush the Redis session storage): users have to log in again.
+
+Do not rotate `kernel.secret` to invalidate the cookies: it also invalidates the CSRF tokens, the signed URLs and the account activation / recovery tokens.
 
 ### 5. Import routes
 

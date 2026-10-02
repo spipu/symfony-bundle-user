@@ -21,6 +21,8 @@ interface ModuleConfigurationInterface
 
     public function hasAllowPasswordRecovery(): bool;
 
+    public function hasAllowRememberMe(): bool;
+
     public function getEntityName(): string;
 
     public function getEntityClassName(): string;
