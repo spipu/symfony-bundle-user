@@ -21,17 +21,20 @@ class ModuleConfiguration implements ModuleConfigurationInterface
     private string $entityClassName;
     private bool $allowAccountCreation;
     private bool $allowPasswordRecovery;
+    private bool $allowRememberMe;
 
     public function __construct(
         string $entityName,
         string $entityClassName,
         bool $allowAccountCreation,
-        bool $allowPasswordRecovery
+        bool $allowPasswordRecovery,
+        bool $allowRememberMe
     ) {
         $this->entityName = $entityName;
         $this->entityClassName = $entityClassName;
         $this->allowAccountCreation = $allowAccountCreation;
         $this->allowPasswordRecovery = $allowPasswordRecovery;
+        $this->allowRememberMe = $allowRememberMe;
     }
 
     public function hasAllowAccountCreation(): bool
@@ -42,6 +45,11 @@ class ModuleConfiguration implements ModuleConfigurationInterface
     public function hasAllowPasswordRecovery(): bool
     {
         return $this->allowPasswordRecovery;
+    }
+
+    public function hasAllowRememberMe(): bool
+    {
+        return $this->allowRememberMe;
     }
 
     public function getEntityName(): string

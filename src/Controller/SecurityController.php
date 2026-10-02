@@ -38,6 +38,7 @@ class SecurityController extends AbstractController
                 'can' => [
                     'accountCreation'  => $moduleConfiguration->hasAllowAccountCreation(),
                     'passwordRecovery' => $moduleConfiguration->hasAllowPasswordRecovery(),
+                    'rememberMe'       => $moduleConfiguration->hasAllowRememberMe(),
                 ]
             ]
         );

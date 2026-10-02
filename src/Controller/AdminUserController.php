@@ -157,6 +157,8 @@ class AdminUserController extends AbstractController
         RoleService $roleService,
         int $id
     ): Response {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         /** @var UserInterface $resource */
         $resource = $userRepository->findOneBy(['id' => $id]);
         if (!$resource) {

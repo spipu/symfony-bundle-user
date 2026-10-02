@@ -34,12 +34,14 @@
                             <input type="password" class="form-control form-control-lg rounded-0" id="password" name="_password" required />
                             <div class="invalid-feedback">{{ 'spipu.user.login.field.required'|trans }}</div>
                         </div>
-                        <div class="form-group">
-                            <div class="form-group custom-control custom-checkbox">
-                                <input type="checkbox" id="remember_me" name="_remember_me" class="custom-control-input"  />
-                                <label class="checkbox-custom custom-control-label" for="remember_me">{{ 'spipu.user.login.field.remember_me'|trans }}</label>
+                        {% if can.rememberMe %}
+                            <div class="form-group">
+                                <div class="form-group custom-control custom-checkbox">
+                                    <input type="checkbox" id="remember_me" name="_remember_me" class="custom-control-input"  />
+                                    <label class="checkbox-custom custom-control-label" for="remember_me">{{ 'spipu.user.login.field.remember_me'|trans }}</label>
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                         <div class="form-group text-center">
                         </div>
                     </div>

@@ -21,6 +21,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\RememberMeAuthenticator;
 
 class UserLoginSubscriber implements EventSubscriberInterface
 {
@@ -51,8 +52,12 @@ class UserLoginSubscriber implements EventSubscriberInterface
 
     public function onLoginSuccess(LoginSuccessEvent $event): void
     {
-        /** @var UserInterface $user */
+        // Users of other firewalls (not managed by this bundle) are ignored.
         $user = $event->getUser();
+        if (!$user instanceof UserInterface) {
+            return;
+        }
+
         $user->setTokenDate(null);
         $user->setNbTryLogin(0);
         $user->setNbLogin($user->getNbLogin() + 1);
@@ -61,14 +66,18 @@ class UserLoginSubscriber implements EventSubscriberInterface
 
     public function onLoginFailed(LoginFailureEvent $event): void
     {
+        // An invalid remember me cookie is not a failed login attempt.
+        if ($event->getAuthenticator() instanceof RememberMeAuthenticator) {
+            return;
+        }
+
         $passport = $event->getPassport();
 
         if ($passport !== null) {
             $badges = $passport->getBadges();
             if (is_array($passport->getBadges()) && isset($badges[UserBadge::class])) {
-                /** @var UserInterface $user */
                 $user = $badges[UserBadge::class]->getUser();
-                if (!$user->getActive()) {
+                if (!$user instanceof UserInterface || !$user->getActive()) {
                     return;
                 }
                 $user->setNbTryLogin($user->getNbTryLogin() + 1);

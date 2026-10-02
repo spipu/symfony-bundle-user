@@ -19,7 +19,8 @@ class ModuleConfigurationTest extends TestCase
             'MockUser',
             GenericUser::class,
             $creation,
-            $password
+            $password,
+            true
         );
 
         return $moduleConfiguration;
@@ -34,5 +35,13 @@ class ModuleConfigurationTest extends TestCase
         $this->assertInstanceOf(GenericUser::class, $moduleConfiguration->getNewEntity());
         $this->assertSame(true, $moduleConfiguration->hasAllowAccountCreation());
         $this->assertSame(false, $moduleConfiguration->hasAllowPasswordRecovery());
+        $this->assertSame(true, $moduleConfiguration->hasAllowRememberMe());
+    }
+
+    public function testRememberMeDisabled(): void
+    {
+        $moduleConfiguration = new ModuleConfiguration('MockUser', GenericUser::class, true, true, false);
+
+        $this->assertSame(false, $moduleConfiguration->hasAllowRememberMe());
     }
 }
