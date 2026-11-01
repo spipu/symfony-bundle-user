@@ -144,6 +144,20 @@ class AdminUserTest extends WebTestCase
         $this->assertEquals(0, $crawler->filter('button:contains("Enable")')->count());
         $this->assertGreaterThan(0, $crawler->filter('button:contains("Password")')->count());
 
+        // Full confirmation messages, with the role kept for older button macros
+        $this->assertSame(
+            'Do you really want to send this user an email to set their password?',
+            $crawler->filter('button:contains("Password")')->attr('data-action-message')
+        );
+        $this->assertSame(
+            'reset the password of',
+            $crawler->filter('button:contains("Password")')->attr('data-action-role')
+        );
+        $this->assertSame(
+            'Do you really want to delete this item?',
+            $crawler->filter('button:contains("Delete")')->attr('data-action-message')
+        );
+
         // Needed to profile email
         $client->enableProfiler();
 

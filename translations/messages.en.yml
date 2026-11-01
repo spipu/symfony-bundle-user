@@ -1,5 +1,8 @@
 spipu:
     user:
+        confirm:
+            reset: "Do you really want to send this user an email to set their password?"
+
         label:
             single:  "User"
             plurial: "Users"

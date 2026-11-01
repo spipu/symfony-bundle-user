@@ -1,0 +1,126 @@
+spipu:
+    user:
+        confirm:
+            reset: "Voulez-vous vraiment envoyer à cet utilisateur un e-mail pour définir son mot de passe ?"
+
+        label:
+            single: "Utilisateur"
+            plurial: "Utilisateurs"
+
+        page:
+            admin:
+                list: "Utilisateurs"
+                create: "Créer un utilisateur"
+                edit: "Modifier l'utilisateur n°%id"
+                show: "Utilisateur n°%id"
+            profile:
+                show: "Mon profil"
+                edit: "Modifier mon profil"
+                password: "Changer mon mot de passe"
+            account:
+                create: "Créer un compte"
+                waiting: "Compte créé"
+                recover: "Récupération de compte"
+            security:
+                log_in: "Se connecter"
+                log_out: "Se déconnecter"
+
+        action:
+            enable: "Activer"
+            disable: "Désactiver"
+            recover: "Récupérer"
+            reset: "Mot de passe"
+            save_acl: "Enregistrer les ACL"
+
+        form:
+            profile: "Modifier mon profil"
+            password: "Changer mon mot de passe"
+            edit: ""
+
+        fieldset:
+            information: "Informations"
+            log_in: "Informations de connexion"
+            acl: "ACL"
+            others: "Autres"
+            password: "Mot de passe"
+            new_password: "Nouveau mot de passe"
+            old_password: "Ancien mot de passe"
+
+        field:
+            id: "Id"
+            username: "Identifiant"
+            email: "E-mail"
+            first_name: "Prénom"
+            last_name: "Nom"
+            roles: "Rôles"
+            active: "Actif"
+            nb_login: "Connexions"
+            nb_try_login: "Tentatives"
+            token_date: "Date du jeton"
+            password: "Mot de passe"
+            password_date: "Date du mot de passe"
+            confirm: "Confirmer le mot de passe"
+            created_at: "Créé le"
+            updated_at: "Modifié le"
+
+        login:
+            title: "Connexion"
+            field:
+                login: "Identifiant"
+                password: "Mot de passe"
+                remember_me: "Se souvenir de moi"
+                required: "Ce champ est obligatoire"
+                submit: "Se connecter"
+
+        error:
+            token: "Jeton invalide !"
+            yourself_delete: "Vous ne pouvez pas supprimer votre propre compte !"
+            yourself_enable: "Vous ne pouvez pas activer votre propre compte !"
+            yourself_disable: "Vous ne pouvez pas désactiver votre propre compte !"
+            yourself_reset: "Vous ne pouvez pas réinitialiser votre propre compte !"
+            yourself_acl: "Vous ne pouvez pas modifier vos propres rôles !"
+            acl_inactive: "Vous ne pouvez pas modifier les rôles d'un compte désactivé !"
+            acl_superior: "Vous ne pouvez pas modifier les rôles d'un utilisateur qui a plus de droits que vous !"
+            acl_invalid: "Les rôles envoyés sont invalides !"
+            acl_not_granted: "Vous ne pouvez pas attribuer un rôle que vous n'avez pas !"
+            bad_old_password: "Votre ancien mot de passe est incorrect !"
+            confirm: "L'e-mail ou le jeton est invalide !"
+            password_too_short: "Le mot de passe est trop court !"
+
+        success:
+            enabled: "L'élément a été activé."
+            disabled: "L'élément a été désactivé."
+            reset: "Un e-mail de récupération de mot de passe a été envoyé"
+            mass_enabled: "%count éléments ont été activés."
+            mass_disabled: "%count éléments ont été désactivés."
+            confirm: "Votre compte a été activé, vous pouvez maintenant l'utiliser."
+            recover: "Votre mot de passe a été modifié, vous pouvez maintenant l'utiliser."
+
+        role:
+            admin: "Gestion des utilisateurs"
+            admin_show: "Gestion des utilisateurs - Consultation"
+            admin_edit: "Gestion des utilisateurs - Modification"
+            admin_delete: "Gestion des utilisateurs - Suppression"
+
+        content:
+            waiting:
+                confirm_1: "Votre compte a été créé avec succès !"
+                confirm_2: "Vous allez recevoir un e-mail de confirmation afin d'activer votre compte."
+            recover:
+                confirm_1: "Un e-mail a été envoyé !"
+                confirm_2: "Si l'adresse correspond à un compte existant, vous recevrez un e-mail avec un lien de récupération."
+
+        email:
+            global:
+                hello: "Bonjour %name"
+                no-reply: "Ceci est un e-mail automatique, merci de ne pas y répondre."
+            confirm:
+                title: "Création de compte"
+                thanks: "Merci pour votre inscription."
+                action: "Pour activer votre compte, cliquez sur le lien suivant ou copiez-le dans votre navigateur."
+            recover:
+                title: "Récupération de compte"
+                action: "Pour définir un nouveau mot de passe, cliquez sur le lien suivant ou copiez-le dans votre navigateur."
+            email_change_notification:
+                title: "Adresse e-mail modifiée"
+                message: "Votre adresse e-mail a été modifiée de %old_email vers %new_email. Si vous n'êtes pas à l'origine de ce changement, merci de contacter l'administrateur."
